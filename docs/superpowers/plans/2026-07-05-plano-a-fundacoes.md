@@ -401,16 +401,15 @@ npm create astro@latest -- site --template minimal --typescript strict --no-inst
 cd site
 npm install
 npx astro add react --yes
-npx astro add tailwind --yes
+# Pinar Tailwind v3 explicitamente — o plan inteiro assume sintaxe v3
+# (@tailwind base/components/utilities + config file). Se preferir v4,
+# reescrever os steps 4.1.1 e 4.1.2 usando @import "tailwindcss" e @theme block.
+npm install --save-exact tailwindcss@3 @astrojs/tailwind@5
 npm install --save chordsheetjs yaml @vite-pwa/astro
 npm install --save-dev vitest
 ```
 
-**Sobre a versão do Tailwind instalada:** o `astro add tailwind` decide entre a integração antiga (`@astrojs/tailwind` + Tailwind v3) ou a nova (`@tailwindcss/vite` + Tailwind v4) baseado no que é atual no momento. **Confira o output do comando** — o `astro.config.mjs` no Step 2.1.3 precisa importar o pacote que foi instalado:
-- Se instalou `@astrojs/tailwind` → mantém `import tailwind from '@astrojs/tailwind'` + `tailwind({ applyBaseStyles: false })` como plugin
-- Se instalou `@tailwindcss/vite` → não precisa listar como integração Astro (já é plugin Vite); só garante que existe uma diretiva `@import "tailwindcss";` no `src/styles/global.css`
-
-O Step 2.1.3 assume a rota antiga por default; **se sua instalação escolheu a nova, comente o import de tailwind e a integração no config, e adicione o `@import "tailwindcss";` no CSS.**
+**Nota:** fixamos Tailwind v3 pra evitar a divergência de sintaxe entre v3 e v4. Se um dia migrar pra v4, é uma refatoração isolada (só afeta `tailwind.config` e `global.css`).
 
 **Sobre pinning:** o `astro add` grava versões compatíveis no `package.json`. Pra deploy determinístico, `npm shrinkwrap` trava transitives.
 
@@ -1730,20 +1729,24 @@ describe('loadAllSongs', () => {
 });
 ```
 
-- [ ] **Step 4.3.5: Implementar `load.ts`**
+- [ ] **Step 4.3.5: Implementar `load.ts` (via `import.meta.glob`)**
 
 ```ts
 // site/src/lib/songs/load.ts
-import { readFileSync, readdirSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve } from 'node:path';
 import { parseChordPro } from '@/lib/cifra-parser';
 import type { Song } from '@/lib/cifra-parser/types';
 import { parseFilename } from './slug';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-// site/src/lib/songs/ → ../../.. → repo root → data/songs
-const SONGS_DIR = resolve(__dirname, '../../../../data/songs');
+/**
+ * Vite/Astro `import.meta.glob` — resolve em build-time, lê o conteúdo
+ * como string via `?raw`. Elimina fragilidade de path relativo.
+ * O prefix `/data/songs` é resolvido pela raiz do projeto Astro.
+ */
+const rawFiles = import.meta.glob<string>('/../data/songs/*.pro', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
 export interface SongEntry {
   slug: string;
@@ -1753,18 +1756,23 @@ export interface SongEntry {
   filename: string;
 }
 
+let cached: SongEntry[] | null = null;
+
 /**
  * Lê todos os arquivos .pro em data/songs/ e retorna array com AST parseado.
  * Chamado em build-time pelas páginas Astro (via getStaticPaths).
  */
 export function loadAllSongs(): SongEntry[] {
-  const files = readdirSync(SONGS_DIR).filter((f) => f.endsWith('.pro'));
-  return files.map((filename) => {
+  if (cached) return cached;
+  const entries: SongEntry[] = [];
+  for (const [path, raw] of Object.entries(rawFiles)) {
+    const filename = path.split('/').pop()!;
     const parsed = parseFilename(filename);
-    const raw = readFileSync(join(SONGS_DIR, filename), 'utf-8');
     const song = parseChordPro(raw);
-    return { ...parsed, song, filename };
-  });
+    entries.push({ ...parsed, song, filename });
+  }
+  cached = entries;
+  return entries;
 }
 
 /** Retorna todas as versões (tons) de uma slug específica. */
@@ -1772,6 +1780,8 @@ export function loadSongVersions(slug: string): SongEntry[] {
   return loadAllSongs().filter((s) => s.slug === slug);
 }
 ```
+
+**Nota sobre teste de `load.ts`:** Vitest não suporta `import.meta.glob` nativamente (é um recurso Vite). Rodar os testes de `load.ts` sob o config do Vitest requer o preset `vite` do Vitest. Se o teste falhar por isso, ajustar `vitest.config.ts` pra usar `defineConfig` do `vitest/config` que já tem Vite integrado (é o caso do Step 2.1.4) — deve funcionar out-of-the-box. Se ainda assim falhar, converter o teste pra rodar contra uma pasta stub temporária (não é o esforço agora — testar em integração via build de produção também vale).
 
 - [ ] **Step 4.3.6: Rodar todos os testes**
 
@@ -1938,7 +1948,7 @@ const base = import.meta.env.BASE_URL;
         {song.metadata.artist && <span>{song.metadata.artist}</span>}
         {song.metadata.artist && <span>·</span>}
         <SectionBadge section={song.metadata.section} />
-        {song.metadata.tags?.length > 0 && (
+        {song.metadata.tags.length > 0 && (
           <>
             <span>·</span>
             <span>{song.metadata.tags.join(', ')}</span>
@@ -1979,6 +1989,8 @@ const base = import.meta.env.BASE_URL;
 
 - [ ] **Step 4.4.3: Escrever `site/src/pages/musicas/[slug]/index.astro`**
 
+`Astro.redirect()` em `output: 'static'` (default do Astro 5) gera um `<meta http-equiv="refresh">` no HTML — funciona pra rota estática. Se algum dia trocar pra `output: 'hybrid'` ou `'server'`, revalidar.
+
 ```astro
 ---
 import { loadAllSongs } from '@/lib/songs/load';
@@ -2008,6 +2020,8 @@ cd site && npx astro check
 ```
 
 Expected: 0 erros de tipo. Se aparecer erro em `SongViewer` importado sem `.default`, ajustar o `import`.
+
+**Nota sobre `client:load` vs `client:idle`:** o `SongViewer` está marcado como `client:load`. Como `chordsheetjs` (usado pra transpor) é ~50KB minified, hidratar antes do usuário interagir custa nada perceptível — o `pre` do Astro renderiza o texto imediatamente e a hidratação da ilha só ativa os controles depois. Se um dia notar TTI ruim, trocar pra `client:idle` (o `<pre>` inicial já mostra a cifra sem depender do JS).
 
 - [ ] **Step 4.4.5: Commit**
 
@@ -2098,7 +2112,7 @@ const totalMusicas = new Set(songs.map((s) => s.slug)).size;
       href={`${base}musicas`}
       class="inline-block bg-mmu-green text-white px-6 py-3 rounded font-semibold hover:opacity-90"
     >
-      Ver as {totalMusicas} músicas do repertório
+      Ver {totalMusicas === 1 ? 'a 1 música' : `as ${totalMusicas} músicas`} do repertório
     </a>
   </section>
 </BaseLayout>
@@ -2138,7 +2152,7 @@ cd site && npm run dev
 Abrir `http://localhost:4321/` (o dev usa `base=/` por default).
 
 Checklist visual:
-- [ ] Home mostra a logo MMU centralizada, título, e botão "Ver as 1 músicas do repertório" (1 slug com 2 versões)
+- [ ] Home mostra a logo MMU centralizada, título, e botão "Ver a 1 música do repertório" (singular quando total = 1)
 - [ ] `/musicas` lista "Nada Além do Sangue" com badge "Congregacional" (verde) e "G · A"
 - [ ] `/musicas/nada-alem-do-sangue` redireciona pra `/musicas/nada-alem-do-sangue/g`
 - [ ] Página da música mostra título, artista, badge verde, link YouTube, seletor de tom
@@ -2148,13 +2162,17 @@ Checklist visual:
 - [ ] Slider de auto-scroll faz a página rolar
 - [ ] Dark mode segue o OS (mudar tema do sistema pra ver)
 
-- [ ] **Step 4.5.5: Verificar build de produção**
+- [ ] **Step 4.5.5: Verificar build de produção + PWA**
+
+O PWA (Service Worker) do `@vite-pwa/astro` só é gerado em **build de produção**, não em `astro dev`. Pra verificar o SW, precisa buildar e usar `npm run preview`.
 
 ```bash
-cd site && SITE=https://odntht.github.io BASE=/pipt-repertorio/ npm run build
+cd site
+SITE=https://odntht.github.io BASE=/pipt-repertorio/ npm run build
+npm run preview   # sobe servidor pra testar o dist/
 ```
 
-Expected: build completa sem erros; gera `site/dist/` com HTML estático.
+Expected: build completa sem erros; `site/dist/` gerado com `manifest.webmanifest` + `sw.js`. Abrir `http://localhost:4321/pipt-repertorio/` no browser, DevTools → Application → Service Workers → deve mostrar SW registrado.
 
 - [ ] **Step 4.5.6: Commit**
 
@@ -2194,15 +2212,13 @@ Objetivo: criar o `plugin/` no repo com 2 skills mínimas (`status` e `add-song`
   "version": "0.1.0",
   "description": "Manutenção do repositório do Ministério de Música PIPT — migração, revisão de PRs, geração de setlist, auditoria.",
   "author": "odntht",
-  "license": "MIT",
-  "skills": [
-    "skills/status",
-    "skills/add-song"
-  ]
+  "license": "MIT"
 }
 ```
 
-Nota: skills adicionais (`migrate-docx`, `review-pr`, `audit-corpus`, `generate-setlist`, `publish-setlist`, `rotate-token`, `cleanup-spam`, `map-arrangements`, `new-version`, `review-issue`) serão adicionadas nos Planos B e C — por ora, só o esqueleto mínimo.
+**Nota sobre skills vs commands:** o Claude Code plugin loader descobre skills automaticamente varrendo `skills/*/SKILL.md` — não é necessário listá-las no manifest. Cada skill exposta neste diretório fica invocável como `/pipt-repertorio:<skill-name>`.
+
+Skills adicionais (`migrate-docx`, `review-pr`, `audit-corpus`, `generate-setlist`, `publish-setlist`, `rotate-token`, `cleanup-spam`, `map-arrangements`, `new-version`, `review-issue`) serão adicionadas nos Planos B e C — por ora, só o esqueleto mínimo.
 
 - [ ] **Step 5.1.2: Escrever `plugin/skills/status/SKILL.md`**
 
