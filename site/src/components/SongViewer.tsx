@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
 import type { Song, SongLine } from '@/lib/cifra-parser/types';
 import { transposeSong } from '@/lib/chordpro/transpose';
+import { chordToDegree } from '@/lib/chordpro/degrees';
 
 interface Props {
   song: Song;
@@ -52,6 +53,7 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
   const [fontSize, setFontSize] = useState<number>(16);
   const [autoScrollSpeed, setAutoScrollSpeed] = useState<number>(0);
   const [controlsVisible, setControlsVisible] = useState<boolean>(true);
+  const [showDegrees, setShowDegrees] = useState<boolean>(false);
   const scrollRef = useRef<number | null>(null);
   const controlsBarRef = useRef<HTMLDivElement | null>(null);
 
@@ -61,6 +63,22 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
     () => transposeSong(song, targetKey, notation),
     [song, targetKey, notation],
   );
+
+  // Aplica conversão de graus se toggle ativo
+  const displayedLines = useMemo(() => {
+    if (!showDegrees) return transposed.lines;
+    return transposed.lines.map((line) => {
+      if (line.kind !== 'lyric-with-chords') return line;
+      return {
+        ...line,
+        segments: line.segments.map((seg) =>
+          seg.chord
+            ? { ...seg, chord: chordToDegree(seg.chord, targetKey) }
+            : seg,
+        ),
+      };
+    });
+  }, [transposed, showDegrees, targetKey]);
 
   // Sobe/desce N semitons (wrap-around). Notação segue a direção:
   // subir → sharp (#), descer → flat (b).
@@ -165,6 +183,19 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
           </button>
         </div>
 
+        <button
+          onClick={() => setShowDegrees((v) => !v)}
+          className={`px-3 py-1 border rounded text-sm ${
+            showDegrees
+              ? 'bg-mmu-green text-white border-mmu-green'
+              : 'bg-transparent'
+          }`}
+          aria-pressed={showDegrees}
+          title={showDegrees ? 'Mostrar acordes' : 'Mostrar graus (I, IV, V...)'}
+        >
+          Graus
+        </button>
+
         <div className="flex items-center gap-1 text-sm">
           <button
             onClick={() => setFontSize((f) => Math.max(10, f - 2))}
@@ -268,7 +299,7 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
         className="cifra-body"
         style={{ fontSize: `${fontSize}px` }}
       >
-        {transposed.lines.map((line, i) => (
+        {displayedLines.map((line, i) => (
           <CifraLine key={i} line={line} />
         ))}
       </div>
