@@ -1,0 +1,7 @@
+{
+  "name": "pipt-repertorio",
+  "version": "0.1.0",
+  "description": "Manutenção do repositório do Ministério de Música PIPT — migração, revisão de PRs, geração de setlist, auditoria.",
+  "author": "odntht",
+  "license": "MIT"
+}
