@@ -38,3 +38,20 @@ describe('chordToDegree in different keys', () => {
     expect(chordToDegree('Eb', 'Bb')).toBe('IV');
   });
 });
+
+describe('chordToDegree com enarmônicos raros', () => {
+  // E# = F. Em Ab (idx 8), F (idx 5) é vi natural.
+  // Interval = (5-8+12)%12 = 9 → VI. Sem 'm' na string original, fica maiúsculo.
+  it('E# in Ab é VI', () => {
+    expect(chordToDegree('E#', 'Ab')).toBe('VI');
+  });
+  // E#m7(11) em Ab → vi7(11) (com minor)
+  it('E#m7(11) in Ab é vi7(11)', () => {
+    expect(chordToDegree('E#m7(11)', 'Ab')).toBe('vi7(11)');
+  });
+  // B# = C. Em G (idx 7), C (idx 0) é IV.
+  it('B# in G é IV', () => {
+    expect(chordToDegree('B#', 'G')).toBe('IV');
+  });
+});
+

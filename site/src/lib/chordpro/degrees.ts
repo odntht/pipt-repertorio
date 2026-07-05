@@ -16,8 +16,12 @@ const NOTES_SHARP = [
   'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B',
 ] as const;
 
-const FLAT_TO_SHARP: Record<string, string> = {
+// Normalização enarmônica — converte qualquer spelling de nota pra sharp/natural
+// que existe em NOTES_SHARP.
+const ENHARMONIC: Record<string, string> = {
   Db: 'C#', Eb: 'D#', Gb: 'F#', Ab: 'G#', Bb: 'A#',
+  // Raros: notas alteradas que apontam pra naturais
+  'E#': 'F', 'B#': 'C', Cb: 'B', Fb: 'E',
 };
 
 const MAJOR_DEGREE_MAP: Record<number, string> = {
@@ -28,7 +32,7 @@ const MAJOR_DEGREE_MAP: Record<number, string> = {
 };
 
 function normalizeRoot(root: string): string {
-  return FLAT_TO_SHARP[root] ?? root;
+  return ENHARMONIC[root] ?? root;
 }
 
 function noteIndex(note: string): number {

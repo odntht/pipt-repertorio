@@ -47,17 +47,20 @@ export function transposeSong(
 ): Song {
   const delta = semitonesBetween(song.metadata.key, targetKey);
 
-  // Conversão manual de acidentes — só troca #↔b onde tem acidente,
-  // nunca converte naturais (evita C → B# ou F → E#).
+  // Conversão de acidentes:
+  //   sharp mode: b → # (e resolve Fb → E, Cb → B — enarmônicos raros)
+  //   flat mode:  # → b (e resolve E# → F, B# → C)
+  // Naturais nunca são convertidos (evita C → B#).
   const SHARP_TO_FLAT: Record<string, string> = {
     'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb',
+    'E#': 'F', 'B#': 'C',
   };
   const FLAT_TO_SHARP_MAP: Record<string, string> = {
     Db: 'C#', Eb: 'D#', Gb: 'F#', Ab: 'G#', Bb: 'A#',
+    Cb: 'B', Fb: 'E',
   };
   const applyNotation = (chordStr: string): string => {
     const map = notation === 'flat' ? SHARP_TO_FLAT : FLAT_TO_SHARP_MAP;
-    // Substitui acidentes em root E baixo (após "/"), preservando qualificadores.
     return chordStr.replace(/([A-G])(#|b)/g, (match) => map[match] ?? match);
   };
 
