@@ -32,10 +32,42 @@ npm install       # instala dependências
 npm run dev       # sobe dev server em http://localhost:4321
 ```
 
+## Testes
+
+```bash
+cd site
+npm test          # roda Vitest (142 testes)
+npx astro check   # type-check
+```
+
+## Build de produção
+
+```bash
+cd site
+SITE=https://odntht.github.io BASE=/pipt-repertorio/ npm run build
+```
+
+Gera site estático em `site/dist/`. `npm run preview` serve pra testar o build.
+
+## Plugin Claude Code (opcional, só admin)
+
+```bash
+mkdir -p ~/.claude/plugins
+ln -s ~/Documents/pipt-repertorio/plugin ~/.claude/plugins/pipt-repertorio
+```
+
+Ver [`plugin/README.md`](plugin/README.md).
+
 ## Documentação
 
 - **Design:** [docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md](docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md)
 - **Plano A (Fundações):** [docs/superpowers/plans/2026-07-05-plano-a-fundacoes.md](docs/superpowers/plans/2026-07-05-plano-a-fundacoes.md)
+
+## Estado do projeto
+
+- ✅ **Plano A — Fundações** (concluído): estrutura + site + parser + plugin skeleton
+- ⏳ **Plano B — Migração do docx** (pendente): converter ~415 músicas do Google Docs original
+- ⏳ **Plano C — Submissão pública** (pendente, depende da conta `odntht` no GitHub)
 
 ## Contribuindo
 
