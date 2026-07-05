@@ -1,0 +1,19 @@
+---
+import { loadAllSongs } from '@/lib/songs/load';
+
+export async function getStaticPaths() {
+  const songs = loadAllSongs();
+  const bySlug = new Map<string, string>();
+  for (const s of songs) {
+    if (!bySlug.has(s.slug)) bySlug.set(s.slug, s.tom);
+  }
+  return Array.from(bySlug.entries()).map(([slug, tom]) => ({
+    params: { slug },
+    props: { defaultTom: tom },
+  }));
+}
+
+return Astro.redirect(
+  `${import.meta.env.BASE_URL}musicas/${Astro.params.slug}/${Astro.props.defaultTom}`,
+);
+---

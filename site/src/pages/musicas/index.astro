@@ -1,0 +1,53 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionBadge from '@/components/SectionBadge.astro';
+import { loadAllSongs } from '@/lib/songs/load';
+
+const base = import.meta.env.BASE_URL;
+
+const songs = loadAllSongs();
+const bySlug = new Map<
+  string,
+  { slug: string; song: (typeof songs)[0]['song']; toms: string[] }
+>();
+for (const s of songs) {
+  const existing = bySlug.get(s.slug);
+  if (existing) {
+    existing.toms.push(s.tom);
+  } else {
+    bySlug.set(s.slug, { slug: s.slug, song: s.song, toms: [s.tom] });
+  }
+}
+const entries = Array.from(bySlug.values()).sort((a, b) =>
+  a.song.metadata.title.localeCompare(b.song.metadata.title, 'pt-BR'),
+);
+---
+
+<BaseLayout title="Músicas">
+  <h1 class="text-2xl font-bold mb-4">Músicas</h1>
+  <p class="text-sm text-gray-500 mb-4">
+    {entries.length} músicas · {songs.length} versões
+  </p>
+
+  <ul class="space-y-2">
+    {
+      entries.map(({ slug, song, toms }) => (
+        <li class="border-b pb-2">
+          <a
+            href={`${base}musicas/${slug}`}
+            class="flex flex-wrap items-center gap-2 hover:text-mmu-green"
+          >
+            <span class="font-semibold">{song.metadata.title}</span>
+            {song.metadata.artist && (
+              <span class="text-sm text-gray-500">{song.metadata.artist}</span>
+            )}
+            <SectionBadge section={song.metadata.section} />
+            <span class="ml-auto text-sm text-gray-500">
+              {toms.map((t) => t.toUpperCase()).join(' · ')}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

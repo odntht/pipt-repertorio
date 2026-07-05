@@ -1,17 +1,28 @@
 ---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { loadAllSongs } from '@/lib/songs/load';
 
+const base = import.meta.env.BASE_URL;
+const songs = loadAllSongs();
+const totalMusicas = new Set(songs.map((s) => s.slug)).size;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Início">
+  <section class="text-center py-12">
+    <img
+      src={`${base}logo/mmu.png`}
+      alt="MMU"
+      class="mx-auto w-32 h-32 rounded-lg mb-6"
+    />
+    <h1 class="text-3xl font-bold mb-2">PIPT Repertório</h1>
+    <p class="text-gray-600 dark:text-gray-400 mb-6">
+      Ministério de Música — Presbiteriana Independente da PIPT
+    </p>
+    <a
+      href={`${base}musicas`}
+      class="inline-block bg-mmu-green text-white px-6 py-3 rounded font-semibold hover:opacity-90"
+    >
+      Ver {totalMusicas === 1 ? 'a 1 música' : `as ${totalMusicas} músicas`} do repertório
+    </a>
+  </section>
+</BaseLayout>
