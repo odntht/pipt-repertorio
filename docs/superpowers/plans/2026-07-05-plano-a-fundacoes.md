@@ -392,22 +392,27 @@ Ver spec §4 (formato ChordPro) e §5.5 (regex de acorde canônico + parser SSOT
 
 - [ ] **Step 2.1.1: Init do projeto Astro**
 
-```bash
-cd ~/Documents/pipt-repertorio/site
-npm init -y
-```
-
-Depois, usar `astro add` (que resolve automaticamente combinações compatíveis) e só depois travar versões:
+**Estratégia:** usar o initializer oficial do Astro (`npm create astro@latest`) pra ter um projeto Astro válido antes de rodar `astro add`. Sem isso, `astro add` pode falhar por não encontrar `astro.config.mjs`.
 
 ```bash
-npx astro@latest add react tailwind --yes
+cd ~/Documents/pipt-repertorio
+# Se o diretório site/ ainda não existir:
+npm create astro@latest -- site --template minimal --typescript strict --no-install --no-git --yes
+cd site
+npm install
+npx astro add react --yes
+npx astro add tailwind --yes
 npm install --save chordsheetjs yaml @vite-pwa/astro
-npm install --save-dev vitest @types/react @types/react-dom
+npm install --save-dev vitest
 ```
 
-**Se `astro add` perguntar interativamente, aceitar todos os defaults.** Isso instala Astro 5, integração React (com major compatível), Tailwind (integração com major compatível). Se algum pacote não existir com o major esperado, `astro add` já ajusta.
+**Sobre a versão do Tailwind instalada:** o `astro add tailwind` decide entre a integração antiga (`@astrojs/tailwind` + Tailwind v3) ou a nova (`@tailwindcss/vite` + Tailwind v4) baseado no que é atual no momento. **Confira o output do comando** — o `astro.config.mjs` no Step 2.1.3 precisa importar o pacote que foi instalado:
+- Se instalou `@astrojs/tailwind` → mantém `import tailwind from '@astrojs/tailwind'` + `tailwind({ applyBaseStyles: false })` como plugin
+- Se instalou `@tailwindcss/vite` → não precisa listar como integração Astro (já é plugin Vite); só garante que existe uma diretiva `@import "tailwindcss";` no `src/styles/global.css`
 
-**Nota sobre pinning:** deixamos as versões resolvidas pelo `astro add` no `package.json`; se quiser travar depois pra deploy determinístico, rodar `npm shrinkwrap` gera um lock que trava todos os transitives.
+O Step 2.1.3 assume a rota antiga por default; **se sua instalação escolheu a nova, comente o import de tailwind e a integração no config, e adicione o `@import "tailwindcss";` no CSS.**
+
+**Sobre pinning:** o `astro add` grava versões compatíveis no `package.json`. Pra deploy determinístico, `npm shrinkwrap` trava transitives.
 
 - [ ] **Step 2.1.2: Escrever `site/tsconfig.json`**
 
@@ -423,7 +428,7 @@ npm install --save-dev vitest @types/react @types/react-dom
     "jsx": "react-jsx",
     "jsxImportSource": "react"
   },
-  "include": ["src/**/*", "astro.config.mjs", "vitest.config.ts"]
+  "include": ["src/**/*", "vitest.config.ts"]
 }
 ```
 
@@ -911,6 +916,16 @@ describe('parseChordPro', () => {
     const song = parseChordPro(src);
     expect(song.lines[1].kind).toBe('lyric-with-chords');
     expect(song.lines[1].segments).toEqual([{ text: 'só texto sem acordes' }]);
+  });
+
+  it('preserves leading whitespace before first chord (alignment)', () => {
+    // Padrão comum no docx original: espaços antes do 1º [G] pra alinhar visualmente
+    const src = `{title: X}\n{key: G}\n{section: congregacional}\n{status: aprovada}\n\n     [G]Teu sangue`;
+    const song = parseChordPro(src);
+    expect(song.lines[1].segments).toEqual([
+      { text: '     ' },
+      { chord: 'G', text: 'Teu sangue' },
+    ]);
   });
 });
 ```
