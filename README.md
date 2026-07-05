@@ -14,12 +14,22 @@ Repositório e site do repertório musical do Ministério de Música da PIPT.
 
 ## Desenvolvimento local
 
-Pré-requisitos: Node 22 LTS (recomendado via [mise](https://mise.jdx.dev/)).
+**Pré-requisitos:** Node 22 LTS (versão fixada em `.nvmrc`).
+
+Instale Node por qualquer meio disponível na sua máquina:
+- **nvm:** `nvm install && nvm use` (lê o `.nvmrc` automaticamente)
+- **fnm:** `fnm use` (idem)
+- **mise:** `mise install` (lê o `.nvmrc` como fallback)
+- **Homebrew:** `brew install node@22`
+- **Instalador oficial:** [nodejs.org](https://nodejs.org/) (versão 22 LTS)
+- **Outro:** basta ter Node ≥ 22 e npm no PATH
+
+Depois:
 
 ```bash
-mise install                    # instala Node 22 conforme .mise.toml
-cd site && npm install          # dependências do site
-npm run dev                     # sobe dev server em http://localhost:4321
+cd site
+npm install       # instala dependências
+npm run dev       # sobe dev server em http://localhost:4321
 ```
 
 ## Documentação
