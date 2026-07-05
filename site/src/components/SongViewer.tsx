@@ -9,32 +9,76 @@ interface Props {
   base: string;
 }
 
-const ALL_TONS = [
+const NOTES_SHARP = [
   'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B',
 ] as const;
+const NOTES_FLAT = [
+  'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B',
+] as const;
+const FLAT_TO_SHARP: Record<string, string> = {
+  Db: 'C#', Eb: 'D#', Gb: 'F#', Ab: 'G#', Bb: 'A#',
+};
+
+type Notation = 'sharp' | 'flat';
+
+function parseKeyToState(key: string): {
+  rootIdx: number;
+  isMinor: boolean;
+  notation: Notation;
+} {
+  const m = key.match(/^([A-G])(#|b)?(m)?$/);
+  if (!m) return { rootIdx: 0, isMinor: false, notation: 'sharp' };
+  const root = m[1] + (m[2] ?? '');
+  const isFlat = m[2] === 'b';
+  const normalized = FLAT_TO_SHARP[root] ?? root;
+  const rootIdx = (NOTES_SHARP as readonly string[]).indexOf(normalized);
+  return { rootIdx, isMinor: m[3] === 'm', notation: isFlat ? 'flat' : 'sharp' };
+}
+
+function formatKey(rootIdx: number, isMinor: boolean, notation: Notation): string {
+  const list = notation === 'flat' ? NOTES_FLAT : NOTES_SHARP;
+  return list[rootIdx] + (isMinor ? 'm' : '');
+}
 
 // Só mostra marcador visual pras seções importantes.
 // Resto vira uma linha em branco (mantém "duas linhas de espaço" entre seções).
 const SHOW_COMMENT_RE = /^(refr[ãa]o|introdu[çc][ãa]o|intro|coro|solo)$/i;
 
 export default function SongViewer({ song, availableToms, slug, base }: Props) {
-  const [targetKey, setTargetKey] = useState<string>(song.metadata.key);
+  const initial = parseKeyToState(song.metadata.key);
+  const [rootIdx, setRootIdx] = useState<number>(initial.rootIdx);
+  const [isMinor, setIsMinor] = useState<boolean>(initial.isMinor);
+  const [notation, setNotation] = useState<Notation>(initial.notation);
   const [fontSize, setFontSize] = useState<number>(16);
   const [autoScrollSpeed, setAutoScrollSpeed] = useState<number>(0);
+  const [controlsVisible, setControlsVisible] = useState<boolean>(true);
   const scrollRef = useRef<number | null>(null);
+  const controlsBarRef = useRef<HTMLDivElement | null>(null);
+
+  const targetKey = formatKey(rootIdx, isMinor, notation);
 
   const transposed = useMemo(
-    () => transposeSong(song, targetKey),
-    [song, targetKey],
+    () => transposeSong(song, targetKey, notation),
+    [song, targetKey, notation],
   );
 
-  // Sobe/desce N semitons (wrap-around). Base é o tom atual.
+  // Sobe/desce N semitons (wrap-around). Notação segue a direção:
+  // subir → sharp (#), descer → flat (b).
   function shiftTom(delta: number) {
-    const currentIdx = ALL_TONS.indexOf(targetKey as (typeof ALL_TONS)[number]);
-    if (currentIdx === -1) return;
-    const newIdx = (currentIdx + delta + ALL_TONS.length) % ALL_TONS.length;
-    setTargetKey(ALL_TONS[newIdx]);
+    setRootIdx((idx) => (idx + delta + 12) % 12);
+    setNotation(delta > 0 ? 'sharp' : 'flat');
   }
+
+  // Dropdown: parse do valor selecionado e atualiza estado + notação inferida.
+  function handleDropdown(value: string) {
+    const parsed = parseKeyToState(value);
+    setRootIdx(parsed.rootIdx);
+    setIsMinor(parsed.isMinor);
+    setNotation(parsed.notation);
+  }
+
+  // Lista mostrada no dropdown segue a notação atual.
+  const dropdownList = notation === 'flat' ? NOTES_FLAT : NOTES_SHARP;
 
   useEffect(() => {
     if (autoScrollSpeed === 0) {
@@ -44,10 +88,21 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
       scrollRef.current = null;
       return;
     }
+    // Velocidade em % da altura da viewport por segundo — funciona igual em
+    // celular pequeno ou tela grande de estúdio.
+    //   speed 1  = 1% da tela por segundo (~100s pra rolar uma tela cheia)
+    //   speed 10 = 10% da tela por segundo (~10s pra rolar uma tela cheia)
     let last = performance.now();
+    let acc = 0; // acumula fração de pixel entre frames
     const tick = (now: number) => {
       const dt = now - last;
-      window.scrollBy(0, (autoScrollSpeed * dt) / 100);
+      const pxPerMs = (autoScrollSpeed * window.innerHeight * 0.01) / 1000;
+      acc += pxPerMs * dt;
+      if (acc >= 1) {
+        const px = Math.floor(acc);
+        window.scrollBy(0, px);
+        acc -= px;
+      }
       last = now;
       scrollRef.current = window.requestAnimationFrame(tick);
     };
@@ -59,9 +114,26 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
     };
   }, [autoScrollSpeed]);
 
+  // Observa se a barra de controles está visível na tela.
+  // Se sair (usuário fez scroll pra baixo) e auto-scroll está ativo,
+  // mostra o controle flutuante.
+  useEffect(() => {
+    const el = controlsBarRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setControlsVisible(entry.isIntersecting),
+      { threshold: 0 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-3 mb-4 no-print">
+      <div
+        ref={controlsBarRef}
+        className="flex flex-wrap items-center gap-3 mb-4 no-print"
+      >
         <div className="flex items-center gap-1 text-sm">
           <span>Tom:</span>
           <button
@@ -70,16 +142,16 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
             aria-label="Descer meio tom"
             title="Descer meio tom"
           >
-            −
+            ↓
           </button>
           <select
-            value={targetKey}
-            onChange={(e) => setTargetKey(e.target.value)}
+            value={dropdownList[rootIdx]}
+            onChange={(e) => handleDropdown(e.target.value + (isMinor ? 'm' : ''))}
             className="border rounded px-2 py-1 bg-white dark:bg-gray-800"
           >
-            {ALL_TONS.map((t) => (
+            {dropdownList.map((t) => (
               <option key={t} value={t}>
-                {t}
+                {t}{isMinor ? 'm' : ''}
               </option>
             ))}
           </select>
@@ -89,7 +161,7 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
             aria-label="Subir meio tom"
             title="Subir meio tom"
           >
-            +
+            ↑
           </button>
         </div>
 
@@ -117,7 +189,7 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
             aria-label="Diminuir velocidade"
             title="Diminuir velocidade"
           >
-            −
+            ↓
           </button>
           <span className="min-w-[3ch] text-center">
             {autoScrollSpeed === 0 ? 'off' : autoScrollSpeed}
@@ -128,7 +200,7 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
             aria-label="Aumentar velocidade"
             title="Aumentar velocidade"
           >
-            +
+            ↑
           </button>
         </div>
 
@@ -139,6 +211,43 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
           Imprimir / PDF
         </button>
       </div>
+
+      {/* Controle flutuante — aparece quando o menu de controles saiu da tela
+          e auto-scroll está ativo. Fica fixo no canto inferior direito. */}
+      {!controlsVisible && autoScrollSpeed > 0 && (
+        <div
+          className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-full shadow-lg px-3 py-2 text-sm no-print"
+        >
+          <span className="text-xs text-gray-500 dark:text-gray-400">Auto-scroll:</span>
+          <button
+            onClick={() => setAutoScrollSpeed((s) => Math.max(0, s - 1))}
+            className="px-2 border rounded"
+            aria-label="Diminuir velocidade"
+            title="Diminuir"
+          >
+            ↓
+          </button>
+          <span className="min-w-[2ch] text-center font-semibold">
+            {autoScrollSpeed}
+          </span>
+          <button
+            onClick={() => setAutoScrollSpeed((s) => Math.min(10, s + 1))}
+            className="px-2 border rounded"
+            aria-label="Aumentar velocidade"
+            title="Aumentar"
+          >
+            ↑
+          </button>
+          <button
+            onClick={() => setAutoScrollSpeed(0)}
+            className="px-2 border rounded text-xs text-red-600 dark:text-red-400"
+            aria-label="Parar auto-scroll"
+            title="Parar"
+          >
+            ■
+          </button>
+        </div>
+      )}
 
       {availableToms.length > 1 && (
         <div className="flex gap-2 mb-4 no-print text-sm">
