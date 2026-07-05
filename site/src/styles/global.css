@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+/**
+ * Paleta MMU + tokens específicos do site.
+ * Ver spec §9.4 (identidade visual).
+ * Tailwind v4 declara cores customizadas via @theme.
+ */
+@theme {
+  --color-mmu-green: #007830;
+  --color-mmu-black: #000000;
+  --color-mmu-white: #ffffff;
+
+  --color-section-congregacional: #007830;
+  --color-section-hinario: #3b82f6;
+  --color-section-infantil: #f59e0b;
+  --color-section-inadequada: #ef4444;
+
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+}
+
+/* Segue o dark mode do OS por default */
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background-color: white;
+  color: #111827;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--color-mmu-black);
+    color: #f3f4f6;
+  }
+}
+
+.cifra-body {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  line-height: 1.75;
+  white-space: pre;
+}
+
+.cifra-chord {
+  color: var(--color-mmu-green);
+  font-weight: 700;
+}
+
+/* Print/PDF: forçar cores, ocultar navegação */
+@media print {
+  .no-print,
+  nav,
+  header,
+  footer {
+    display: none !important;
+  }
+  .cifra-body {
+    color: #000 !important;
+    background: #fff !important;
+    page-break-inside: avoid;
+  }
+  .cifra-chord {
+    color: #000 !important;
+    font-weight: bold;
+  }
+}
