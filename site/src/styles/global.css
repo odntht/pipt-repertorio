@@ -44,7 +44,7 @@ body {
 }
 
 .cifra-chord {
-  color: var(--color-mmu-green);
+  color: #f97316;  /* laranja estilo Cifra Club */
   font-weight: 700;
 }
 

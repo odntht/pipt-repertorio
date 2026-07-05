@@ -21,7 +21,16 @@ export function renderChordsOverLyrics(lines: SongLine[]): string {
     let lyricRow = '';
     for (const seg of line.segments) {
       if (seg.chord) {
+        // Se lyric já passou do chord row, alcança o chord row.
         while (chordRow.length < lyricRow.length) chordRow += ' ';
+        // Se chord row já passou do lyric (acorde anterior era mais largo que o texto),
+        // empurra o lyric pra frente pra manter alinhamento e forçar espaço entre acordes.
+        while (lyricRow.length < chordRow.length) lyricRow += ' ';
+        // Garante pelo menos 1 espaço entre acordes consecutivos (evita "Em7(11)G").
+        if (chordRow.length > 0 && !chordRow.endsWith(' ')) {
+          chordRow += ' ';
+          lyricRow += ' ';
+        }
         chordRow += seg.chord;
       }
       lyricRow += seg.text;
