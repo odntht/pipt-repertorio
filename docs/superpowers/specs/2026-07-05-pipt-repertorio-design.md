@@ -766,5 +766,29 @@ Labels aplicadas automaticamente pelo Action:
 
 1. Passar pelo `spec-document-reviewer` (loop de revisão automática do spec)
 2. Usuário revisa o spec final
-3. Escrever o **plano de implementação** (via skill `writing-plans`) — divisão em tarefas executáveis
-4. Iniciar Fase 1 (local-first): scaffold do repo, do site, do plugin, batch-canário
+3. Escrever **3 planos de implementação separados** (via skill `writing-plans`), executáveis sequencialmente:
+
+   **Plano A — Fundações (executável já, 100% local)**
+   - Estrutura do repo (`data/`, `site/`, workflows placeholder)
+   - Site Astro renderizando 1-2 arquivos de exemplo (`.pro` seed) com transposição, PDF, PWA
+   - Plugin Claude com esqueleto (`status`, `add-song` mínimo)
+   - Parser TS canônico em `site/src/lib/cifra-parser` + fixtures
+   - Testes (Vitest) do parser
+   - **Não inclui:** submissão pública, migração, setlists via site
+
+   **Plano B — Migração do docx (depende de A)**
+   - `scripts/migrate-docx.ts` (reusa o parser de A)
+   - Análise de clusters estruturais → relatório
+   - Batch-canário (Fase 1 da migração) com revisão do admin
+   - Batches sequenciais alfabéticos (uma por vez)
+   - `docs/migration/failures.md` com follow-up de casos irrecuperáveis
+
+   **Plano C — Submissão pública + Setlists via site (depende de A e da conta `odntht`)**
+   - Form paste-and-parse em `/adicionar`
+   - Criação de setlist via site (`/setlists/novo`)
+   - GitHub Action `process-submission.yml` (com circuit breaker especificado em §6.3)
+   - PAT injetado no bundle via secret + workflow
+   - `SECURITY.md`, `CONTRIBUTING.md`
+   - Fluxo end-to-end funcionando com usuário sem conta GitHub
+
+4. Executar Plano A → aprovação → Plano B → aprovação → (aguardar conta `odntht`) → Plano C
