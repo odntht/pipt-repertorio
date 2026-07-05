@@ -61,16 +61,30 @@ export function transposeSong(
     return chordStr.replace(/([A-G])(#|b)/g, (match) => map[match] ?? match);
   };
 
+  // Fallback: transpõe manualmente a raiz (e o baixo, se houver) usando regex.
+  // Usado quando ChordSheetJS não parseia o acorde — típico com "º" (dim raro).
+  const manualTranspose = (chord: string): string => {
+    return chord.replace(/([A-G])(#|b)?/g, (match) => {
+      const idx = (NOTES_SHARP as readonly string[]).indexOf(normalizeRoot(match));
+      if (idx === -1) return match;
+      const newIdx = (idx + delta + 12) % 12;
+      return NOTES_SHARP[newIdx];
+    });
+  };
+
   const transposeChord = (chord: string): string => {
     try {
       const parsed = (ChordSheetJS as any).Chord.parse(chord);
-      if (!parsed) return chord;
+      if (!parsed) {
+        // Fallback manual — garante que o acorde acompanha a transposição
+        return applyNotation(manualTranspose(chord));
+      }
       const shifted = delta === 0 ? parsed : parsed.transpose(delta);
-      if (!shifted) return chord;
+      if (!shifted) return applyNotation(manualTranspose(chord));
       const raw = (shifted as { toString: () => string }).toString();
       return applyNotation(raw);
     } catch {
-      return chord;
+      return applyNotation(manualTranspose(chord));
     }
   };
 
