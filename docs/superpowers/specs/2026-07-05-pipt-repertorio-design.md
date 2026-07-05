@@ -513,7 +513,7 @@ Invocação: `/pipt-repertorio:<comando>` (namespacing padrão de plugins). Coma
 ### 7.3 Estratégia de custo (uso de Claude)
 
 Plugin é desenhado pra minimizar tokens:
-- **Scripts fazem o trabalho pesado** (parser Python), Claude só decide ambiguidades
+- **Scripts fazem o trabalho pesado** (parser TS em `site/src/lib/cifra-parser`, invocado via `scripts/migrate-docx.ts`), Claude só decide ambiguidades
 - **Migração inicial** é a fase mais pesada (talvez precise de Pro por 1 mês)
 - **Operação em regime** (setlist semanal + revisão ocasional de PR) cabe em Free tier
 
@@ -543,7 +543,7 @@ Plugin é desenhado pra minimizar tokens:
   - Toma as primeiras N (N = 3 pros 4 clusters maiores, N = 1 pros clusters raros)
   - Total dinâmico: entre 15 e 20 amostras cobrindo toda a diversidade estrutural
 - Admin revisa **com lupa**
-- Se um cluster inteiro estiver quebrado, ajusta parser antes de qualquer bulk (regenerar batch-00 é ~30s)
+- Se um cluster inteiro estiver quebrado, ajusta parser antes de qualquer bulk (regenerar batch-00 é ~40s)
 - Só depois de aprovado o canário, seguimos
 
 **Fase 2+ — Batches sequenciais (um por vez)**
