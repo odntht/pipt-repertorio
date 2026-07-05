@@ -823,6 +823,19 @@ Labels aplicadas automaticamente pelo Action:
 
 ---
 
+## 10.5 Backlog / futuras iterações (fora dos Planos A/B/C)
+
+Ideias registradas como futuras — não fazem parte do escopo inicial mas ficam listadas pra não perder.
+
+- **Estatísticas de repertório** — a partir dos arquivos em `data/setlists/`, gerar página `/estatisticas` (ou aba na home) com:
+  - Ranking de músicas mais tocadas em cada seção
+  - "Última vez tocada" por música
+  - Distribuição por tom, tempo, tema
+  - Sinal visual na página da música: "última vez tocada em DD/MM/AA (N semanas atrás)"
+  - Usado como input pra `generate-setlist`: penalizar músicas tocadas nas últimas N semanas
+  - Custo baixo — é só agregar YAMLs no build. Fácil de adicionar depois do Plano C.
+- Outras ideias futuras podem ser adicionadas aqui à medida que aparecerem.
+
 ## 11. YAGNI (o que foi rejeitado por agora)
 
 - **Cloudflare Worker / Netlify Function** — descartado por preferência de zero infra externa
