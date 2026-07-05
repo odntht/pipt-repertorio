@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "title": "Teste",
+    "artist": "Autor Teste",
+    "key": "G",
+    "section": "congregacional",
+    "status": "aprovada",
+    "tags": ["adoracao", "teste"],
+    "arrangements": [
+      { "url": "https://drive.google.com/file/d/ABC/view", "label": "Ensaio 01/01/25" },
+      { "url": "https://drive.google.com/file/d/XYZ/view" }
+    ]
+  },
+  "lines": [
+    { "kind": "blank", "segments": [] },
+    { "kind": "section-comment", "segments": [], "comment": "Estrofe 1" },
+    {
+      "kind": "lyric-with-chords",
+      "segments": [
+        { "chord": "G", "text": "Uma linha " },
+        { "chord": "D", "text": "simples de " },
+        { "chord": "G", "text": "teste" }
+      ]
+    }
+  ]
+}
