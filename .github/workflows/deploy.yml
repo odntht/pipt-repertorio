@@ -22,11 +22,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: site/package-lock.json
       - name: Install dependencies
         working-directory: site
-        run: npm ci
+        run: npm install --no-audit --no-fund
       - name: Build
         working-directory: site
         env:
