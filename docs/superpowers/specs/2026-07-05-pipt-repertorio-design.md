@@ -834,6 +834,13 @@ Ideias registradas como futuras — não fazem parte do escopo inicial mas ficam
   - Sinal visual na página da música: "última vez tocada em DD/MM/AA (N semanas atrás)"
   - Usado como input pra `generate-setlist`: penalizar músicas tocadas nas últimas N semanas
   - Custo baixo — é só agregar YAMLs no build. Fácil de adicionar depois do Plano C.
+
+- **Modo "só letra"** — botão de exibição na página da música que oculta os acordes, deixando só o texto cantado. Útil pra:
+  - Cantores que não precisam da cifra
+  - Projeção em telão de igreja (letra grande, sem poluição de acordes)
+  - Exportação de PDF só-letra pra compartilhar
+  - Implementação: novo estado `displayMode: 'chords' | 'lyrics-only'` no SongViewer, adiciona 3ª opção no toggle Cifra/Graus (ou botão separado). Renderiza só os `text` dos segments, ignorando `chord`. Preserva quebras de linha e comentários de seção. Também vale um modo "só cifra" (sem letra) pra referência instrumental. Custo baixo — é modificação pequena no CifraLine.
+
 - Outras ideias futuras podem ser adicionadas aqui à medida que aparecerem.
 
 ## 11. YAGNI (o que foi rejeitado por agora)
