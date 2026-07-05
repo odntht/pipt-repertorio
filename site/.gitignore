@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+.vite/
+.env
+.env.local
+*.log
