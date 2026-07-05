@@ -93,8 +93,8 @@ pipt-repertorio/
 │       ├── failures.md           # relatório da migração inicial
 │       └── decisions.md          # log de decisões da migração
 ├── scripts/                      # Standalone (usados pelo plugin)
-│   ├── parse-cifra.py            # parser docx → chordpro
-│   ├── audit-corpus.sh
+│   ├── migrate-docx.ts           # docx → chordpro (reusa site/src/lib/cifra-parser)
+│   ├── audit-corpus.ts
 │   └── cleanup-spam.sh
 ├── SECURITY.md                   # Rotação de PAT, resposta a flood
 ├── CONTRIBUTING.md               # Como adicionar música manualmente
@@ -157,18 +157,50 @@ Cada versão de música é um arquivo `.pro` em formato ChordPro (padrão text-b
 | `added` | auto | Data de entrada no repertório |
 | `slug` | auto | Gerado do título |
 
+**Regras do parser sobre valor de tag:**
+- Tags opcionais **podem** ficar com valor vazio (`{tempo: }`) — indicam placeholder pra preenchimento futuro. Site trata como "não preenchido"; auditoria pode listar como "tags a completar".
+- Tags obrigatórias **não podem** ter valor vazio; validação rejeita.
+- Ausência da tag e presença com valor vazio são semanticamente equivalentes no runtime, mas o placeholder é útil como sinal de "sabia que existia, faltou preencher".
+
 ### 4.4 Naming convention
 
-```
-data/songs/{slug}.{tom-lowercase}.pro
+**Gramática do nome de arquivo:**
 
-Exemplos:
+```
+filename ::= {slug}("."{qualifier})*"."{key}".pro"
+slug     ::= [a-z0-9-]+       # ex: nada-alem-do-sangue
+qualifier::= [a-z0-9-]+       # ex: arranjo-1, simples, grande-lucas, v2
+key      ::= [a-g](s|b)?m?    # tom, slugificado (regras abaixo)
+```
+
+**Slugify do tom:**
+
+| Tom original | Slugificado | Exemplo |
+|---|---|---|
+| `G`, `A`, `B`, `C`, `D`, `E`, `F` | `g`, `a`, `b`, `c`, `d`, `e`, `f` | `g` |
+| `G#`, `F#`, etc. | `gs`, `fs`, etc. (sharp → `s`) | `fs` |
+| `Bb`, `Ab`, etc. | `bb`, `ab`, etc. (flat → `b`) | `bb` |
+| `Am`, `Bm`, `Gm`, etc. | `am`, `bm`, `gm` (minor → `m` no fim) | `bm` |
+| `F#m`, `C#m` | `fsm`, `csm` | `fsm` |
+
+Regra formal: `tom.toLowerCase().replace('#', 's')` — sem exceções. `Bb` fica `bb` (root duplicada; é o preço de ter uma regra determinística).
+
+**Ordem dos qualifiers:** qualifiers vêm **antes** do tom, em ordem de aparição na fonte (arranjo primeiro, depois versão, depois variante). Múltiplos qualifiers separados por ponto.
+
+**Exemplos:**
+
+```
 data/songs/nada-alem-do-sangue.g.pro
 data/songs/nada-alem-do-sangue.a.pro
-data/songs/ele-e-exaltado.simples.e.pro         # variante nomeada
-data/songs/em-espirito-em-verdade.arranjo-1.g.pro
+data/songs/ele-e-exaltado.simples.e.pro                  # 1 qualifier
+data/songs/em-espirito-em-verdade.arranjo-1.g.pro        # 1 qualifier
 data/songs/em-espirito-em-verdade.arranjo-2.g.pro
+data/songs/em-espirito-em-verdade.grande-lucas.g.pro
+data/songs/porque-ele-vive.hinario.b.pro                 # hinário como qualifier
+data/songs/ainda-que-a-figueira.fernandinho.fsm.pro      # tom F#m
 ```
+
+**Renomear a família:** quando o slug canônico de uma música muda (correção, desambiguação), **todas** as variantes de tom da mesma música precisam ser renomeadas juntas — o plugin oferece `rename-song <slug-antigo> <slug-novo>` pra fazer isso de forma atômica.
 
 ### 4.5 Governança das seções
 
@@ -251,17 +283,16 @@ Layout single-page otimizado pro palco:
 **Modelo:** 1 arquivo YAML por evento, em `data/setlists/YYYY-MM-DD.yml`.
 
 ```yaml
-date: 2026-07-12
-title: 12/07/26
+# data/setlists/2026-07-12.yml
+date: 2026-07-12                # ISO 8601 (fonte da verdade da data)
+title: null                     # Opcional; se null, site deriva de `date` (formato "12/07/26")
 services:
   - name: Manhã
     songs:
       - slug: acoes-de-graca
         tom: G
-        hinario: 061
       - slug: chuvas-de-bencaos
         tom: G
-        hinario: 172
       - slug: teu-povo
         tom: G
   - name: Noite
@@ -272,9 +303,19 @@ services:
         tom: D
       - slug: aclame-ao-senhor
         tom: A
-        version: 2
+        variant: v2               # Se a música tem múltiplas variantes no mesmo tom
 notes: ""
 ```
+
+**Campos:**
+- `date` (obrigatório, ISO): fonte única da verdade da data
+- `title` (opcional): rótulo alternativo; se ausente, o site formata `date` como `dd/mm/aa`
+- `services[]`: lista ordenada de cultos
+- `songs[]`: cada item aponta pra uma música existente pela combinação `(slug, tom, variant?)`
+- `variant`: qualifier no filename (ex.: `arranjo-1`, `v2`) — só usado quando ambíguo
+- **Não** existe `hinario` no setlist — o número do hino vem da música (`hinario_num` no `.pro`), evitando duplicação de dado
+
+**Validação:** o Action rejeita YAML se algum `(slug, tom, variant?)` não resolve pra arquivo existente em `data/songs/`.
 
 **Regras derivadas:**
 - 1 setlist por evento (assumido: todas as 4 equipes tocam as mesmas músicas na mesma ordem)
@@ -304,12 +345,29 @@ Wizard em 3 passos:
 **Passo 1 — Colar** — textarea grande, aceita texto de Cifra Club, docs, email.
 
 **Passo 2 — Revisar detecção** — o parser rotula cada linha:
-- **Cifra** — linha com >70% de tokens que batem no regex de acorde
+- **Cifra** — linha com ≥70% de tokens que batem no regex de acorde
 - **Letra** — <30% de acordes, tem palavras/pontuação
-- **Seção** — match em `^(INTRO|VERSO|REFRÃO|PONTE|SOLO|FINAL|ESTROFE|...)[\s:]?`
-- **Separador** — só dashes/iguais
+- **Seção** — match em `^(INTRO|VERSO|REFR(Ã|A)O|PONTE|BRIDGE|SOLO|FINAL|ESTROFE|BASE|TAG|CODA)[\s:]?` (case-insensitive)
+- **Separador** — só dashes/iguais/asteriscos
+
+**Regex de acorde (fonte da verdade):**
+
+```regex
+^[A-G](#|b)?(m|maj|min|dim|aug|sus)?[0-9]*(\((#|b)?[0-9]+([+-][0-9]+)?\))?(\/[A-G](#|b)?)?$
+```
+
+Pega: `G`, `Gm`, `Gm7`, `Gmaj7`, `G#m7`, `Bb`, `C9(11)`, `D/F#`, `Em7(11)`, `G#dim`, `Am7(9-13)`. Casos que **não** cobre e viram falso-negativo (aceitáveis): notação com colchetes internos, acordes com barras múltiplas.
 
 O usuário pode reclassificar qualquer linha com um clique. Metadados são preenchidos separadamente (título, artista, tom, seção, YouTube, tags, observações).
+
+**Onde o parser mora (fonte única):**
+- **Implementação canônica:** TypeScript em `site/src/lib/cifra-parser/`
+- **Consumo pelo site:** import direto (mesmo pacote)
+- **Consumo pela migração:** o script `scripts/migrate-docx.ts` no repo (rodado com `tsx` ou `node --loader ts-node`) reusa a mesma lib
+- **Consumo pelo plugin Claude:** os comandos do plugin invocam os scripts via `bash`/`node` — não têm reimplementação em Python
+- **Fixtures compartilhadas:** `site/src/lib/cifra-parser/__fixtures__/` com pares (input.txt, expected.pro). Migração e UI batem no mesmo conjunto de testes.
+
+Consequência: sem Python. O que a versão anterior chamava de `scripts/parse-cifra.py` vira `scripts/migrate-docx.ts` (Node/TS).
 
 **Passo 3 — Preview + Enviar** — mostra o render final; ao clicar Enviar, dispara o fluxo de submissão (§7).
 
@@ -357,13 +415,22 @@ O usuário pode reclassificar qualquer linha com um clique. Metadados são preen
 
 Como o PAT fica exposto no JS público (pré-requisito pra "sem conta GitHub"), a defesa é em camadas:
 
-1. **Frontend soft — honeypot + tempo mínimo + rate limit localStorage** (5 min entre submissões no mesmo browser)
-2. **GitHub rate limit nativo** — 5000 req/h por token, secondary rate limit em bursts
-3. **Circuit breaker no Action** — se >10 issues com `song-submission` na última 1h, novas issues ganham `spam-suspect` e workflow não gera PR
-4. **Schema validation no Action** — ChordPro precisa parsear; tom precisa bater regex; seção precisa estar na lista
-5. **Rotação do PAT** — nuclear, 30s pra invalidar atacante
+1. **Frontend UX — honeypot + tempo mínimo + rate limit localStorage** (5 min entre submissões no mesmo browser).
+   ⚠️ **Isso é UX, não segurança.** localStorage é trivialmente burlável por qualquer bot; o valor real é impedir cliques duplos e retries acidentais humanos. Não gastar esforço "endurecendo" essa camada — atacante sério passa por ela em 1 linha de JS.
 
-**Turnstile foi descartado** por simplicidade. Se o volume de spam mostrar necessidade, adicionamos depois.
+2. **GitHub rate limit nativo** — 5000 req/h por token, secondary rate limit em bursts.
+
+3. **Circuit breaker no Action** — parametrização e operação:
+   - **Como conta:** o workflow, ao ser disparado por `issues: [opened]`, roda `gh issue list --repo $REPO --label song-submission --search "created:>$(date -u -d '1 hour ago' +%FT%TZ)"` e conta o retorno.
+   - **Threshold:** > 10 issues criadas na última 1h → nova issue recebe label `spam-suspect`, workflow retorna sem gerar PR.
+   - **Reset:** passivo. Conforme issues antigas caem da janela de 1h, o count diminui naturalmente. Nenhuma ação humana necessária pra "reabrir" o gate.
+   - **Issues legítimas durante flood:** ficam abertas com label `spam-suspect`, sem PR. **Não são perdidas.** Quando o admin roda `/pipt-repertorio:cleanup-spam --requeue`, o comando reavalia cada `spam-suspect`: as que passam schema+dedup viram PR normalmente; as que falham ficam pra decisão manual.
+
+4. **Schema validation no Action** — ChordPro precisa parsear (via lib no repo); tom precisa bater regex; seção precisa estar em `sections.yml`; slug+tom+variant precisam não colidir com arquivo existente (a não ser em `type=edit`).
+
+5. **Rotação do PAT** — nuclear, 30s pra invalidar atacante; documentada em `SECURITY.md`.
+
+**Turnstile foi descartado** por simplicidade. Se o volume de spam mostrar necessidade, adicionamos depois — a mudança fica isolada no frontend.
 
 ### 6.4 Notificações de flood
 
@@ -381,7 +448,14 @@ Discord/Slack webhook fica pra depois se precisar.
 - **Expiration:** 1 ano
 - **Rotation:** documentada em `SECURITY.md`
 
-Quando expira, GitHub envia email 7 dias antes → admin rotaciona.
+**Como o PAT chega ao frontend:**
+- Guardado como **repository secret** (`SUBMISSION_PAT`) em Settings → Secrets → Actions
+- O workflow `deploy.yml` injeta o secret como variável de build (`PUBLIC_SUBMISSION_PAT`) no comando de build do Astro
+- Astro embute a variável no bundle publicado
+- **Consequência:** o PAT **é público** no HTML/JS servido — qualquer visitante do site consegue ler. Isso é **intencional e inerente ao design** (é o preço de "sem conta GitHub"). Não tentar "esconder" via ofuscação — o modelo de ameaça já assume que o PAT é acessível.
+- Toda a segurança vem das camadas 3-5 da §6.3 (circuit breaker, schema validation, rotação), não do sigilo do token.
+
+Quando expira, GitHub envia email 7 dias antes → admin rotaciona (regenera PAT + atualiza secret + rebuild do site via re-run do workflow).
 
 ---
 
@@ -404,8 +478,8 @@ Quando expira, GitHub envia email 7 dias antes → admin rotaciona.
 │   ├── rotate-token/SKILL.md
 │   ├── cleanup-spam/SKILL.md
 │   └── status/SKILL.md
-├── scripts/
-│   ├── parse-cifra.py
+├── scripts/                      # Wrappers finos que invocam scripts do repo
+│   ├── migrate-docx.sh
 │   ├── audit-corpus.sh
 │   └── cleanup-spam.sh
 ├── references/
@@ -464,9 +538,12 @@ Plugin é desenhado pra minimizar tokens:
 
 **Fase 1 — Batch-canário (batch-00)**
 
-- 20 músicas escolhidas pra cobrir a diversidade máxima (2-3 de cada cluster)
-- Parser converte, admin revisa **com lupa**
-- Se um cluster inteiro estiver quebrado, ajusta parser antes de qualquer bulk
+- Script escolhe **deterministicamente** as amostras:
+  - Para cada cluster identificado na Fase 0, ordena as músicas por hash estável do slug
+  - Toma as primeiras N (N = 3 pros 4 clusters maiores, N = 1 pros clusters raros)
+  - Total dinâmico: entre 15 e 20 amostras cobrindo toda a diversidade estrutural
+- Admin revisa **com lupa**
+- Se um cluster inteiro estiver quebrado, ajusta parser antes de qualquer bulk (regenerar batch-00 é ~30s)
 - Só depois de aprovado o canário, seguimos
 
 **Fase 2+ — Batches sequenciais (um por vez)**
@@ -511,32 +588,120 @@ Após todos os batches mergeados, admin+Claude atacam os failures caso a caso.
 
 ### Fase 1 — Local-first (sem GitHub)
 
-- Cria `~/Documents/pipt-repertorio` como repo git local
+- Cria `~/Documents/pipt-repertorio` como repo git local (`git init` sem remote)
 - Instala plugin em `~/.claude/plugins/pipt-repertorio/`
-- Roda scaffold do site (Astro)
-- Roda análise + batch-canário do docx
+- Roda scaffold do site (Astro), instala deps
+- Roda análise + batch-canário do docx (branches locais `migration/batch-00`, `migration/batch-01`, ...)
 - Valida tudo local (`npm run dev`)
+
+**Critério de aceite:** site local mostra as músicas do batch-canário renderizadas corretamente; transposição, PDF e busca funcionam; todos os arquivos `.pro` gerados passam na validação de schema.
 
 ### Fase 2 — Setup GitHub (aguarda conta `odntht`)
 
-- Cria conta `odntht`, repo vazio, ativa Pages
-- Gera PAT com scope `Issues: write`, 1 ano
-- Adiciona sitekey/config no site
+- Cria conta `odntht`, repo `odntht/pipt-repertorio` vazio, ativa Pages (source: GitHub Actions)
+- Gera **fine-grained PAT** com scope `Issues: write` apenas nesse repo, validade 1 ano
+- Guarda PAT como secret `SUBMISSION_PAT` no repo
+- (Nenhuma configuração de Turnstile — foi descartado; nenhuma sitekey.)
+
+**Critério de aceite:** repo existe, secret salvo, Pages ativo.
 
 ### Fase 3 — Push inicial
 
-- `git remote add origin`, `git push origin main` → esqueleto sobe, Pages builda, site fica no ar
-- Push das branches de migração → skill abre PRs (uma por batch)
-- Admin mergeia PR por PR no ritmo dele
+- `git remote add origin`, `git push origin main` → esqueleto (site + config, `data/songs/` ainda vazio ou só com canário) sobe
+- Pages builda automaticamente → site fica no ar em `odntht.github.io/pipt-repertorio`
+- Push das branches locais de migração: `git push origin 'refs/heads/migration/*'`
+- Plugin roda `gh pr create` pra cada branch de migração → 1 PR por batch
+- Admin mergeia PR por PR no ritmo dele; a cada merge o Pages rebuilda e as músicas aparecem no site
+
+**Critério de aceite:** site acessível publicamente; batches de migração abrem como PRs revisáveis; ao mergear um PR, site atualiza em <2 min.
 
 ### Fase 4 — Regime normal
 
-- Setlists semanais via plugin ou GitHub
-- Submissões via site (dependente de estar no ar)
-- Revisão de PRs via plugin
-- Auditoria trimestral
+- Setlists semanais criados via `/setlists/novo` ou via plugin
+- Submissões dos usuários via site — fluxo Issue → Action → PR funciona ponta a ponta
+- Revisão de PRs via plugin (`/pipt-repertorio:review-pr`)
+- Auditoria trimestral (`/pipt-repertorio:audit-corpus`)
+- Failures pendentes de migração são resolvidos caso a caso
+
+**Critério de aceite:** um usuário aleatório do ministério consegue submeter uma cifra via site e ver PR aberto sem intervenção manual; admin recebe notificação; merge publica a música no site.
 
 ---
+
+## 9.5 Contratos de dados (consolidado)
+
+Referência rápida de todos os schemas usados no sistema. Para detalhe/contexto, veja as seções indicadas.
+
+### Schema `.pro` (música — §4)
+
+Obrigatórios: `title`, `key`, `section`, `status`. Opcionais podem ter valor vazio como placeholder.
+
+### Schema `data/setlists/YYYY-MM-DD.yml` (setlist — §5.4)
+
+```yaml
+date: <ISO 8601>              # obrigatório
+title: <string|null>          # opcional; null → derivado de date
+services:                     # obrigatório, >= 1
+  - name: <string>            # ex: "Manhã", "Noite"
+    songs:                    # obrigatório, >= 1
+      - slug: <string>        # obrigatório, existe em data/songs/
+        tom: <string>         # obrigatório, slugificado (§4.4)
+        variant: <string?>    # opcional, qualifier do filename
+notes: <string?>              # opcional
+```
+
+### Schema `data/sections.yml` (governança — §4.5)
+
+```yaml
+sections:
+  - id: <congregacional|hinario|infantil|inadequada>
+    label: <string>
+    badge_color: <green|blue|yellow|red|...>
+    order: <int>
+    description: <string?>
+    hidden_by_default: <bool?>
+```
+
+### Schema `data/config.yml`
+
+```yaml
+tail_song:                    # tocada sempre no fim do setlist (§5.4)
+  slug: triplice-amem
+  tom: g
+site:
+  title: "PIPT Repertório"
+  base_url: "/pipt-repertorio"
+```
+
+### Schema Issue de submissão (GitHub)
+
+Title: `[Submissão] <resumo>`
+
+Body: bloco markdown com JSON estruturado:
+
+````markdown
+## Nova submissão
+
+**Tipo:** new-song
+
+<!-- resumo humano opcional -->
+
+```json
+{
+  "type": "new-song|new-version|edit|new-setlist",
+  "payload": { ... }             // conteúdo específico do tipo
+}
+```
+````
+
+Payload varia por tipo:
+- `new-song` / `new-version` / `edit`: `{ title, artist, key, section, youtube, tags, notes, chordpro }`
+- `new-setlist`: `{ date, services, notes }` (mesmo schema do YAML)
+
+Labels aplicadas automaticamente pelo Action:
+- Sucesso: fecha issue, comenta com link do PR
+- Malformada: `needs-fix`, comentário com diagnóstico
+- Duplicata: `possible-duplicate`, comentário com link pra existente
+- Flood: `spam-suspect`, sem comentário
 
 ## 10. Decisões (log)
 
@@ -591,6 +756,9 @@ Após todos os batches mergeados, admin+Claude atacam os failures caso a caso.
 | Docx original tem casos que o parser não previa | Falhas na migração | `failures.md` cataloga; admin+Claude resolvem depois |
 | Custo de Claude estourar Free tier na migração | Bloqueio temporário | Assinar Pro por 1 mês, cancelar depois |
 | Setlist ad-hoc em localStorage some (limpar cache) | Perde setlist pessoal | Botão "Compartilhar" gera URL persistente que pode ser salva |
+| ChordSheetJS lança exception em cifra específica | Página quebra pra aquele arquivo | Error boundary por página de música + fallback pro texto cru do `.pro` |
+| Slug canônico muda depois de PRs mergeados | Links quebram, setlists apontam pra slug morto | Comando `rename-song` do plugin faz redirecionamento + atualiza referências em setlists |
+| Divergência entre parser da UI e o da migração | Mesma cifra gera arquivos diferentes | Fonte única em `site/src/lib/cifra-parser`, fixtures compartilhadas, CI roda testes |
 
 ---
 
