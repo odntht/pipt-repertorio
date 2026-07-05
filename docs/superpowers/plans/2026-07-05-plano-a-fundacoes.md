@@ -30,52 +30,60 @@
 
 ## Chunk 1: Scaffold do repositório + seed data
 
-### Task 1.1: Configurar Node/npm via mise
+### Task 1.1: Configurar Node/npm (portátil)
 
 **Files:**
-- Create: `.mise.toml`
 - Create: `.nvmrc`
 
-- [ ] **Step 1.1.1: Criar `.mise.toml` na raiz**
+**Decisão:** usar só `.nvmrc` (padrão de facto que nvm, fnm, mise, volta e a maioria das ferramentas respeitam). Evita amarrar o projeto a uma ferramenta específica — funciona em qualquer laptop com Node 22 disponível.
 
-```toml
-# .mise.toml
-[tools]
-node = "22.11.0"
-
-[env]
-_.file = { path = ".env", optional = true }
-```
-
-- [ ] **Step 1.1.2: Criar `.nvmrc` como fallback**
+- [ ] **Step 1.1.1: Criar `.nvmrc` na raiz**
 
 ```
 22.11.0
 ```
 
-- [ ] **Step 1.1.3: Ativar versão do Node no diretório**
+- [ ] **Step 1.1.2: Ativar versão do Node no diretório**
 
+Use qualquer uma:
+- `nvm install && nvm use`
+- `fnm use`
+- `mise install` (lê `.nvmrc` como fallback)
+- `brew install node@22` (versão global — Node ≥22 basta)
+- Instalador de [nodejs.org](https://nodejs.org/)
+
+Verificar:
 ```bash
 cd ~/Documents/pipt-repertorio
-mise install
 node --version
 ```
 
-Expected: `v22.11.0`
+Expected: `v22.x.x` (idealmente `v22.11.0`)
 
-- [ ] **Step 1.1.4: Verificar npm veio junto**
+- [ ] **Step 1.1.3: Verificar npm veio junto**
 
 ```bash
 npm --version
 ```
 
-Expected: qualquer versão 10.x ou 11.x (vem com Node 22)
+Expected: 10.x ou 11.x (bundled com Node 22)
 
-- [ ] **Step 1.1.5: Commit**
+**Nota macOS + mise:** algumas instalações de mise não criam shim automático de `npm` (só `node`, `npx`). Se `npm --version` falhar com "command not found", cria wrapper shell:
 
 ```bash
-git add .mise.toml .nvmrc
-git commit -m "chore: pin Node 22 LTS via mise"
+mkdir -p ~/.local/bin
+cat > ~/.local/bin/npm <<'EOF'
+#!/bin/sh
+exec mise exec -- npm "$@"
+EOF
+chmod +x ~/.local/bin/npm
+```
+
+- [ ] **Step 1.1.4: Commit**
+
+```bash
+git add .nvmrc
+git commit -m "chore: pin Node 22 LTS via .nvmrc"
 ```
 
 ### Task 1.2: Criar estrutura de diretórios do `data/`
@@ -502,13 +510,16 @@ dist/
 *.log
 ```
 
-- [ ] **Step 2.1.6: Atualizar `site/package.json` — scripts**
+- [ ] **Step 2.1.6: Atualizar `site/package.json` — scripts + engines**
 
-Editar o `package.json` gerado, ajustando o campo `scripts`:
+Editar o `package.json` gerado, ajustando `scripts` e adicionando `engines`:
 
 ```json
 {
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -519,6 +530,8 @@ Editar o `package.json` gerado, ajustando o campo `scripts`:
   }
 }
 ```
+
+O `engines` faz `npm install` avisar (ou falhar, dependendo do config) se o Node instalado for < 22 — segunda camada de proteção além do `.nvmrc`.
 
 - [ ] **Step 2.1.7: Verificar setup funcionando**
 
