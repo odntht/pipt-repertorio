@@ -643,17 +643,17 @@ O ministério tem uma identidade visual estabelecida: logo quadrado com **"MMU"*
 
 Uso proposto na UI:
 
-| Cor | Hex aprox | Uso |
+| Cor | Hex | Uso |
 |---|---|---|
 | Preto | `#000000` | Background (dark mode) / texto principal (light mode) |
-| Verde MMU | `#22C55E` (ajustar do arquivo real) | Cor de acento — botões primários, links ativos, badge "Congregacional" |
+| **Verde MMU** | **`#007830`** | Cor de acento — botões primários, links ativos, badge "Congregacional" (extraída da logo original) |
 | Branco | `#FFFFFF` | Background (light mode) / texto principal (dark mode) |
 | Cinza | `#6B7280` | Texto secundário, dividers, metadados |
 | Amarelo | `#F59E0B` | Badge "Infantil" |
 | Azul | `#3B82F6` | Badge "Hinário" |
 | Vermelho | `#EF4444` | Badge "Inadequada" |
 
-Cor exata do verde MMU será extraída do arquivo PNG (usando o `#22C55E` como aproximação até lá).
+O verde é um tom "floresta"/institucional (mais escuro que o verde-neon comum em UIs modernas) — combina com fundo preto e mantém identidade da logo original.
 
 ### Onde a logo aparece no site
 
