@@ -1430,6 +1430,1107 @@ Esperado: ~100+ testes passam (adiciona ~4 de render + ~11 de transpose).
 
 ---
 
-**Fim do Chunk 3. Próximos chunks: Site Astro (Chunk 4), Plugin skeleton + wrap-up (Chunk 5).**
+---
 
-Vou dispatchar reviewer sobre Chunks 1-3, corrigir se houver issues, e só depois seguir pra escrever Chunks 4-5.
+## Chunk 4: Site Astro — layout, componentes e páginas de música
+
+Objetivo: site local que renderiza as 2 músicas seed com transposição, PDF, PWA offline e badges coloridos por seção.
+
+### Task 4.1: Setup do Tailwind com a paleta MMU
+
+**Files:**
+- Create: `site/tailwind.config.mjs` (ou ajuste do gerado pelo `astro add tailwind`)
+- Create: `site/src/styles/global.css`
+
+- [ ] **Step 4.1.1: Escrever `site/tailwind.config.mjs`**
+
+```js
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./src/**/*.{astro,tsx,ts,mdx,md,html}'],
+  darkMode: 'media',   // segue o OS por default; toggle manual pode override via .dark
+  theme: {
+    extend: {
+      colors: {
+        mmu: {
+          green: '#007830',
+          black: '#000000',
+          white: '#FFFFFF',
+        },
+        section: {
+          congregacional: '#007830',  // verde
+          hinario: '#3B82F6',          // azul
+          infantil: '#F59E0B',         // amarelo
+          inadequada: '#EF4444',       // vermelho
+        },
+      },
+      fontFamily: {
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+      },
+    },
+  },
+};
+```
+
+- [ ] **Step 4.1.2: Escrever `site/src/styles/global.css`**
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+  body {
+    @apply bg-white text-gray-900 dark:bg-mmu-black dark:text-gray-100;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .cifra-body {
+    @apply font-mono text-base leading-relaxed whitespace-pre;
+  }
+  .cifra-chord {
+    @apply text-mmu-green font-bold;
+  }
+}
+
+/* Print/PDF-specific: forçar cores, ocultar navegação, uma música por página */
+@media print {
+  .no-print, nav, header, footer { display: none !important; }
+  .cifra-body {
+    color: #000 !important;
+    background: #fff !important;
+    page-break-inside: avoid;
+  }
+  .cifra-chord {
+    color: #000 !important;
+    font-weight: bold;
+  }
+}
+```
+
+- [ ] **Step 4.1.3: Importar o CSS global no layout base (feito no Task 4.2)**
+
+- [ ] **Step 4.1.4: Commit**
+
+```bash
+cd ~/Documents/pipt-repertorio
+git add site/tailwind.config.mjs site/src/styles/global.css
+git commit -m "feat(site): tailwind + paleta MMU + estilos base pra cifra e print"
+```
+
+### Task 4.2: Layout base + componentes de UI compartilhados
+
+**Files:**
+- Create: `site/src/layouts/BaseLayout.astro`
+- Create: `site/src/components/SiteHeader.astro`
+- Create: `site/src/components/SectionBadge.astro`
+
+- [ ] **Step 4.2.1: Escrever `site/src/components/SectionBadge.astro`**
+
+```astro
+---
+interface Props {
+  section: 'congregacional' | 'hinario' | 'infantil' | 'inadequada';
+}
+const { section } = Astro.props;
+
+const labels: Record<Props['section'], string> = {
+  congregacional: 'Congregacional',
+  hinario: 'Hinário',
+  infantil: 'Infantil',
+  inadequada: 'Inadequada',
+};
+
+const bgClass: Record<Props['section'], string> = {
+  congregacional: 'bg-section-congregacional',
+  hinario: 'bg-section-hinario',
+  infantil: 'bg-section-infantil',
+  inadequada: 'bg-section-inadequada',
+};
+---
+
+<span class={`inline-block px-2 py-1 rounded text-xs font-semibold text-white ${bgClass[section]}`}>
+  {labels[section]}
+</span>
+```
+
+- [ ] **Step 4.2.2: Escrever `site/src/components/SiteHeader.astro`**
+
+```astro
+---
+const base = import.meta.env.BASE_URL;
+---
+
+<header class="border-b border-gray-200 dark:border-gray-800 py-3 px-4 flex items-center gap-3">
+  <a href={base} class="flex items-center gap-2 hover:opacity-80">
+    <img src={`${base}logo/mmu-small.png`} alt="MMU" class="h-10 w-10 rounded" />
+    <div class="flex flex-col leading-tight">
+      <span class="font-bold text-mmu-green">PIPT Repertório</span>
+      <span class="text-xs text-gray-500 dark:text-gray-400">Ministério de Música</span>
+    </div>
+  </a>
+  <nav class="ml-auto flex gap-4 text-sm no-print">
+    <a href={`${base}musicas`} class="hover:text-mmu-green">Músicas</a>
+    <a href={`${base}sobre`} class="hover:text-mmu-green">Sobre</a>
+  </nav>
+</header>
+```
+
+- [ ] **Step 4.2.3: Escrever `site/src/layouts/BaseLayout.astro`**
+
+```astro
+---
+import '@/styles/global.css';
+import SiteHeader from '@/components/SiteHeader.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#007830" />
+    <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}logo/mmu-small.png`} />
+    <title>{title} · PIPT Repertório</title>
+    {description && <meta name="description" content={description} />}
+  </head>
+  <body>
+    <SiteHeader />
+    <main class="max-w-4xl mx-auto px-4 py-6">
+      <slot />
+    </main>
+  </body>
+</html>
+```
+
+- [ ] **Step 4.2.4: Commit**
+
+```bash
+cd ~/Documents/pipt-repertorio
+git add site/src/layouts/ site/src/components/
+git commit -m "feat(site): BaseLayout + SiteHeader + SectionBadge"
+```
+
+### Task 4.3: Loader de músicas (build-time)
+
+**Files:**
+- Create: `site/src/lib/songs/load.ts`
+- Create: `site/src/lib/songs/load.test.ts`
+- Create: `site/src/lib/songs/slug.ts`
+- Create: `site/src/lib/songs/slug.test.ts`
+
+**Responsabilidade:** ler todos os `.pro` de `data/songs/`, parsear, e expor um índice de músicas com metadados + AST — pronto pra Astro consumir em build.
+
+- [ ] **Step 4.3.1: Escrever teste de `slug.ts` (extrai slug e tom do filename)**
+
+```ts
+// site/src/lib/songs/slug.test.ts
+import { describe, it, expect } from 'vitest';
+import { parseFilename } from './slug';
+
+describe('parseFilename', () => {
+  it('handles simple slug + tom', () => {
+    expect(parseFilename('nada-alem-do-sangue.g.pro'))
+      .toEqual({ slug: 'nada-alem-do-sangue', tom: 'g', qualifiers: [] });
+  });
+
+  it('handles multiple qualifiers before tom', () => {
+    expect(parseFilename('em-espirito-em-verdade.arranjo-2.g.pro'))
+      .toEqual({ slug: 'em-espirito-em-verdade', tom: 'g', qualifiers: ['arranjo-2'] });
+  });
+
+  it('handles sharp tom slug', () => {
+    expect(parseFilename('ainda-que-a-figueira.fernandinho.fsm.pro'))
+      .toEqual({ slug: 'ainda-que-a-figueira', tom: 'fsm', qualifiers: ['fernandinho'] });
+  });
+
+  it('rejects filename without .pro extension', () => {
+    expect(() => parseFilename('foo.txt')).toThrow();
+  });
+});
+```
+
+- [ ] **Step 4.3.2: Implementar `slug.ts`**
+
+```ts
+// site/src/lib/songs/slug.ts
+
+export interface ParsedFilename {
+  slug: string;
+  tom: string;              // slug de tom (ex: "g", "fsm", "bb")
+  qualifiers: string[];     // ordem preservada, ex: ["arranjo-2"] ou []
+}
+
+/**
+ * Parse do filename convention `{slug}[.{qualifier}]*.{tom}.pro`
+ * Ver spec §4.4.
+ */
+export function parseFilename(filename: string): ParsedFilename {
+  if (!filename.endsWith('.pro')) {
+    throw new Error(`Not a .pro filename: ${filename}`);
+  }
+  const withoutExt = filename.slice(0, -4);
+  const parts = withoutExt.split('.');
+  if (parts.length < 2) {
+    throw new Error(`Filename missing tom: ${filename}`);
+  }
+  const tom = parts[parts.length - 1];
+  const slug = parts[0];
+  const qualifiers = parts.slice(1, -1);
+  return { slug, tom, qualifiers };
+}
+```
+
+- [ ] **Step 4.3.3: Rodar teste de `slug.ts` (deve passar)**
+
+```bash
+cd site && npm run test -- --run slug
+```
+
+- [ ] **Step 4.3.4: Escrever teste do loader**
+
+```ts
+// site/src/lib/songs/load.test.ts
+import { describe, it, expect } from 'vitest';
+import { loadAllSongs } from './load';
+
+describe('loadAllSongs', () => {
+  it('carrega as 2 músicas seed', () => {
+    const songs = loadAllSongs();
+    expect(songs.length).toBeGreaterThanOrEqual(2);
+    const slugs = new Set(songs.map((s) => s.slug));
+    expect(slugs.has('nada-alem-do-sangue')).toBe(true);
+  });
+
+  it('agrupa versões pela slug com múltiplos tons', () => {
+    const songs = loadAllSongs();
+    const nada = songs.filter((s) => s.slug === 'nada-alem-do-sangue');
+    expect(nada.length).toBe(2);
+    const toms = new Set(nada.map((s) => s.tom));
+    expect(toms.has('g')).toBe(true);
+    expect(toms.has('a')).toBe(true);
+  });
+
+  it('cada música tem metadata parseado', () => {
+    const [first] = loadAllSongs();
+    expect(first.song.metadata.title).toBeTruthy();
+    expect(first.song.metadata.section).toBeTruthy();
+  });
+});
+```
+
+- [ ] **Step 4.3.5: Implementar `load.ts`**
+
+```ts
+// site/src/lib/songs/load.ts
+import { readFileSync, readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join, resolve } from 'node:path';
+import { parseChordPro } from '@/lib/cifra-parser';
+import type { Song } from '@/lib/cifra-parser/types';
+import { parseFilename } from './slug';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+// site/src/lib/songs/ → ../../.. → repo root → data/songs
+const SONGS_DIR = resolve(__dirname, '../../../../data/songs');
+
+export interface SongEntry {
+  slug: string;
+  tom: string;
+  qualifiers: string[];
+  song: Song;
+  filename: string;
+}
+
+/**
+ * Lê todos os arquivos .pro em data/songs/ e retorna array com AST parseado.
+ * Chamado em build-time pelas páginas Astro (via getStaticPaths).
+ */
+export function loadAllSongs(): SongEntry[] {
+  const files = readdirSync(SONGS_DIR).filter((f) => f.endsWith('.pro'));
+  return files.map((filename) => {
+    const parsed = parseFilename(filename);
+    const raw = readFileSync(join(SONGS_DIR, filename), 'utf-8');
+    const song = parseChordPro(raw);
+    return { ...parsed, song, filename };
+  });
+}
+
+/** Retorna todas as versões (tons) de uma slug específica. */
+export function loadSongVersions(slug: string): SongEntry[] {
+  return loadAllSongs().filter((s) => s.slug === slug);
+}
+```
+
+- [ ] **Step 4.3.6: Rodar todos os testes**
+
+```bash
+cd site && npm run test -- --run
+```
+
+Expected: todos passam.
+
+- [ ] **Step 4.3.7: Commit**
+
+```bash
+cd ~/Documents/pipt-repertorio
+git add site/src/lib/songs/
+git commit -m "feat(site): loader de músicas (parseFilename + loadAllSongs) com testes"
+```
+
+### Task 4.4: Página de detalhe da música + SongViewer (React island)
+
+**Files:**
+- Create: `site/src/components/SongViewer.tsx`
+- Create: `site/src/pages/musicas/[slug]/[tom].astro`
+- Create: `site/src/pages/musicas/[slug]/index.astro`
+
+**Divisão de responsabilidades:**
+- `[tom].astro` — página Astro estática que gera rotas via `getStaticPaths`, carrega Song no build, e passa como prop pro `<SongViewer />` (React island).
+- `SongViewer.tsx` — ilha interativa: seletor de tom (dispara `transposeSong` no cliente), auto-scroll com slider, controles de zoom, botão PDF.
+- `[slug]/index.astro` — redireciona pra primeira versão disponível.
+
+- [ ] **Step 4.4.1: Escrever `SongViewer.tsx`**
+
+```tsx
+// site/src/components/SongViewer.tsx
+import { useMemo, useState, useEffect, useRef } from 'react';
+import type { Song } from '@/lib/cifra-parser/types';
+import { transposeSong } from '@/lib/chordpro/transpose';
+import { renderChordsOverLyrics } from '@/lib/chordpro/render';
+
+interface Props {
+  song: Song;
+  availableToms: string[];   // ex: ['g', 'a']
+  slug: string;
+  base: string;              // BASE_URL do Astro
+}
+
+const ALL_TONS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] as const;
+
+export default function SongViewer({ song, availableToms, slug, base }: Props) {
+  const [targetKey, setTargetKey] = useState<string>(song.metadata.key);
+  const [fontSize, setFontSize] = useState<number>(16);
+  const [autoScrollSpeed, setAutoScrollSpeed] = useState<number>(0); // 0 = off; 1-10 = pixels/s
+  const scrollRef = useRef<number | null>(null);
+
+  const transposed = useMemo(() => transposeSong(song, targetKey), [song, targetKey]);
+  const rendered = useMemo(() => renderChordsOverLyrics(transposed.lines), [transposed]);
+
+  useEffect(() => {
+    if (autoScrollSpeed === 0) {
+      if (scrollRef.current) window.cancelAnimationFrame(scrollRef.current);
+      scrollRef.current = null;
+      return;
+    }
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = now - last;
+      window.scrollBy(0, (autoScrollSpeed * dt) / 100);
+      last = now;
+      scrollRef.current = window.requestAnimationFrame(tick);
+    };
+    scrollRef.current = window.requestAnimationFrame(tick);
+    return () => {
+      if (scrollRef.current) window.cancelAnimationFrame(scrollRef.current);
+    };
+  }, [autoScrollSpeed]);
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-center gap-3 mb-4 no-print">
+        <label className="flex items-center gap-1 text-sm">
+          Tom:
+          <select
+            value={targetKey}
+            onChange={(e) => setTargetKey(e.target.value)}
+            className="border rounded px-2 py-1 bg-white dark:bg-gray-800"
+          >
+            {ALL_TONS.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </label>
+
+        <div className="flex items-center gap-1 text-sm">
+          <button onClick={() => setFontSize((f) => Math.max(10, f - 2))} className="px-2 border rounded">A-</button>
+          <span>{fontSize}px</span>
+          <button onClick={() => setFontSize((f) => Math.min(32, f + 2))} className="px-2 border rounded">A+</button>
+        </div>
+
+        <label className="flex items-center gap-1 text-sm">
+          Auto-scroll:
+          <input
+            type="range"
+            min={0}
+            max={10}
+            value={autoScrollSpeed}
+            onChange={(e) => setAutoScrollSpeed(Number(e.target.value))}
+          />
+          <span>{autoScrollSpeed === 0 ? 'off' : autoScrollSpeed}</span>
+        </label>
+
+        <button onClick={() => window.print()} className="ml-auto px-3 py-1 border rounded text-sm">
+          Imprimir / PDF
+        </button>
+      </div>
+
+      {availableToms.length > 1 && (
+        <div className="flex gap-2 mb-4 no-print text-sm">
+          <span>Versões:</span>
+          {availableToms.map((t) => (
+            <a key={t} href={`${base}musicas/${slug}/${t}`} className="underline hover:text-mmu-green">
+              {t.toUpperCase()}
+            </a>
+          ))}
+        </div>
+      )}
+
+      <pre className="cifra-body" style={{ fontSize: `${fontSize}px` }}>
+        {rendered}
+      </pre>
+    </div>
+  );
+}
+```
+
+- [ ] **Step 4.4.2: Escrever `site/src/pages/musicas/[slug]/[tom].astro`**
+
+```astro
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionBadge from '@/components/SectionBadge.astro';
+import SongViewer from '@/components/SongViewer';
+import { loadAllSongs } from '@/lib/songs/load';
+
+export async function getStaticPaths() {
+  const songs = loadAllSongs();
+  return songs.map((entry) => ({
+    params: { slug: entry.slug, tom: entry.tom },
+    props: {
+      song: entry.song,
+      availableToms: songs.filter((s) => s.slug === entry.slug).map((s) => s.tom),
+    },
+  }));
+}
+
+const { song, availableToms } = Astro.props;
+const { slug } = Astro.params;
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title={song.metadata.title}>
+  <article>
+    <header class="mb-4">
+      <h1 class="text-2xl font-bold">{song.metadata.title}</h1>
+      <div class="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
+        {song.metadata.artist && <span>{song.metadata.artist}</span>}
+        {song.metadata.artist && <span>·</span>}
+        <SectionBadge section={song.metadata.section} />
+        {song.metadata.tags?.length > 0 && (
+          <>
+            <span>·</span>
+            <span>{song.metadata.tags.join(', ')}</span>
+          </>
+        )}
+      </div>
+      {song.metadata.youtube && (
+        <a
+          href={song.metadata.youtube}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-block mt-2 text-sm text-mmu-green hover:underline no-print"
+        >
+          ▶ YouTube (referência) ↗
+        </a>
+      )}
+    </header>
+
+    <SongViewer client:load song={song} availableToms={availableToms} slug={slug!} base={base} />
+
+    {song.metadata.arrangements.length > 0 && (
+      <section class="mt-8 border-t pt-4 no-print">
+        <h2 class="text-lg font-semibold mb-2">🎧 Gravações do ministério</h2>
+        <ul class="space-y-1">
+          {song.metadata.arrangements.map((a, i) => (
+            <li>
+              <a href={a.url} target="_blank" rel="noopener noreferrer" class="text-mmu-green hover:underline">
+                {a.label ?? `Gravação ${i + 1}`} ↗
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+```
+
+- [ ] **Step 4.4.3: Escrever `site/src/pages/musicas/[slug]/index.astro`**
+
+```astro
+---
+import { loadAllSongs } from '@/lib/songs/load';
+
+export async function getStaticPaths() {
+  const songs = loadAllSongs();
+  const bySlug = new Map<string, string>();
+  for (const s of songs) {
+    if (!bySlug.has(s.slug)) bySlug.set(s.slug, s.tom);
+  }
+  return Array.from(bySlug.entries()).map(([slug, tom]) => ({
+    params: { slug },
+    props: { defaultTom: tom },
+  }));
+}
+
+const { slug } = Astro.params;
+const { defaultTom } = Astro.props;
+return Astro.redirect(`${import.meta.env.BASE_URL}musicas/${slug}/${defaultTom}`);
+---
+```
+
+- [ ] **Step 4.4.4: Rodar `astro check`**
+
+```bash
+cd site && npx astro check
+```
+
+Expected: 0 erros de tipo. Se aparecer erro em `SongViewer` importado sem `.default`, ajustar o `import`.
+
+- [ ] **Step 4.4.5: Commit**
+
+```bash
+cd ~/Documents/pipt-repertorio
+git add site/src/components/SongViewer.tsx site/src/pages/musicas/
+git commit -m "feat(site): página de música com SongViewer React island (transpose/zoom/PDF/autoscroll)"
+```
+
+### Task 4.5: Índice `/musicas` e home
+
+**Files:**
+- Create: `site/src/pages/musicas/index.astro`
+- Create: `site/src/pages/index.astro`
+- Create: `site/src/pages/sobre.astro`
+
+- [ ] **Step 4.5.1: Escrever `site/src/pages/musicas/index.astro`**
+
+```astro
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionBadge from '@/components/SectionBadge.astro';
+import { loadAllSongs } from '@/lib/songs/load';
+
+const base = import.meta.env.BASE_URL;
+
+// Agrupar por slug (uma entrada por música, com lista de tons)
+const songs = loadAllSongs();
+const bySlug = new Map<string, { slug: string; song: (typeof songs)[0]['song']; toms: string[] }>();
+for (const s of songs) {
+  const existing = bySlug.get(s.slug);
+  if (existing) {
+    existing.toms.push(s.tom);
+  } else {
+    bySlug.set(s.slug, { slug: s.slug, song: s.song, toms: [s.tom] });
+  }
+}
+const entries = Array.from(bySlug.values()).sort((a, b) =>
+  a.song.metadata.title.localeCompare(b.song.metadata.title, 'pt-BR')
+);
+---
+
+<BaseLayout title="Músicas">
+  <h1 class="text-2xl font-bold mb-4">Músicas</h1>
+  <p class="text-sm text-gray-500 mb-4">{entries.length} músicas · {songs.length} versões</p>
+
+  <ul class="space-y-2">
+    {entries.map(({ slug, song, toms }) => (
+      <li class="border-b pb-2">
+        <a href={`${base}musicas/${slug}`} class="flex flex-wrap items-center gap-2 hover:text-mmu-green">
+          <span class="font-semibold">{song.metadata.title}</span>
+          {song.metadata.artist && <span class="text-sm text-gray-500">{song.metadata.artist}</span>}
+          <SectionBadge section={song.metadata.section} />
+          <span class="ml-auto text-sm text-gray-500">
+            {toms.map((t) => t.toUpperCase()).join(' · ')}
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
+```
+
+- [ ] **Step 4.5.2: Escrever `site/src/pages/index.astro` (home mínimo)**
+
+```astro
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { loadAllSongs } from '@/lib/songs/load';
+
+const base = import.meta.env.BASE_URL;
+const songs = loadAllSongs();
+const totalMusicas = new Set(songs.map((s) => s.slug)).size;
+---
+
+<BaseLayout title="Início">
+  <section class="text-center py-12">
+    <img
+      src={`${base}logo/mmu.png`}
+      alt="MMU"
+      class="mx-auto w-32 h-32 rounded-lg mb-6"
+    />
+    <h1 class="text-3xl font-bold mb-2">PIPT Repertório</h1>
+    <p class="text-gray-600 dark:text-gray-400 mb-6">
+      Ministério de Música — Presbiteriana Independente da PIPT
+    </p>
+    <a
+      href={`${base}musicas`}
+      class="inline-block bg-mmu-green text-white px-6 py-3 rounded font-semibold hover:opacity-90"
+    >
+      Ver as {totalMusicas} músicas do repertório
+    </a>
+  </section>
+</BaseLayout>
+```
+
+- [ ] **Step 4.5.3: Escrever `site/src/pages/sobre.astro`**
+
+```astro
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Sobre">
+  <h1 class="text-2xl font-bold mb-4">Sobre</h1>
+  <p class="mb-4">
+    Este é o repositório digital do repertório do Ministério de Música da PIPT.
+    Ele consolida músicas congregacionais, hinos do Novo Cântico, músicas infantis
+    e um registro de músicas consideradas inadequadas ao culto público (por transparência).
+  </p>
+  <p class="mb-4">
+    Todo o conteúdo é versionado no GitHub, permite transposição em tempo real,
+    exportação em PDF e uso offline no celular. Governança e política de escolha
+    de repertório serão detalhadas em versão futura.
+  </p>
+  <p class="text-sm text-gray-500 mt-8">
+    Para contribuir: veja <code>CONTRIBUTING.md</code> (a ser publicado no Plano C).
+  </p>
+</BaseLayout>
+```
+
+- [ ] **Step 4.5.4: Rodar dev server e verificar visualmente**
+
+```bash
+cd site && npm run dev
+```
+
+Abrir `http://localhost:4321/` (o dev usa `base=/` por default).
+
+Checklist visual:
+- [ ] Home mostra a logo MMU centralizada, título, e botão "Ver as 1 músicas do repertório" (1 slug com 2 versões)
+- [ ] `/musicas` lista "Nada Além do Sangue" com badge "Congregacional" (verde) e "G · A"
+- [ ] `/musicas/nada-alem-do-sangue` redireciona pra `/musicas/nada-alem-do-sangue/g`
+- [ ] Página da música mostra título, artista, badge verde, link YouTube, seletor de tom
+- [ ] Trocar tom pra "A" no seletor faz os acordes mudarem em tempo real
+- [ ] Botão "Imprimir / PDF" abre o print preview do browser sem navegação
+- [ ] Aumentar/diminuir fonte funciona
+- [ ] Slider de auto-scroll faz a página rolar
+- [ ] Dark mode segue o OS (mudar tema do sistema pra ver)
+
+- [ ] **Step 4.5.5: Verificar build de produção**
+
+```bash
+cd site && SITE=https://odntht.github.io BASE=/pipt-repertorio/ npm run build
+```
+
+Expected: build completa sem erros; gera `site/dist/` com HTML estático.
+
+- [ ] **Step 4.5.6: Commit**
+
+```bash
+cd ~/Documents/pipt-repertorio
+git add site/src/pages/
+git commit -m "feat(site): home, índice /musicas e /sobre"
+```
+
+**Marco de verificação do Chunk 4:**
+
+- `cd site && npm run test -- --run` — todos os testes passam (~110)
+- `cd site && npx astro check` — 0 erros de tipo
+- `cd site && npm run build` (com env vars) — build de produção completa
+- Dev server renderiza as 2 seed songs com transposição funcional
+
+---
+
+## Chunk 5: Plugin Claude Code (esqueleto) + wrap-up
+
+Objetivo: criar o `plugin/` no repo com 2 skills mínimas (`status` e `add-song`) e instruções pra instalar via symlink em `~/.claude/plugins/`. Deixar o repo pronto pra Plano B começar.
+
+### Task 5.1: Estrutura do plugin
+
+**Files:**
+- Create: `plugin/plugin.json`
+- Create: `plugin/skills/status/SKILL.md`
+- Create: `plugin/skills/add-song/SKILL.md`
+- Create: `plugin/references/chordpro-format.md`
+- Create: `plugin/README.md`
+
+- [ ] **Step 5.1.1: Escrever `plugin/plugin.json`**
+
+```json
+{
+  "name": "pipt-repertorio",
+  "version": "0.1.0",
+  "description": "Manutenção do repositório do Ministério de Música PIPT — migração, revisão de PRs, geração de setlist, auditoria.",
+  "author": "odntht",
+  "license": "MIT",
+  "skills": [
+    "skills/status",
+    "skills/add-song"
+  ]
+}
+```
+
+Nota: skills adicionais (`migrate-docx`, `review-pr`, `audit-corpus`, `generate-setlist`, `publish-setlist`, `rotate-token`, `cleanup-spam`, `map-arrangements`, `new-version`, `review-issue`) serão adicionadas nos Planos B e C — por ora, só o esqueleto mínimo.
+
+- [ ] **Step 5.1.2: Escrever `plugin/skills/status/SKILL.md`**
+
+```markdown
+---
+name: status
+description: Overview rápido do estado atual do repertório — contagens de músicas por seção, PRs abertos, setlists futuros, issues pendentes. Use quando quiser saber "como tá o repertório?" sem precisar abrir vários lugares.
+---
+
+# status — Overview do repertório
+
+Roda checagens rápidas no repo local pra dar um panorama.
+
+## O que executar
+
+1. Verificar que estamos no repo certo:
+   ```bash
+   cd ~/Documents/pipt-repertorio && git remote -v
+   ```
+
+2. Contar músicas por seção:
+   ```bash
+   for section in congregacional hinario infantil inadequada; do
+     count=$(grep -l "{section: $section}" data/songs/*.pro 2>/dev/null | wc -l | tr -d ' ')
+     echo "  $section: $count arquivos"
+   done
+   ```
+
+3. Contar setlists (nos Planos futuros):
+   ```bash
+   ls data/setlists/*.yml 2>/dev/null | wc -l
+   ```
+
+4. Listar PRs abertos (só quando remote existir — Plano C em diante):
+   ```bash
+   gh pr list --repo odntht/pipt-repertorio --state open 2>/dev/null || echo "  (repo remoto ainda não configurado)"
+   ```
+
+5. Listar issues com label `needs-fix` ou `spam-suspect`:
+   ```bash
+   gh issue list --repo odntht/pipt-repertorio --label needs-fix,spam-suspect --state open 2>/dev/null || true
+   ```
+
+## O que reportar pro usuário
+
+Formato:
+```
+PIPT Repertório — status
+├── Músicas: N (congregacional: A · hinario: B · infantil: C · inadequada: D)
+├── Setlists: N arquivos
+├── PRs abertos: N
+└── Issues pendentes: N (needs-fix: X · spam-suspect: Y)
+```
+```
+
+- [ ] **Step 5.1.3: Escrever `plugin/skills/add-song/SKILL.md`**
+
+```markdown
+---
+name: add-song
+description: Adiciona uma música ao repertório — recebe texto de cifra (arquivo, cola inline, ou URL de Cifra Club), parseia via o parser TS canônico, valida ChordPro, gera arquivo em data/songs/, faz commit. Útil quando você tem 1-5 cifras pra adicionar de uma vez sem passar pelo form do site.
+---
+
+# add-song — Adicionar música ao repertório
+
+## Quando usar
+
+- Você tem cifras num arquivo/email/WhatsApp e quer adicionar direto sem passar pelo form web
+- Você quer adicionar múltiplas em batch
+- Uma submissão do site caiu em `needs-fix` e você quer corrigir e commitar direto
+
+## Fluxo
+
+1. Perguntar ao usuário a fonte da cifra (arquivo local, cola inline, ou URL Cifra Club).
+2. Se URL, buscar o HTML e extrair o corpo textual (regex + limpeza).
+3. Rodar o parser TS canônico do repo pra converter em ChordPro:
+   ```bash
+   cd ~/Documents/pipt-repertorio/site
+   node --experimental-vm-modules --experimental-strip-types \
+     ../scripts/add-song.ts \
+     --input="<caminho ou stdin>" \
+     --title="..." --artist="..." --key="G" --section=congregacional --status=aprovada
+   ```
+   Nota: script `scripts/add-song.ts` será criado quando este comando for exercitado pela primeira vez (Plano B ou depois). No Plano A o comando existe só como documentação da intenção.
+4. Mostrar o `.pro` gerado pro usuário aprovar.
+5. Salvar em `data/songs/{slug}.{tom}.pro`.
+6. Rodar `astro check` e `vitest run` pra garantir que nada quebrou.
+7. Commit + push (se remoto existir).
+
+## Regras
+
+- **Não** sobrescrever arquivo existente sem confirmação dupla.
+- Se detectar duplicata (mesmo slug+tom), oferecer sufixo (`.v2`, `.arranjo-2`, `.<artista>`).
+- Sempre validar campos obrigatórios: `title`, `key`, `section`, `status`.
+
+## Escopo no Plano A
+
+Este comando fica documentado mas **não implementado**. Suas regras servem de referência pro form paste-and-parse do site (Plano C) e pra migração (Plano B).
+```
+
+- [ ] **Step 5.1.4: Escrever `plugin/references/chordpro-format.md`**
+
+```markdown
+# Formato ChordPro no PIPT Repertório
+
+Referência rápida do formato usado em `data/songs/*.pro`. Fonte da verdade: [docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md §4](../../docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md#4-modelo-de-dados-e-formato-chordpro).
+
+## Tags obrigatórias
+
+- `{title: Nome da música}`
+- `{key: G}` (ou `Bm`, `F#m`, `Bb`, etc.)
+- `{section: congregacional}` (ou `hinario` / `infantil` / `inadequada`)
+- `{status: aprovada}` (ou `em-revisao` / `arquivada`)
+
+## Tags opcionais
+
+- `{artist: Fernandinho}`
+- `{tempo: 90}` (ou vazio como placeholder: `{tempo: }`)
+- `{youtube: https://...}`
+- `{tags: adoracao, cruz}`
+- `{notes: começa em Em}`
+- `{hinario_num: 061}` (só quando section=hinario)
+- `{arrangement_of: outra-slug}` (marca rearranjo de outra música)
+- `{arrangement: https://drive.google.com/... | Ensaio 12/06/25}` (repetível)
+- `{added: 2026-07-05}` (auto-gerado)
+
+## Corpo
+
+```
+{comment: Refrão}
+[G]Uma linha [D]com acordes[Em7] intercalados
+     [G]Whitespace antes é preservado
+```
+
+- Acordes entre `[...]` — usar regex canônico (ver `site/src/lib/cifra-parser/chord-regex.ts`)
+- `{comment: X}` marca seção (INTRO, REFRÃO, PONTE...)
+- Linhas em branco preservam espaçamento
+
+## Filename
+
+`{slug}.{qualifier?}.{tom-slugificado}.pro`
+
+- Tom slugificado: `#` → `s`, minúsculo. `G` → `g`, `F#m` → `fsm`, `Bb` → `bb`.
+- Qualifiers opcionais antes do tom: `arranjo-1`, `simples`, `grande-lucas`, `v2`.
+```
+
+- [ ] **Step 5.1.5: Escrever `plugin/README.md`**
+
+```markdown
+# Plugin `pipt-repertorio`
+
+Plugin do Claude Code pra manter o repertório da PIPT.
+
+## Instalação
+
+Symlink pro diretório de plugins do Claude Code:
+
+```bash
+mkdir -p ~/.claude/plugins
+ln -s ~/Documents/pipt-repertorio/plugin ~/.claude/plugins/pipt-repertorio
+```
+
+Verificar:
+```bash
+ls -l ~/.claude/plugins/pipt-repertorio
+```
+
+Deve mostrar o symlink apontando pro repo. Depois disso, os comandos ficam disponíveis via `/pipt-repertorio:<comando>` no Claude Code.
+
+## Comandos disponíveis (Plano A)
+
+- `/pipt-repertorio:status` — overview do repertório
+- `/pipt-repertorio:add-song` — adicionar música (esqueleto; implementação plena no Plano B)
+
+## Roadmap
+
+Skills adicionais serão adicionadas nos Planos B e C:
+- `migrate-docx`, `new-version`, `map-arrangements` — Plano B
+- `review-pr`, `review-issue`, `audit-corpus`, `generate-setlist`, `publish-setlist`, `rotate-token`, `cleanup-spam` — Plano C
+
+Ver [design completo](../docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md#7-plugin-claude-code-pipt-repertorio).
+```
+
+- [ ] **Step 5.1.6: Testar instalação do plugin**
+
+```bash
+mkdir -p ~/.claude/plugins
+ln -sfn ~/Documents/pipt-repertorio/plugin ~/.claude/plugins/pipt-repertorio
+ls -l ~/.claude/plugins/pipt-repertorio
+```
+
+Expected: symlink apontando pra `~/Documents/pipt-repertorio/plugin`. Nesta sessão do Claude Code, os comandos podem ainda não aparecer até reinicializar — mas o symlink em si tem que funcionar.
+
+- [ ] **Step 5.1.7: Commit**
+
+```bash
+cd ~/Documents/pipt-repertorio
+git add plugin/
+git commit -m "feat(plugin): esqueleto do plugin com status + add-song (docs-only por enquanto)"
+```
+
+### Task 5.2: README raiz + verificação final
+
+**Files:**
+- Modify: `README.md`
+
+- [ ] **Step 5.2.1: Atualizar `README.md` com instruções de plugin e status do Plano A**
+
+```markdown
+# PIPT Repertório
+
+Repositório e site do repertório musical do Ministério de Música da PIPT.
+
+## Estrutura
+
+- `data/songs/` — arquivos ChordPro (`.pro`), 1 por (música, tom)
+- `data/setlists/` — arquivos YAML, 1 por evento (populado em Planos B/C)
+- `data/sections.yml` — governança das 4 seções
+- `data/config.yml` — configuração global do site
+- `site/` — código do site (Astro 5 + React ilhas)
+- `plugin/` — source do Claude Code plugin (instalável via symlink)
+- `docs/` — design docs, planos de implementação, migração
+
+## Desenvolvimento local
+
+Pré-requisitos: Node 22 LTS (recomendado via [mise](https://mise.jdx.dev/)).
+
+```bash
+mise install                    # instala Node 22 conforme .mise.toml
+cd site && npm install          # dependências do site
+npm run dev                     # sobe dev server em http://localhost:4321
+```
+
+## Testes
+
+```bash
+cd site && npm run test         # roda Vitest
+npx astro check                 # type-check
+```
+
+## Build de produção
+
+```bash
+cd site
+SITE=https://odntht.github.io BASE=/pipt-repertorio/ npm run build
+```
+
+## Plugin Claude Code
+
+```bash
+mkdir -p ~/.claude/plugins
+ln -s ~/Documents/pipt-repertorio/plugin ~/.claude/plugins/pipt-repertorio
+```
+
+Ver [`plugin/README.md`](plugin/README.md).
+
+## Documentação
+
+- **Design:** [docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md](docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md)
+- **Plano A (Fundações):** [docs/superpowers/plans/2026-07-05-plano-a-fundacoes.md](docs/superpowers/plans/2026-07-05-plano-a-fundacoes.md)
+
+## Estado do projeto
+
+- ✅ **Plano A — Fundações** (este plano): estrutura + site + parser + plugin skeleton
+- ⏳ **Plano B — Migração do docx** (pendente): converter ~415 músicas do Google Docs original
+- ⏳ **Plano C — Submissão pública** (pendente, depende da conta `odntht` no GitHub)
+
+## Licença
+
+MIT — ver `LICENSE`.
+```
+
+- [ ] **Step 5.2.2: Commit final**
+
+```bash
+cd ~/Documents/pipt-repertorio
+git add README.md
+git commit -m "docs: README completo com estado do Plano A"
+```
+
+### Task 5.3: Verificação end-to-end do Plano A
+
+- [ ] **Step 5.3.1: Rodar tudo e checar cada critério**
+
+```bash
+cd ~/Documents/pipt-repertorio/site
+
+# 1. Todos os testes passam
+npm run test -- --run
+
+# 2. Type-check limpo
+npx astro check
+
+# 3. Build de produção limpa
+SITE=https://odntht.github.io BASE=/pipt-repertorio/ npm run build
+
+# 4. Dev server sobe
+npm run dev
+```
+
+Critérios de aceite (do spec §9):
+
+- [ ] Todos os testes passam (~110+)
+- [ ] Type-check sem erros
+- [ ] Build de produção completa sem erros
+- [ ] Site local mostra as 2 seed songs
+- [ ] Transposição funciona em tempo real (G → A no seletor troca acordes)
+- [ ] PDF via botão "Imprimir / PDF" mostra cifra sem navegação
+- [ ] PWA está registrado (checar em DevTools → Application → Service Workers)
+- [ ] Badges de seção aparecem coloridos (verde pra Congregacional)
+- [ ] Plugin symlink funciona: `ls -l ~/.claude/plugins/pipt-repertorio` mostra o link
+- [ ] `git log` mostra ~15 commits todos como `odntht`
+
+- [ ] **Step 5.3.2: Marcar o Plano A como completo**
+
+Se todos critérios passaram, criar commit-tag pra marcar milestone:
+
+```bash
+cd ~/Documents/pipt-repertorio
+git commit --allow-empty -m "chore: Plano A — Fundações concluído"
+git tag plano-a-completo
+git log --oneline
+```
+
+## Handoff
+
+**Plano A completo.** Próximo: Plano B (Migração do docx) — quando estiver pronto pra atacar isso, invoque a skill de brainstorming pra revisar se o design da migração ainda faz sentido, e depois `writing-plans` pra escrever o Plano B com o mesmo formato.
+
+**Se o usuário quiser executar este plano num agente subagente:** usar `superpowers:subagent-driven-development` (fresh subagent por task, two-stage review).
+
+**Se executar em sessão corrente:** usar `superpowers:executing-plans` (batch com checkpoints).
