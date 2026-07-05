@@ -634,10 +634,11 @@ Após todos os batches mergeados, admin+Claude atacam os failures caso a caso.
 O ministério tem uma identidade visual estabelecida: logo quadrado com **"MMU"** em letras brancas grandes sobre um **waveform verde**, fundo **preto**, e o texto **"MINISTÉRIO DE MÚSICA PIPT"** embaixo.
 
 **Arquivos:**
-- `site/public/logo/mmu.png` — versão colorida (fonte: fornecida pelo ministério)
-- `site/public/logo/mmu.svg` — versão vetorial (derivada, opcional; ideal pra dark mode e alto DPI)
-- `site/public/favicon.svg` — versão simplificada, só o "MMU" sem texto embaixo
-- `site/public/favicon.ico` — fallback pra browsers antigos
+- `site/public/logo/mmu.png` — **2560×2560, alta resolução** (upscale 4x + unsharp mask do PNG original de 640×640; escolhido como canônico após comparação visual de variantes)
+- `site/public/logo/mmu-small.png` — 640×640, versão web-ready pra header (economiza bytes)
+- `site/public/logo/mmu.svg` — versão vetorial hand-crafted; escala infinita, útil pra PDF e favicon; o pattern do waveform é uma reinterpretação, não pixel-perfect
+- `site/public/favicon.svg` — versão simplificada, só o "MMU" sem texto embaixo (a ser gerado no Plano A)
+- `site/public/favicon.ico` — fallback pra browsers antigos (a ser gerado no Plano A)
 
 ### Paleta derivada da logo
 
@@ -663,9 +664,17 @@ O verde é um tom "floresta"/institucional (mais escuro que o verde-neon comum e
 - **PDF gerado** — cabeçalho de cada folha
 - **Favicon** — aba do browser, PWA icon
 
-### Guardar arquivos da logo
+### Estado atual dos arquivos
 
-Salve o PNG que você compartilhou em: `~/Documents/pipt-repertorio/site/public/logo/mmu.png` (o diretório será criado no Plano A durante o scaffold do site). Depois disso, o Plano A também gera o SVG derivado e o favicon.
+Já commitados no repo (não precisam ser gerados no Plano A):
+- ✅ `mmu.png` (2560×2560)
+- ✅ `mmu-small.png` (640×640)
+- ✅ `mmu.svg` (vetorial)
+
+A gerar no Plano A:
+- `favicon.svg` (versão simplificada só com "MMU")
+- `favicon.ico` (fallback)
+- Variantes tamanhos-específicos pra PWA manifest (192×192, 512×512)
 
 ## 9.5 Contratos de dados (consolidado)
 
