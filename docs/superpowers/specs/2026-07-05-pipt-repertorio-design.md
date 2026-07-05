@@ -154,6 +154,7 @@ Cada versão de música é um arquivo `.pro` em formato ChordPro (padrão text-b
 | `notes` | ○ | Observações do arranjo |
 | `hinario_num` | ○ | Só pra hinário: número no Novo Cântico |
 | `arrangement_of` | ○ | Slug de outra versão (marca "sou rearranjo de X") |
+| `arrangement` | ○ | Link Google Drive de gravação do ministério (repetível — ver §4.6) |
 | `added` | auto | Data de entrada no repertório |
 | `slug` | auto | Gerado do título |
 
@@ -201,6 +202,50 @@ data/songs/ainda-que-a-figueira.fernandinho.fsm.pro      # tom F#m
 ```
 
 **Renomear a família:** quando o slug canônico de uma música muda (correção, desambiguação), **todas** as variantes de tom da mesma música precisam ser renomeadas juntas — o plugin oferece `rename-song <slug-antigo> <slug-novo>` pra fazer isso de forma atômica.
+
+### 4.6 Gravações do ministério ("Arranjos")
+
+O ministério já mantém uma pasta no Google Drive com gravações (ensaios, lives, arranjos alternativos). Manter lá **e** referenciar do site:
+
+**Sintaxe no `.pro`** (tag repetível):
+
+```chordpro
+{arrangement: https://drive.google.com/file/d/XYZ/view | Ensaio 12/06/25}
+{arrangement: https://drive.google.com/file/d/ABC/view | Live 20/06/25}
+{arrangement: https://drive.google.com/file/d/PQR/view | Arranjo Ramon}
+```
+
+**Formato:** `{arrangement: <url> | <label>}`
+- `<url>` — obrigatório, link do Drive (ou YouTube, se houver)
+- `<label>` — opcional; se ausente, o site exibe "Gravação 1", "Gravação 2"...
+- Separador: pipe `|` (escolhido por não colidir com URLs)
+- Múltiplas ocorrências permitidas — cada linha é uma gravação
+
+**Renderização no site:**
+- Na página da música, aparece um bloco "🎧 Gravações do ministério" com lista de links
+- Cada link abre em **nova aba** (sem player embedded — decisão explícita)
+- Se a música não tiver `arrangement`, o bloco é omitido silenciosamente
+
+**Página `/arranjos`:**
+- Índice global de todas as gravações do repertório
+- Filtros: por música, por data (se detectável do label), por texto livre
+- Útil pra "cadê aquela gravação do último ensaio?"
+
+**Storage:** intencionalmente **fora do git**. Os arquivos ficam no Drive; o repo só carrega links. Motivo: áudio é grande, GitHub Pages tem limite de 100MB/arquivo e 1GB/site, e Git LFS cobra banda. Trade-off aceito: se um link do Drive quebrar (arquivo movido/deletado), o site mostra o link mas o clique dá 404 — auditoria periódica do plugin (`audit-corpus`) valida links.
+
+**Fonte da verdade da pasta:**
+
+```
+https://drive.google.com/drive/folders/1-EWKxWupLSmbx_0tQsT53PzpktrbXvMC
+```
+
+Essa pasta agrega todos os arranjos históricos do ministério. Enumerar cada arquivo individual pro `{arrangement}` das músicas é trabalho de migração (§8):
+
+1. **Permissão:** essa pasta precisa estar como "Qualquer pessoa com o link pode ver" (não "restrito"), senão o link no site cai em tela de login pra quem não é do ministério. Se decidir manter "restrito", o site continua funcionando pros usuários que têm acesso; visitantes anônimos veem "acesso negado" — pode ser aceitável.
+2. **Mapeamento música → arquivo:** o plugin oferece comando `map-arrangements` (adicionar em §7) que lista arquivos da pasta, tenta casar título com slugs existentes (`nada-alem-do-sangue.mp3` → `nada-alem-do-sangue.g.pro`), e propõe as tags `{arrangement}` num PR pra revisão manual.
+3. **Formato de URL preferido:** `https://drive.google.com/file/d/{fileid}/view` (view direto do arquivo) — o folder URL não serve como link individual.
+
+Como isso não é bloqueante pro MVP, essa migração pode acontecer **depois** dos Planos A/B/C, como tarefa contínua.
 
 ### 4.5 Governança das seções
 
@@ -254,6 +299,7 @@ Cada música exibe um **badge colorido** com a seção na página de detalhe e n
 /setlists/{data}/apresentar    Modo apresentação
 /proximo                       Redireciona pro próximo setlist
 /proximo/{equipe}              Idem, com header
+/arranjos                      Índice de gravações do ministério (§4.6)
 /sobre                         Introdução (do docx) + governança
 /inadequadas                   Lista rejeitadas + justificativa
 ```
