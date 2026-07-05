@@ -627,6 +627,46 @@ Após todos os batches mergeados, admin+Claude atacam os failures caso a caso.
 
 ---
 
+## 9.4 Identidade visual
+
+### Logo do Ministério de Música (MMU)
+
+O ministério tem uma identidade visual estabelecida: logo quadrado com **"MMU"** em letras brancas grandes sobre um **waveform verde**, fundo **preto**, e o texto **"MINISTÉRIO DE MÚSICA PIPT"** embaixo.
+
+**Arquivos:**
+- `site/public/logo/mmu.png` — versão colorida (fonte: fornecida pelo ministério)
+- `site/public/logo/mmu.svg` — versão vetorial (derivada, opcional; ideal pra dark mode e alto DPI)
+- `site/public/favicon.svg` — versão simplificada, só o "MMU" sem texto embaixo
+- `site/public/favicon.ico` — fallback pra browsers antigos
+
+### Paleta derivada da logo
+
+Uso proposto na UI:
+
+| Cor | Hex aprox | Uso |
+|---|---|---|
+| Preto | `#000000` | Background (dark mode) / texto principal (light mode) |
+| Verde MMU | `#22C55E` (ajustar do arquivo real) | Cor de acento — botões primários, links ativos, badge "Congregacional" |
+| Branco | `#FFFFFF` | Background (light mode) / texto principal (dark mode) |
+| Cinza | `#6B7280` | Texto secundário, dividers, metadados |
+| Amarelo | `#F59E0B` | Badge "Infantil" |
+| Azul | `#3B82F6` | Badge "Hinário" |
+| Vermelho | `#EF4444` | Badge "Inadequada" |
+
+Cor exata do verde MMU será extraída do arquivo PNG (usando o `#22C55E` como aproximação até lá).
+
+### Onde a logo aparece no site
+
+- **Header** de todas as páginas (versão pequena, ao lado do nome do site)
+- **Home** (`/`) — versão grande, hero
+- **Modo apresentação** de setlist — canto pequeno, discreto
+- **PDF gerado** — cabeçalho de cada folha
+- **Favicon** — aba do browser, PWA icon
+
+### Guardar arquivos da logo
+
+Salve o PNG que você compartilhou em: `~/Documents/pipt-repertorio/site/public/logo/mmu.png` (o diretório será criado no Plano A durante o scaffold do site). Depois disso, o Plano A também gera o SVG derivado e o favicon.
+
 ## 9.5 Contratos de dados (consolidado)
 
 Referência rápida de todos os schemas usados no sistema. Para detalhe/contexto, veja as seções indicadas.
