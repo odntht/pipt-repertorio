@@ -1,0 +1,17 @@
+---
+const base = import.meta.env.BASE_URL;
+---
+
+<header class="border-b border-gray-200 dark:border-gray-800 py-3 px-4 flex items-center gap-3">
+  <a href={base} class="flex items-center gap-2 hover:opacity-80">
+    <img src={`${base}logo/mmu-small.png`} alt="MMU" class="h-10 w-10 rounded" />
+    <div class="flex flex-col leading-tight">
+      <span class="font-bold text-mmu-green">PIPT Repertório</span>
+      <span class="text-xs text-gray-500 dark:text-gray-400">Ministério de Música</span>
+    </div>
+  </a>
+  <nav class="ml-auto flex gap-4 text-sm no-print">
+    <a href={`${base}musicas`} class="hover:text-mmu-green">Músicas</a>
+    <a href={`${base}sobre`} class="hover:text-mmu-green">Sobre</a>
+  </nav>
+</header>
