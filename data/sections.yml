@@ -1,0 +1,33 @@
+# data/sections.yml — governança das 4 seções do repertório
+# Ver spec §4.5
+
+sections:
+  - id: congregacional
+    label: Músicas Congregacionais
+    badge_color: green
+    order: 1
+    description: |
+      1ª PARTE — extra-hinário, aprovadas pela liderança do Ministério de Música
+      ou por algum pastor da PIPT. Ainda que o repertório tenha surgido de um
+      movimento histórico, sempre devemos ter juízo crítico sobre qualquer canção.
+
+  - id: hinario
+    label: Hinário Novo Cântico
+    badge_color: blue
+    order: 2
+    description: Hinos oficiais do Hinário Novo Cântico da IPB.
+
+  - id: infantil
+    label: Músicas Infantis
+    badge_color: yellow
+    order: 3
+    description: Músicas usadas nos cultos infantis e escola dominical infantil.
+
+  - id: inadequada
+    label: Inadequadas ao Culto Público
+    badge_color: red
+    order: 4
+    hidden_by_default: true
+    description: |
+      Músicas avaliadas pela liderança e consideradas inadequadas para uso em culto público.
+      Registradas com justificativa por transparência histórica.

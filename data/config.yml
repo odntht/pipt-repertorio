@@ -1,0 +1,13 @@
+# data/config.yml — configuração global
+# Ver spec §5.4 (tail_song) e §9.4 (identidade)
+
+site:
+  title: "PIPT Repertório"
+  subtitle: "Ministério de Música — PIPT"
+  base_url: "/pipt-repertorio"
+  primary_color: "#007830"
+
+# Peça tocada sempre no fim de todo setlist, todas as equipes
+tail_song:
+  slug: triplice-amem
+  tom: g
