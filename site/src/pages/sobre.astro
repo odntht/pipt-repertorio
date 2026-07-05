@@ -3,19 +3,281 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Sobre">
-  <h1 class="text-2xl font-bold mb-4">Sobre</h1>
-  <p class="mb-4">
-    Este é o repositório digital do repertório do Ministério de Música da PIPT.
-    Ele consolida músicas congregacionais, hinos do Novo Cântico, músicas
-    infantis e um registro de músicas consideradas inadequadas ao culto público
-    (por transparência).
-  </p>
-  <p class="mb-4">
-    Todo o conteúdo é versionado no GitHub, permite transposição em tempo real,
-    exportação em PDF e uso offline no celular. Governança e política de escolha
-    de repertório serão detalhadas em versão futura.
-  </p>
-  <p class="text-sm text-gray-500 mt-8">
-    Para contribuir: veja <code>CONTRIBUTING.md</code> (a ser publicado no Plano C).
-  </p>
+  <article class="max-w-3xl mx-auto leading-relaxed text-gray-800">
+    <h1 class="text-3xl font-bold mb-2">Sobre o Repertório</h1>
+    <p class="text-sm text-gray-500 mb-8">
+      Introdução escrita por Ramon Guimarães Brum em 15 de janeiro de 2025,
+      transcrita integralmente do documento original do Ministério de Música da PIPT.
+    </p>
+
+    <h2 class="text-2xl font-bold mt-8 mb-4">INTRODUÇÃO</h2>
+    <p class="mb-4">
+      Antes de usar o repertório para a escolha de canções a serem executadas no
+      Culto Público, é importante saber como manuseá-lo, já que, com o passar do
+      tempo, ele foi se tornando cada vez maior.
+    </p>
+
+    <h3 class="text-xl font-bold mt-8 mb-4">Escolhas restritas ao repertório</h3>
+    <p class="mb-4">
+      Primeiramente, ressalto que, para o Culto Público, devemos escolher apenas
+      as músicas que constam no repertório. Contudo, nem toda música aqui
+      relacionada é adequada ao Culto Público. Isso também não significa que
+      toda música que está fora do repertório é inadequada à nossa liturgia.
+    </p>
+    <p class="mb-4">Ficou confuso? Explico melhor:</p>
+    <p class="mb-4">
+      As músicas relacionadas neste repertório são constantemente analisadas,
+      avaliadas e reavaliadas em relação à sua adequação ao canto congregacional.
+    </p>
+    <p class="mb-4">
+      Mas o que é canto congregacional? Boa pergunta! Há muita discussão sobre o
+      que seja isso. Mas vou resumir em três tópicos que são suficientes para a
+      nossa finalidade:
+    </p>
+    <ul class="list-disc pl-6 mb-4 space-y-3">
+      <li>
+        <strong>Adequação à Teologia Reformada:</strong> ao executarmos canções
+        na igreja, estamos ensinando o corpo de Cristo acerca da Bíblia, dos
+        atributos de Deus e, juntos, estamos exaltando a figura de Deus,
+        notadamente por intermédio de Jesus Cristo, e movidos pelo Espírito
+        Santo. Assim, se as letras das músicas não forem criteriosamente
+        selecionadas, corremos o risco de promover um falso ensino ou de cantar
+        músicas que não trazem qualquer instrução;
+      </li>
+      <li>
+        <strong>Elogio a Deus (hallel):</strong> como estamos num Culto Público,
+        sua finalidade principal é cultuar a Deus. E, para isso, torna-se
+        evidente que as músicas devem trazer elogios a Deus e ensinamentos
+        sobre a trindade;
+      </li>
+      <li>
+        <strong>Simplicidade/Executabilidade:</strong> este é o aspecto mais
+        simples de se explicar. Por outro lado, é o mais difícil de se verificar
+        na prática. As músicas devem ter melodia de fácil aprendizagem, que a
+        igreja efetivamente consiga acompanhar, e em tom acessível à maioria da
+        congregação local. De que adianta cantar uma música linda, com letra
+        perfeita, mas que a igreja não consegue cantar juntamente com a banda?
+        Lembre-se de que a função principal do Ministério de Música é promover
+        o canto congregacional, e não fazer show de performances. A parte
+        difícil deste tópico é que, na análise prática de uma música específica,
+        sempre surgem discordâncias sobre o que é simples ou que apenas demanda
+        mais estudo, ou se o tom está alto ou baixo para homens e mulheres.
+      </li>
+    </ul>
+    <p class="mb-4">
+      Tudo isso para embasar a afirmação de que devemos cantar apenas as músicas
+      que estão neste repertório. Pois, desta forma, corremos um risco bem menor
+      de acabar trazendo ensinamentos equivocados ao corpo de Cristo.
+    </p>
+    <p class="mb-4">
+      Como diria Paulo, quem ensina falsas doutrinas mostra interesse doentio
+      por controvérsias e discussões inúteis que resultam em desavenças e
+      atritos constantes (1 Timóteo 6:3-5). Em outro momento, o referido
+      apóstolo até recomenda que nos afastemos de quem põe obstáculo ao ensino,
+      pois não estariam servindo a Cristo, mas aos próprios apetites
+      (Romanos 16:17-18).
+    </p>
+    <p class="mb-4">
+      Nossa responsabilidade é tamanha por promovermos ensinamento a toda a
+      igreja, desde os menores até os idosos, de mamando a caducando. Lembrem-se
+      de que as crianças sempre participam do momento dos cânticos e,
+      parafraseando as palavras de Jesus, qualquer um que fizer um pequenino
+      tropeçar merece ser afogado no mar com uma pedra amarrada ao pescoço
+      (Mateus 18:6 e Lucas 17:1-2).
+    </p>
+    <p class="mb-4">
+      É melhor repetir a mesma música dez vezes, até a igreja decorar e cansar
+      dela, que nos aventurarmos a qualquer inclusão impensada que nos torne
+      pedras de tropeço para os demais irmãos.
+    </p>
+
+    <h3 class="text-xl font-bold mt-8 mb-4">Como adicionar músicas ao repertório?</h3>
+    <p class="mb-4">
+      Claro que não podemos ser engessados a ponto de não permitir a inclusão
+      de novas músicas em nosso repertório. Contudo, isso deve ser feito de
+      maneira lenta e gradual, para que a igreja tenha tempo de absorver cada
+      uma das novas músicas inseridas.
+    </p>
+    <p class="mb-4">
+      O procedimento é simples, mas leva um tempo considerável, pois exige a
+      participação de vários membros e há limitação temporal (por se tratar de
+      um serviço voluntário) e limitação quantitativa de músicas novas.
+    </p>
+    <p class="mb-4">
+      Em recente reunião da Liderança do MMU, realizada no dia 11/01/2025,
+      decidiu-se por limitar a inclusão de uma música a cada trimestre,
+      totalizando quatro músicas por ano.
+    </p>
+    <p class="mb-4">
+      Para sugerir novas músicas, você pode usar o formulário existente no
+      seguinte link:
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSe5-43b0LYXkUtxfW88te3BrfwxcZGP5T81xksaTuWcHUFCNg/viewform"
+        class="text-mmu-green underline break-all"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        docs.google.com/forms/…/viewform
+      </a>
+    </p>
+    <p class="mb-4">
+      Ao recebermos sua sugestão, toda a liderança irá apreciar a canção em
+      todos os aspectos do canto congregacional (adequação teológica, elogio
+      a Deus e simplicidade) e, contando com unânime aprovação, será remetida
+      ao pastor titular para "bater o martelo".
+    </p>
+
+    <h3 class="text-xl font-bold mt-8 mb-4">Divisão do Repertório</h3>
+    <p class="mb-4">O repertório está dividido em quatro partes:</p>
+
+    <h4 class="text-lg font-bold mt-6 mb-3">1ª Parte — Músicas Congregacionais</h4>
+    <p class="mb-4">
+      Nesta primeira parte, temos as músicas extra-hinário que já cantamos em
+      nossa igreja e foram analisadas previamente pela liderança do Ministério
+      de Música e/ou algum pastor da PIPT. Contudo, ressalto que, como o
+      repertório surgiu de um movimento histórico, nem todas foram adequada e
+      profundamente avaliadas e, por isso, devemos sempre ter juízo crítico
+      sobre qualquer canção, mesmo que já conste dentre as músicas
+      congregacionais. Assim, se notar algo estranho, não hesite em questionar
+      com a liderança ou algum pastor;
+    </p>
+
+    <h4 class="text-lg font-bold mt-6 mb-3">2ª Parte — Hinos do Hinário Novo Cântico</h4>
+    <p class="mb-4">
+      Aqui não constam todos os hinos, pois nem todos são adequados ao Culto
+      Público. Gosto de citar o exemplo do Hino 71 Perdão. Trata-se de uma
+      música de confissão de pecados. Como não temos um momento musical para
+      a confissão de pecados, mas tão somente de louvor a Deus, torna-se um
+      hino incompatível à atual liturgia que adotamos.
+    </p>
+    <p class="mb-4">
+      Aqui moram as exceções ao critério de exclusiva adoção de músicas
+      constantes neste repertório, pois cada equipe tem a liberdade de executar
+      outros hinos do Hinário Novo Cântico que não constam neste rol.
+    </p>
+    <p class="mb-4">
+      Contudo, deve-se sempre tomar o devido cuidado para selecionar canções
+      que se enquadrem aos requisitos trazidos acima acerca do canto
+      congregacional pertinente ao Culto Público;
+    </p>
+
+    <h4 class="text-lg font-bold mt-6 mb-3">3ª Parte — Músicas Infantis</h4>
+    <p class="mb-4">
+      Nesta parte constam algumas canções que já tocamos em eventos com as
+      crianças. O rol é bem curto e meramente exemplificativo, pois não envolve
+      a atividade principal do MMU, consistindo em mera facilitação de uso;
+    </p>
+
+    <h4 class="text-lg font-bold mt-6 mb-3">4ª Parte — Músicas Inadequadas ao Culto Público</h4>
+    <p class="mb-4">
+      Este é o rol mais melindroso. Aqui há músicas que, apesar de não serem
+      teologicamente e/ou totalmente erradas, não se adequaram a algum dos
+      requisitos inerentes ao canto congregacional, seja porque é muito difícil
+      ou porque não cumpre o papel de cultuar a Deus.
+    </p>
+    <p class="mb-4">
+      Aqui também podem ser alocadas canções que contenham algum trecho de
+      discordância entre os irmãos.
+    </p>
+    <p class="mb-4">
+      Assim, primando-se pelo bom trabalho no momento solene de Culto Público,
+      caso goste das canções relacionadas nesta parte, contente-se em cantá-las
+      em outros momentos, como num prelúdio, póslúdio, reunião de oração etc.
+    </p>
+    <p class="mb-4">
+      Lembre-se de que nosso serviço na obra de Deus não é tocar/cantar apenas
+      o que gostamos, mas sim o que leva a igreja à adoração mais pura possível.
+      Nosso trabalho é não atrapalhar!
+    </p>
+
+    <h3 class="text-xl font-bold mt-8 mb-4">Que músicas escolher para domingo?</h3>
+    <p class="mb-4">
+      Chegou a hora de escolher as músicas. O que eu faço? O líder de equipe
+      escolhe sozinho, a equipe escolhe? Qual critério usar? Será que o fulano
+      não vai ficar constrangido se o líder cortar a música dele?
+    </p>
+    <p class="mb-4">
+      <em>First things first!</em> (Primeiro as coisas mais importantes!) Goste
+      ou não, toda liderança é instituída por Deus, portanto, respeite-as e se
+      submeta a elas. Simples assim! Mais importante ainda: ore por sua
+      liderança! Assim, não é porque você sugeriu uma música que ela comporá a
+      seleção de domingo.
+    </p>
+    <p class="mb-4">
+      E como o líder deve escolher as canções? Recebe sugestões? Escolhe
+      sozinho? Fica a critério de cada líder receber indicações de sua equipe
+      ou escolher sozinho, pois, para tal finalidade, deverá considerar os
+      critérios arrolados abaixo e, ainda, verificar se as músicas são passíveis
+      de serem executadas com os vocais e instrumentos disponíveis. Por exemplo,
+      se, no dia designado, por quaisquer razões, houver apenas a
+      disponibilidade de um guitarrista ainda inexperiente, poderá ser um caos
+      tocar um hino com muitos acordes seguidos e complexos.
+    </p>
+    <p class="mb-4">
+      São seis regrinhas bem simples, não há muito segredo! Mas elas podem ser
+      alteradas caso nossa liturgia venha a ser redesenhada (o que raramente
+      acontece).
+    </p>
+    <ol class="list-decimal pl-6 mb-4 space-y-3">
+      <li>
+        A primeira música da EBD deve ser de agradecimento ou, ao menos, se
+        encaixar no contexto de engrandecimento a Deus/Jesus por sua obra em
+        nossas vidas. Este é o momento em que irmãos vão à frente para
+        apresentar seus motivos de gratidão e apresentar dízimos e ofertas;
+      </li>
+      <li>
+        A primeira música do Culto Público noturno não precisa ser de
+        agradecimento (pois não há este momento específico), mas deve veicular
+        mensagem sobre a exaltação de Deus/Jesus. Lembrando que, durante esta
+        primeira música, tal como na EBD, ocorre o recolhimento dos dízimos;
+      </li>
+      <li>
+        As demais músicas (EBD e Culto Público noturno) devem ser de elogio,
+        engrandecimento e adoração a Deus e Jesus, priorizando-se músicas
+        Cristocêntricas (já que, por meio de Jesus, temos acesso ao Pai). A
+        ordem de execução dessas músicas deve ser analisada caso a caso segundo
+        a dinâmica que foi estabelecida nos ensaios. Em regra, indica-se começar
+        com a mais agitada e terminar com uma música mais calma, preparando-se
+        para a finalização do momento;
+      </li>
+      <li>
+        Sugere-se a execução de 3 a 4 cânticos por ministração. Caso haja
+        eventos (ex.: participação do Coral), deve-se reduzir para apenas 2
+        músicas;
+      </li>
+      <li>
+        Na busca por atender anseios e gostos, além de primar pela história da
+        igreja e da comunidade local e respeitar os idosos, sempre que possível,
+        devemos escolher um Hino do Hinário Novo Cântico (HNC) para cada
+        execução. Além disso, é bom mesclar músicas antigas e novas (caso
+        existentes, notadamente as recém incluídas);
+      </li>
+      <li>
+        Por fim, havendo Santa Ceia, por óbvio, deve-se escolher uma música a
+        mais que remeta ao sacrifício de Jesus na cruz por nossos pecados.
+      </li>
+    </ol>
+
+    <p class="mb-4">Finalizo este introito com os dizeres de Paulo:</p>
+    <blockquote class="border-l-4 border-mmu-green pl-4 my-6 italic text-gray-700">
+      <p class="mb-2">
+        <strong>23</strong> Tudo quanto fizerdes, fazei-o de todo o coração,
+        como para o Senhor e não para homens, <strong>24</strong> cientes de
+        que recebereis do Senhor a recompensa da herança. A Cristo, o Senhor,
+        é que estais servindo;
+      </p>
+      <footer class="text-sm not-italic text-gray-500">
+        (Colossenses 3:23-24)
+      </footer>
+    </blockquote>
+    <p class="mb-8">
+      E que "a graça do Senhor Jesus Cristo, e o amor de Deus, e a comunhão do
+      Espírito Santo estejam com todos vocês" (2 Coríntios 13:13).
+    </p>
+
+    <footer class="mt-12 pt-6 border-t border-gray-200 text-sm text-gray-600">
+      <p class="font-semibold">Ramon Guimarães Brum</p>
+      <p>15 de janeiro de 2025</p>
+    </footer>
+  </article>
 </BaseLayout>
