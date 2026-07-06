@@ -17,6 +17,8 @@ export interface Setlist {
   slug: string;
   event: string;
   date: string; // ISO 'YYYY-MM-DD'
+  /** Soft-delete: se true, some da listagem principal mas o arquivo fica. */
+  hidden: boolean;
   songs: SetlistSong[];
 }
 
@@ -40,6 +42,7 @@ function stripQuotes(s: string): string {
 function parseSetlist(raw: string): Omit<Setlist, 'filename' | 'slug'> {
   let event = '';
   let date = '';
+  let hidden = false;
   const songs: SetlistSong[] = [];
   let current: Partial<SetlistSong> | null = null;
 
@@ -57,6 +60,10 @@ function parseSetlist(raw: string): Omit<Setlist, 'filename' | 'slug'> {
       date = stripQuotes(m[1].trim());
       continue;
     }
+    if ((m = line.match(/^hidden:\s*(.*)$/))) {
+      hidden = /^true$/i.test(stripQuotes(m[1].trim()));
+      continue;
+    }
     if (/^songs:\s*$/.test(line)) continue;
     if ((m = line.match(/^\s*-\s*slug:\s*(.*)$/))) {
       if (current) songs.push(current as SetlistSong);
@@ -71,7 +78,7 @@ function parseSetlist(raw: string): Omit<Setlist, 'filename' | 'slug'> {
     }
   }
   if (current) songs.push(current as SetlistSong);
-  return { event, date, songs };
+  return { event, date, hidden, songs };
 }
 
 let cached: Setlist[] | null = null;

@@ -11,6 +11,29 @@ export async function getStaticPaths() {
 const { setlist } = Astro.props;
 const base = import.meta.env.BASE_URL;
 
+// Reconstrói o YAML da setlist com um estado alternativo de `hidden`.
+// Passado pro botão inline; evita duplicar a lógica de build no JS.
+function buildYamlForSetlist(
+  sl: typeof setlist,
+  hidden: boolean,
+): string {
+  const lines: string[] = [];
+  lines.push(`event: "${sl.event.replace(/"/g, '\\"')}"`);
+  lines.push(`date: ${sl.date}`);
+  if (hidden) lines.push('hidden: true');
+  lines.push('songs:');
+  for (const s of sl.songs) {
+    lines.push(`  - slug: ${s.slug}`);
+    if (s.qualifier) lines.push(`    qualifier: ${s.qualifier}`);
+    lines.push(`    tom: ${s.tom.toLowerCase()}`);
+    if (s.notes) lines.push(`    notes: "${s.notes.replace(/"/g, '\\"')}"`);
+  }
+  return lines.join('\n') + '\n';
+}
+
+const yamlHidden = buildYamlForSetlist(setlist, true);
+const yamlVisible = buildYamlForSetlist(setlist, false);
+
 const songs = loadAllSongs();
 // Chave completa `slug.qualifier?.tom` casa com o arquivo exato.
 const byFullKey = new Map(
@@ -63,7 +86,14 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
 
 <BaseLayout title={setlist.event}>
   <header class="mb-4">
-    <h1 class="text-2xl font-bold">{setlist.event}</h1>
+    <div class="flex flex-wrap items-baseline gap-2">
+      <h1 class="text-2xl font-bold">{setlist.event}</h1>
+      {setlist.hidden && (
+        <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-gray-400 text-white no-print">
+          Oculta
+        </span>
+      )}
+    </div>
     <p class="text-sm text-gray-600 dark:text-gray-400">
       {formatDate(setlist.date)} · {setlist.songs.length} música{setlist.songs.length === 1 ? '' : 's'}
     </p>
@@ -116,27 +146,49 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
       Editar
     </button>
     <button
-      id="delete-btn"
+      id="hide-btn"
       type="button"
-      class="text-sm text-red-600 border border-red-300 dark:border-red-700 rounded px-3 py-2 hover:bg-red-50 dark:hover:bg-red-950"
+      class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
     >
-      Deletar
+      {setlist.hidden ? 'Mostrar novamente' : 'Ocultar'}
     </button>
+    <p id="hide-hint" class="w-full text-sm text-mmu-green mt-2 hidden"></p>
   </div>
-  <script is:inline define:vars={{ setlist, base }}>
+  <script
+    is:inline
+    define:vars={{ setlist, base, yamlHidden, yamlVisible }}
+  >
     document.getElementById('edit-btn')?.addEventListener('click', () => {
       sessionStorage.setItem('setlist.edit', JSON.stringify(setlist));
       window.location.href = `${base}setlists/novo/`;
     });
-    document.getElementById('delete-btn')?.addEventListener('click', () => {
+    document.getElementById('hide-btn')?.addEventListener('click', async () => {
+      const isHidden = setlist.hidden;
+      const targetYaml = isHidden ? yamlVisible : yamlHidden;
+      const verb = isHidden ? 'mostrar novamente' : 'ocultar';
       const ok = confirm(
-        `Deletar a setlist "${setlist.event}" (${setlist.date})?\n\n` +
-        `Vamos abrir o GitHub pra você confirmar a exclusão do arquivo ` +
-        `data/setlists/${setlist.filename}.`,
+        `${verb.charAt(0).toUpperCase() + verb.slice(1)} a setlist "${setlist.event}"?\n\n` +
+        `Vamos copiar o YAML atualizado pro clipboard e abrir o GitHub — ` +
+        `você cola por cima do conteúdo do arquivo pra confirmar.`,
       );
       if (!ok) return;
+      const hint = document.getElementById('hide-hint');
+      try {
+        await navigator.clipboard.writeText(targetYaml);
+        if (hint) {
+          hint.textContent =
+            'YAML copiado. Na aba do GitHub que abriu, faça Cmd+A pra selecionar tudo e Cmd+V pra colar por cima.';
+          hint.classList.remove('hidden');
+        }
+      } catch {
+        if (hint) {
+          hint.textContent =
+            'Clipboard indisponível — copie o YAML manualmente do detalhe.';
+          hint.classList.remove('hidden');
+        }
+      }
       window.open(
-        `https://github.com/odntht/pipt-repertorio/delete/main/data/setlists/${setlist.filename}`,
+        `https://github.com/odntht/pipt-repertorio/edit/main/data/setlists/${setlist.filename}`,
         '_blank',
         'noopener,noreferrer',
       );
