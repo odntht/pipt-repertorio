@@ -60,10 +60,13 @@ body {
     display: none !important;
   }
   .print-only { display: block !important; }
+  /* Header docx-style não pode ficar sozinho no final da página */
+  .print-only { page-break-after: avoid; break-after: avoid; }
   .cifra-body {
     color: #000 !important;
     background: #fff !important;
-    page-break-inside: avoid;
+    /* deliberadamente sem page-break-inside: avoid — cifras longas quebram
+       naturalmente entre páginas em vez de pularem inteiras */
   }
   .cifra-chord {
     color: #000 !important;
