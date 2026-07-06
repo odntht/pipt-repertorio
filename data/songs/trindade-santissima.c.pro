@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 011}
+{tags: santidade, poder-de-deus, louvor, arrependimento}
 {added: 2026-07-06}
 
 {comment: Intro: C4   C (2x)}

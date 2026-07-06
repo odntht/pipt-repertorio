@@ -3,6 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: poder-de-deus, fe, adoracao, esperanca}
 {added: 2026-07-06}
 
 Tantas [G9]lutas, tantas [Em7(9)]dores

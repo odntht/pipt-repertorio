@@ -3,6 +3,7 @@
 {key: A}
 {section: inadequada}
 {status: em-revisao}
+{tags: oracao, amor-de-deus, paz, fe}
 {added: 2026-07-06}
 
 Intro e Base:

@@ -3,6 +3,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=arranjo-1 (revisar)}
+{tags: adoracao, oracao}
 {added: 2026-07-06}
 
 

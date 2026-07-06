@@ -3,6 +3,7 @@
 {youtube: https://www.youtube.com/watch?v=BHtpRWpuJ6g}
 {section: inadequada}
 {status: em-revisao}
+{tags: reino}
 {added: 2026-07-06}
 
 Estamos[G] todos congre[Am]gados aq[Bm]ui  [Dm]

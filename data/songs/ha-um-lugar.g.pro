@@ -3,6 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: paz}
 {added: 2026-07-06}
 
 Intro 3x: C9  G

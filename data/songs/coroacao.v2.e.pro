@@ -5,6 +5,7 @@
 {status: em-revisao}
 {hinario_num: 028}
 {notes: qualifier=v2 (revisar)}
+{tags: alegria}
 {added: 2026-07-06}
 
 {comment: Intro}

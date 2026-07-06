@@ -3,6 +3,7 @@
 {key: G}
 {section: infantil}
 {status: em-revisao}
+{tags: louvor, jesus-cristo}
 {added: 2026-07-06}
 
 

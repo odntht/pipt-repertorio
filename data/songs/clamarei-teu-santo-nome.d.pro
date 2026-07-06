@@ -3,6 +3,7 @@
 {key: D}
 {section: inadequada}
 {status: em-revisao}
+{tags: santidade}
 {added: 2026-07-06}
 
 (intro) D D9 Bm7 D

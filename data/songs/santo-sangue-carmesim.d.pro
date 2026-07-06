@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=SVCOZwHwH6g&t=13s}
 {section: congregacional}
 {status: em-revisao}
+{tags: sangue-de-jesus, santidade, jesus-cristo}
 {added: 2026-07-06}
 
 

@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 230}
+{tags: adoracao, louvor, oracao}
 {added: 2026-07-06}
 
 

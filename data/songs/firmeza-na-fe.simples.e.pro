@@ -5,6 +5,7 @@
 {status: em-revisao}
 {hinario_num: 093}
 {notes: qualifier=simples (revisar)}
+{tags: louvor, graca}
 {added: 2026-07-06}
 
 Som[E]ente ponho a minha fé [F#m]

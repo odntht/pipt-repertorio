@@ -5,6 +5,7 @@
 {status: em-revisao}
 {hinario_num: 093}
 {notes: qualifier=versao (revisar)}
+{tags: louvor, graca}
 {added: 2026-07-06}
 
 

@@ -3,6 +3,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor, amor-de-deus}
 {added: 2026-07-06}
 
 Cantare[E9]i Teus louvores pra Tua Glória

@@ -3,6 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 033}
+{tags: poder-de-deus}
 {added: 2026-07-06}
 
 [D]Ao Deus de amor e de imensa bondade,     [G]        [D]

@@ -5,6 +5,7 @@
 {status: em-revisao}
 {hinario_num: 010}
 {notes: qualifier=versao (revisar)}
+{tags: louvor}
 {added: 2026-07-06}
 
 

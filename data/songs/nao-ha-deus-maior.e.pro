@@ -3,6 +3,7 @@
 {youtube: https://www.youtube.com/watch?v=DJQkbmLZzew}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor}
 {added: 2026-07-06}
 
 {comment: Intro: (B)  F#m  B  E  C#m}

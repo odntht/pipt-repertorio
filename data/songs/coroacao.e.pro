@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 028}
+{tags: oracao, alegria, familia}
 {added: 2026-07-06}
 
 

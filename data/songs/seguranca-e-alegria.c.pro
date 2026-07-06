@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 144}
+{tags: jesus-cristo, salvacao, cruz, alegria}
 {added: 2026-07-06}
 
 

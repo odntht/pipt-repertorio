@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 110}
+{tags: fe, jesus-cristo}
 {added: 2026-07-06}
 
 {comment: Intro}

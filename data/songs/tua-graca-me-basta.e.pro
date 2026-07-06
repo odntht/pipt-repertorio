@@ -3,6 +3,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
+{tags: graca, oracao}
 {added: 2026-07-06}
 
 Nas noite[E]s mais sombrias

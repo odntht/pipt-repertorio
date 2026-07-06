@@ -3,6 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor}
 {added: 2026-07-06}
 
 {comment: Intro: C  D  Em / C  D  Bm (2x) C}

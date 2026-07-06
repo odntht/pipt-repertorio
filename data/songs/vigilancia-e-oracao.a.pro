@@ -3,6 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 129}
+{tags: oracao}
 {added: 2026-07-06}
 
 AC#-B-   B-/A

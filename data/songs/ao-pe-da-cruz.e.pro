@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 107}
+{tags: cruz}
 {added: 2026-07-06}
 
 Introd: C#m7 A9 E9 (2x)

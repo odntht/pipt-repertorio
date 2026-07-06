@@ -3,6 +3,7 @@
 {youtube: https://www.youtube.com/watch?v=6ROlrIfj0Qw}
 {section: congregacional}
 {status: em-revisao}
+{tags: jesus-cristo, poder-de-deus, fe, arrependimento}
 {added: 2026-07-06}
 
 

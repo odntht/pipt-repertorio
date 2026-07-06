@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=ZsXwZ6xWaBs}
 {section: congregacional}
 {status: em-revisao}
+{tags: adoracao, santidade, oracao, jesus-cristo}
 {added: 2026-07-06}
 
 {comment: Intro}

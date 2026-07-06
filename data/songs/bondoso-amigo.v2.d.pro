@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 159}
+{tags: oracao, jesus-cristo, amor-de-deus, paz}
 {added: 2026-07-06}
 
 

@@ -3,6 +3,7 @@
 {youtube: https://www.youtube.com/watch?v=3JUS_ueGjnA&t=154s}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor, amor-de-deus, oracao, alegria}
 {added: 2026-07-06}
 
 

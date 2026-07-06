@@ -3,6 +3,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=versao (revisar)}
+{tags: adoracao, louvor}
 {added: 2026-07-06}
 
 

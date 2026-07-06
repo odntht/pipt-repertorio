@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=PME30Sd3K9M}
 {section: congregacional}
 {status: em-revisao}
+{tags: jesus-cristo, graca, santidade}
 {added: 2026-07-06}
 
 Base: D     G7M    Bm7     A4      G7M

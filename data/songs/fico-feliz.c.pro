@@ -3,6 +3,7 @@
 {key: C}
 {section: congregacional}
 {status: em-revisao}
+{tags: adoracao, oracao}
 {added: 2026-07-06}
 
 [C]Fico [C/E]feliz e[F]m vir em Tua casa,[C] erguer minha voz e[G] cantar.

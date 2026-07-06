@@ -2,6 +2,7 @@
 {key: D}
 {section: congregacional}
 {status: em-revisao}
+{tags: adoracao, louvor, jesus-cristo, oracao}
 {added: 2026-07-06}
 
 D9               D/F#G          A

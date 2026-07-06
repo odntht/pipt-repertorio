@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=QDFa6xFQ-yo&t=6s}
 {section: congregacional}
 {status: em-revisao}
+{tags: arrependimento, perdao}
 {added: 2026-07-06}
 
 

@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 135}
+{tags: jesus-cristo, amor-de-deus}
 {added: 2026-07-06}
 
 

@@ -3,6 +3,7 @@
 {key: C}
 {section: infantil}
 {status: em-revisao}
+{tags: salvacao, alegria, jesus-cristo}
 {added: 2026-07-06}
 
 

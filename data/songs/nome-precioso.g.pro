@@ -3,6 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 164}
+{tags: esperanca, jesus-cristo}
 {added: 2026-07-06}
 
 [G]Santo nome, incomparável,

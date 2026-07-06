@@ -3,6 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: jesus-cristo, amor-de-deus}
 {added: 2026-07-06}
 
 Base Solo Intro: G  C  G  C

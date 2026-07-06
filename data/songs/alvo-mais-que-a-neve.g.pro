@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 269}
+{tags: arrependimento, sangue-de-jesus, jesus-cristo}
 {added: 2026-07-06}
 
 [G]Seja bendito o Cord[Bm]eir[Em]o,

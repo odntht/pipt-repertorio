@@ -3,6 +3,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
+{tags: graca}
 {added: 2026-07-06}
 
 {comment: Intro: A E  (2x)}

@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 232}
+{tags: jesus-cristo, natal, louvor, amor-de-deus}
 {added: 2026-07-06}
 
 

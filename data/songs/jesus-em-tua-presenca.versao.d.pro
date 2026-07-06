@@ -3,6 +3,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=versao (revisar)}
+{tags: adoracao, oracao, jesus-cristo}
 {added: 2026-07-06}
 
 

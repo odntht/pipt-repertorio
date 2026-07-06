@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 269}
+{tags: arrependimento, sangue-de-jesus, jesus-cristo}
 {added: 2026-07-06}
 
 S[C]eja bendito o Cordeiro, [C/E]

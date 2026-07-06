@@ -3,6 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: santidade, adoracao, louvor, jesus-cristo}
 {added: 2026-07-06}
 
 [D7M(9)]Digno é o Cordeiro, que f[Am7(9)]oi morto

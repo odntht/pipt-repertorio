@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 062}
+{tags: gratidao, salvacao, amor-de-deus, arrependimento}
 {added: 2026-07-06}
 
 Graças te dou p[G]or tudo qu[G/B]e me deste,     [C]          [E]

@@ -4,6 +4,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=versao (revisar)}
+{tags: reino}
 {added: 2026-07-06}
 
 {comment: Intro}

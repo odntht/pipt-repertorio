@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=Pwl94uj7JC4}
 {section: inadequada}
 {status: em-revisao}
+{tags: reino, cruz, vitoria}
 {added: 2026-07-06}
 
 {comment: Intro: F7+  C9  Am7  G}

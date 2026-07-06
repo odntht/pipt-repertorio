@@ -4,6 +4,7 @@
 {youtube: http://www.youtube.com/watch?feature=player_embedded&v=FJqbr8Uncqc}
 {section: inadequada}
 {status: em-revisao}
+{tags: santidade}
 {added: 2026-07-06}
 
 

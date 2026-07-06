@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=fdwUu7oCnmw}
 {section: inadequada}
 {status: em-revisao}
+{tags: amor-de-deus, poder-de-deus}
 {added: 2026-07-06}
 
 

@@ -3,6 +3,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
+{tags: jesus-cristo, salvacao, amor-de-deus, santidade}
 {added: 2026-07-06}
 
 

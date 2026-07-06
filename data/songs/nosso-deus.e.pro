@@ -3,6 +3,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
+{tags: pascoa}
 {added: 2026-07-06}
 
 {comment: Intro}

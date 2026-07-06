@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 093}
+{tags: louvor, graca}
 {added: 2026-07-06}
 
 {comment: Intro}

@@ -3,6 +3,7 @@
 {youtube: https://www.youtube.com/watch?v=Z77FZnhTF44&feature=youtu.be}
 {section: congregacional}
 {status: em-revisao}
+{tags: familia, louvor}
 {added: 2026-07-06}
 
 

@@ -2,6 +2,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor, graca}
 {added: 2026-07-06}
 
 Qu[E]ero louvar-te, sempre mais e mais!

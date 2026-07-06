@@ -4,6 +4,7 @@
 {youtube: https://youtu.be/lMhEFpHzRsY}
 {section: congregacional}
 {status: em-revisao}
+{tags: reino, adoracao}
 {added: 2026-07-06}
 
 Introdução A# Dm C

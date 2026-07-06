@@ -2,6 +2,7 @@
 {key: F}
 {section: congregacional}
 {status: em-revisao}
+{tags: oracao, perdao}
 {added: 2026-07-06}
 
 

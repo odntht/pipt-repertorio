@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=PX4BxN2Ntag}
 {section: infantil}
 {status: em-revisao}
+{tags: jesus-cristo, louvor, salvacao}
 {added: 2026-07-06}
 
 

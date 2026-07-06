@@ -3,6 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: oracao, louvor}
 {added: 2026-07-06}
 
 [G]Como é bom pertence[D/G]r a Ti Jesus   [C]

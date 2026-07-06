@@ -3,6 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor}
 {added: 2026-07-06}
 
 Intro 2x: G7M G D Am6 Am7 C

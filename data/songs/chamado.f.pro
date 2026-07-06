@@ -3,6 +3,7 @@
 {key: F}
 {section: congregacional}
 {status: em-revisao}
+{tags: oracao}
 {added: 2026-07-06}
 
 {comment: Intro}

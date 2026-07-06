@@ -3,6 +3,7 @@
 {key: F}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor, salvacao, oracao, alegria}
 {added: 2026-07-06}
 
 

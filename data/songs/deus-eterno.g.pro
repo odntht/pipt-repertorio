@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=iPlQjRCfzOs&t=63s}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor}
 {added: 2026-07-06}
 
 

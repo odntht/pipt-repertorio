@@ -5,6 +5,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 021}
+{tags: louvor, salvacao, amor-de-deus}
 {added: 2026-07-06}
 
 

@@ -3,6 +3,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
+{tags: oracao, adoracao}
 {added: 2026-07-06}
 
 Intro 2x: E  C#m  A  E  B

@@ -2,6 +2,7 @@
 {key: D}
 {section: congregacional}
 {status: em-revisao}
+{tags: fe}
 {added: 2026-07-06}
 
 {comment: Intro}

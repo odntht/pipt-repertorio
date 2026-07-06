@@ -3,6 +3,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
+{tags: adoracao, jesus-cristo, oracao, poder-de-deus}
 {added: 2026-07-06}
 
 {comment: Intro}

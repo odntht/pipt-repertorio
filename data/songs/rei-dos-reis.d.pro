@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=oMneWx9IPts}
 {section: congregacional}
 {status: em-revisao}
+{tags: jesus-cristo, natal}
 {added: 2026-07-06}
 
 {comment: Intro}

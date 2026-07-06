@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=J1KAalOvqzM}
 {section: congregacional}
 {status: em-revisao}
+{tags: jesus-cristo, amor-de-deus, santidade, santo-espirito}
 {added: 2026-07-06}
 
 {comment: Intro}

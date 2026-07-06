@@ -3,6 +3,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
+{tags: graca}
 {added: 2026-07-06}
 
 [A]Na fraqueza é que sou forte, 

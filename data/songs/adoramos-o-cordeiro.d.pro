@@ -2,6 +2,7 @@
 {key: D}
 {section: congregacional}
 {status: em-revisao}
+{tags: adoracao, oracao, jesus-cristo}
 {added: 2026-07-06}
 
 [D] Adoramos [A]o cordeiro

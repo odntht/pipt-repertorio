@@ -3,6 +3,7 @@
 {youtube: http://www.youtube.com/watch?v=BZCb92bivGA}
 {section: congregacional}
 {status: em-revisao}
+{tags: adoracao, louvor, oracao}
 {added: 2026-07-06}
 
 Intro 2x: E  B/E  D/E  A/E

@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=iiaHGoh_qk0}
 {section: infantil}
 {status: em-revisao}
+{tags: salvacao, jesus-cristo}
 {added: 2026-07-06}
 
 

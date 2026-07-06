@@ -4,6 +4,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=versao (revisar)}
+{tags: santa-ceia, perdao, jesus-cristo}
 {added: 2026-07-06}
 
 {comment: Intro}

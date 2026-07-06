@@ -3,6 +3,7 @@
 {youtube: https://www.youtube.com/watch?v=wOa9Bgcy7yI}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor}
 {added: 2026-07-06}
 
 

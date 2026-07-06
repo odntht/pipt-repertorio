@@ -2,6 +2,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
+{tags: pascoa, perdao, jesus-cristo}
 {added: 2026-07-06}
 
 

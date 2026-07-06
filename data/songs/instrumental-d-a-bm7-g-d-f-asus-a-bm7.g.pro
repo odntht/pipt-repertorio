@@ -2,6 +2,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: oracao, santidade}
 {added: 2026-07-06}
 
 Bem aventurado é o qu[A/G]e está                  [G]     [A/G]     [G]

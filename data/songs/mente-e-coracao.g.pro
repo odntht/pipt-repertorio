@@ -3,6 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: oracao, poder-de-deus, jesus-cristo}
 {added: 2026-07-06}
 
 {comment: Intro: G  G/B  C (4x)}

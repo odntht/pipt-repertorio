@@ -3,6 +3,7 @@
 {key: D}
 {section: congregacional}
 {status: em-revisao}
+{tags: paz}
 {added: 2026-07-06}
 
 {comment: Intro}

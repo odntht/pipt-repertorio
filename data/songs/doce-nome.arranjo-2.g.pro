@@ -3,6 +3,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=arranjo-2 (revisar)}
+{tags: jesus-cristo}
 {added: 2026-07-06}
 
 

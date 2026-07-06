@@ -3,6 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 254}
+{tags: oracao}
 {added: 2026-07-06}
 
 Me[G9]stre o mar se revolta        [Am7-]

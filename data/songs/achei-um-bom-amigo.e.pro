@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 113}
+{tags: jesus-cristo, salvacao}
 {added: 2026-07-06}
 
 [E]Achei um bom amigo, Je[E7]sus, o Salv[A]ador      [E]

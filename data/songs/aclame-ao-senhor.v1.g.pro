@@ -3,6 +3,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=v1 (revisar)}
+{tags: louvor, poder-de-deus, alegria}
 {added: 2026-07-06}
 
 [G9]Meu Jesus, [D]salvador

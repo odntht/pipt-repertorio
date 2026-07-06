@@ -4,6 +4,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=v2 (revisar)}
+{tags: jesus-cristo, adoracao, louvor, cruz}
 {added: 2026-07-06}
 
 

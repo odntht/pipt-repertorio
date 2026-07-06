@@ -3,6 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
+{tags: jesus-cristo, louvor, gratidao}
 {added: 2026-07-06}
 
 Eu sou[G9] grato por tudo o que [C]tenho

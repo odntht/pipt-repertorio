@@ -2,6 +2,7 @@
 {key: C}
 {section: congregacional}
 {status: em-revisao}
+{tags: poder-de-deus}
 {added: 2026-07-06}
 
 

@@ -4,6 +4,7 @@
 {status: em-revisao}
 {hinario_num: 110}
 {notes: qualifier=versao (revisar)}
+{tags: jesus-cristo, fe}
 {added: 2026-07-06}
 
 Intro – Eb   Eb4   Eb

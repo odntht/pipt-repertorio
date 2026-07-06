@@ -3,6 +3,7 @@
 {key: C}
 {section: congregacional}
 {status: em-revisao}
+{tags: adoracao, oracao, jesus-cristo}
 {added: 2026-07-06}
 
 {comment: Intro}

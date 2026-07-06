@@ -4,6 +4,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=v1 (revisar)}
+{tags: louvor, santidade}
 {added: 2026-07-06}
 
 {comment: Intro:  Gm   C7  (4x)}

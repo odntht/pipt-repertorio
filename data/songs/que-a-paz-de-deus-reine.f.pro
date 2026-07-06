@@ -3,6 +3,7 @@
 {key: F}
 {section: congregacional}
 {status: em-revisao}
+{tags: paz, santidade, santo-espirito}
 {added: 2026-07-06}
 
 (intro) F Bb Dm C/E F Eb Bb/D Csus4 C

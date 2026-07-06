@@ -3,6 +3,7 @@
 {youtube: https://www.youtube.com/watch?v=JxpRoWaYA3k}
 {section: congregacional}
 {status: em-revisao}
+{tags: adoracao, oracao, jesus-cristo}
 {added: 2026-07-06}
 
 

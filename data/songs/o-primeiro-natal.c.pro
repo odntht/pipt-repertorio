@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 231}
+{tags: natal, oracao, adoracao}
 {added: 2026-07-06}
 
 Eis que um [C]anjo procla[Em]mou o pr[F]imeiro N[C]atal

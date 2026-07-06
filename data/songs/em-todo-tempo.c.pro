@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=KN3NLeVF7u8&t=0s&index=16&list=PLTJO5XsEiMjp8j_s6oY_fZ6nFgVLw4gDB}
 {section: congregacional}
 {status: em-revisao}
+{tags: louvor}
 {added: 2026-07-06}
 
 All Draws Fast Vib (Speed: Fast)

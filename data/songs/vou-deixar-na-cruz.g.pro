@@ -3,6 +3,7 @@
 {youtube: http://m.youtube.com/watch?v=_tOQmTJflYA}
 {section: congregacional}
 {status: em-revisao}
+{tags: cruz, amor-de-deus}
 {added: 2026-07-06}
 
 {comment: Intro}

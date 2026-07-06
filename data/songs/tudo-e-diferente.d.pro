@@ -3,6 +3,7 @@
 {key: D}
 {section: inadequada}
 {status: em-revisao}
+{tags: louvor, jesus-cristo}
 {added: 2026-07-06}
 
 Intro 4x: D  G

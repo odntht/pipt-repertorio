@@ -3,6 +3,7 @@
 {key: E}
 {section: inadequada}
 {status: em-revisao}
+{tags: paz}
 {added: 2026-07-06}
 
 (intro) C#m79 

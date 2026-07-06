@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 010}
+{tags: louvor}
 {added: 2026-07-06}
 
 

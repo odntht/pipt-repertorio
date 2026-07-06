@@ -2,6 +2,7 @@
 {key: G}
 {section: inadequada}
 {status: em-revisao}
+{tags: oracao, jesus-cristo, familia}
 {added: 2026-07-06}
 
 Rece[G]bi um novo coração do pai,

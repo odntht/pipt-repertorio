@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 107}
+{tags: cruz}
 {added: 2026-07-06}
 
 Introd: Em7 C9 G9 (2x)

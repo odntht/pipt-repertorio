@@ -3,6 +3,7 @@
 {key: B}
 {section: congregacional}
 {status: em-revisao}
+{tags: cruz, amor-de-deus, salvacao}
 {added: 2026-07-06}
 
 {comment: Intro}

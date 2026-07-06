@@ -3,6 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 014}
+{tags: santidade, louvor, jesus-cristo}
 {added: 2026-07-06}
 
 

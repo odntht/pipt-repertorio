@@ -3,6 +3,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
+{tags: adoracao, oracao}
 {added: 2026-07-06}
 
 

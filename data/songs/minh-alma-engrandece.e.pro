@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=parq-gj2-rU&t=10s}
 {section: congregacional}
 {status: em-revisao}
+{tags: santidade}
 {added: 2026-07-06}
 
 

@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=kWmqDSm8xeI}
 {section: congregacional}
 {status: em-revisao}
+{tags: santidade, louvor, jesus-cristo, graca}
 {added: 2026-07-06}
 
 {comment: Intro}
