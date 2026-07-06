@@ -10,6 +10,7 @@ interface Entry {
   tags: string[];
   toms: string[];
   hinarioNum?: string;
+  lyrics: string;
 }
 
 interface Props {
@@ -60,12 +61,52 @@ function prettyTag(tag: string): string {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
+// Cada entrada pré-normalizada pra busca (evita renormalizar a cada tecla).
+interface SearchableEntry extends Entry {
+  normTitle: string;
+  normLyrics: string;
+}
+
+// Extrai um snippet da letra em torno do primeiro match, com destaque.
+function findLyricSnippet(
+  entry: SearchableEntry,
+  q: string,
+): { line: string; before: string; match: string; after: string } | null {
+  if (q === '') return null;
+  const lines = entry.lyrics.split('\n');
+  for (const line of lines) {
+    const idx = normalize(line).indexOf(q);
+    if (idx >= 0) {
+      // Reencontra o índice na linha original preservando acentos
+      const rawIdx = idx; // aproximação — normalize preserva length
+      const before = line.slice(Math.max(0, rawIdx - 24), rawIdx);
+      const match = line.slice(rawIdx, rawIdx + q.length);
+      const after = line.slice(rawIdx + q.length, rawIdx + q.length + 40);
+      return { line, before, match, after };
+    }
+  }
+  return null;
+}
+
 export default function MusicasList({ entries, base }: Props) {
   const [selectedSection, setSelectedSection] = useState<Section | null>(null);
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [tagQuery, setTagQuery] = useState('');
   const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [searchDropdownOpen, setSearchDropdownOpen] = useState(false);
   const tagInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const searchable = useMemo<SearchableEntry[]>(
+    () =>
+      entries.map((e) => ({
+        ...e,
+        normTitle: normalize(e.title + (e.hinarioNum ? ` hino ${e.hinarioNum}` : '')),
+        normLyrics: normalize(e.lyrics),
+      })),
+    [entries],
+  );
 
   const allTags = useMemo(() => {
     const counts = new Map<string, number>();
@@ -84,17 +125,43 @@ export default function MusicasList({ entries, base }: Props) {
   }, [entries]);
 
   const filtered = useMemo(() => {
-    let out = entries;
+    const q = normalize(search.trim());
+    let out: SearchableEntry[] = searchable;
     if (selectedSection) out = out.filter((e) => e.section === selectedSection);
     if (selectedTags.size > 0) {
       out = out.filter((e) => e.tags.some((t) => selectedTags.has(t)));
+    }
+    if (q !== '') {
+      out = out.filter(
+        (e) => e.normTitle.includes(q) || e.normLyrics.includes(q),
+      );
     }
     return out.slice().sort((a, b) => {
       const bySection = SECTION_ORDER[a.section] - SECTION_ORDER[b.section];
       if (bySection !== 0) return bySection;
       return sortKey(a).localeCompare(sortKey(b), 'pt-BR');
     });
-  }, [entries, selectedSection, selectedTags]);
+  }, [searchable, selectedSection, selectedTags, search]);
+
+  // Sugestões do autocomplete: até 8 primeiros hits, títulos antes de letras.
+  const searchSuggestions = useMemo(() => {
+    const q = normalize(search.trim());
+    if (q === '') return [] as Array<{ entry: SearchableEntry; kind: 'title' | 'lyric' }>;
+    const titleHits: SearchableEntry[] = [];
+    const lyricHits: SearchableEntry[] = [];
+    for (const e of searchable) {
+      if (e.normTitle.includes(q)) titleHits.push(e);
+      else if (e.normLyrics.includes(q)) lyricHits.push(e);
+      if (titleHits.length + lyricHits.length >= 20) break;
+    }
+    return [
+      ...titleHits.slice(0, 8).map((entry) => ({ entry, kind: 'title' as const })),
+      ...lyricHits.slice(0, 8 - Math.min(titleHits.length, 8)).map((entry) => ({
+        entry,
+        kind: 'lyric' as const,
+      })),
+    ].slice(0, 8);
+  }, [searchable, search]);
 
   function addTag(t: string) {
     const next = new Set(selectedTags);
@@ -124,6 +191,68 @@ export default function MusicasList({ entries, base }: Props) {
   return (
     <div>
       <div className="mb-4 space-y-3">
+        <div className="relative">
+          <input
+            ref={searchInputRef}
+            type="search"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setSearchDropdownOpen(true);
+            }}
+            onFocus={() => setSearchDropdownOpen(true)}
+            onBlur={() => setTimeout(() => setSearchDropdownOpen(false), 150)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && searchSuggestions.length > 0) {
+                e.preventDefault();
+                window.location.href = `${base}musicas/${searchSuggestions[0].entry.slug}`;
+              } else if (e.key === 'Escape') {
+                setSearchDropdownOpen(false);
+              }
+            }}
+            placeholder="Buscar por nome da música ou trecho da letra…"
+            className="w-full border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800"
+            aria-label="Buscar música"
+          />
+          {searchDropdownOpen && searchSuggestions.length > 0 && (
+            <ul
+              className="absolute z-20 mt-1 w-full bg-white dark:bg-gray-800 border rounded shadow-lg max-h-80 overflow-auto"
+              role="listbox"
+            >
+              {searchSuggestions.map(({ entry, kind }) => {
+                const snippet =
+                  kind === 'lyric' ? findLyricSnippet(entry, normalize(search.trim())) : null;
+                return (
+                  <li key={entry.slug} role="option">
+                    <a
+                      href={`${base}musicas/${entry.slug}`}
+                      onMouseDown={(e) => e.preventDefault()}
+                      className="block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <div className="font-semibold uppercase">
+                        {entry.hinarioNum && `HINO ${entry.hinarioNum} – `}
+                        {entry.title}
+                      </div>
+                      {entry.artist && (
+                        <div className="text-xs text-gray-500">{entry.artist}</div>
+                      )}
+                      {snippet && (
+                        <div className="text-xs text-gray-500 italic mt-1 truncate">
+                          …{snippet.before}
+                          <mark className="bg-yellow-200 dark:bg-yellow-800 text-inherit rounded px-0.5">
+                            {snippet.match}
+                          </mark>
+                          {snippet.after}…
+                        </div>
+                      )}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
         <div>
           <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">
             Categoria
