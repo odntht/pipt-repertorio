@@ -91,11 +91,8 @@ function findLyricSnippet(
 export default function MusicasList({ entries, base }: Props) {
   const [selectedSection, setSelectedSection] = useState<Section | null>(null);
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
-  const [tagQuery, setTagQuery] = useState('');
-  const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [searchDropdownOpen, setSearchDropdownOpen] = useState(false);
-  const tagInputRef = useRef<HTMLInputElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const searchable = useMemo<SearchableEntry[]>(
@@ -143,10 +140,22 @@ export default function MusicasList({ entries, base }: Props) {
     });
   }, [searchable, selectedSection, selectedTags, search]);
 
-  // Sugestões do autocomplete: até 8 primeiros hits, títulos antes de letras.
-  const searchSuggestions = useMemo(() => {
+  // Sugestões unificadas: temas + títulos + trechos de letra na mesma dropdown.
+  type Suggestion =
+    | { kind: 'tag'; tag: string; tagCount: number }
+    | { kind: 'title' | 'lyric'; entry: SearchableEntry };
+  const searchSuggestions = useMemo<Suggestion[]>(() => {
     const q = normalize(search.trim());
-    if (q === '') return [] as Array<{ entry: SearchableEntry; kind: 'title' | 'lyric' }>;
+    if (q === '') return [];
+    const MAX = 8;
+    const tagMatches: Suggestion[] = allTags
+      .filter(([tag]) => !selectedTags.has(tag))
+      .filter(
+        ([tag]) =>
+          normalize(tag).includes(q) || normalize(prettyTag(tag)).includes(q),
+      )
+      .slice(0, 3)
+      .map(([tag, count]) => ({ kind: 'tag', tag, tagCount: count }));
     const titleHits: SearchableEntry[] = [];
     const lyricHits: SearchableEntry[] = [];
     for (const e of searchable) {
@@ -154,22 +163,22 @@ export default function MusicasList({ entries, base }: Props) {
       else if (e.normLyrics.includes(q)) lyricHits.push(e);
       if (titleHits.length + lyricHits.length >= 20) break;
     }
+    const remaining = MAX - tagMatches.length;
+    const titleSlice = titleHits.slice(0, remaining);
+    const lyricSlice = lyricHits.slice(0, Math.max(0, remaining - titleSlice.length));
     return [
-      ...titleHits.slice(0, 8).map((entry) => ({ entry, kind: 'title' as const })),
-      ...lyricHits.slice(0, 8 - Math.min(titleHits.length, 8)).map((entry) => ({
-        entry,
-        kind: 'lyric' as const,
-      })),
-    ].slice(0, 8);
-  }, [searchable, search]);
+      ...tagMatches,
+      ...titleSlice.map((entry) => ({ kind: 'title' as const, entry })),
+      ...lyricSlice.map((entry) => ({ kind: 'lyric' as const, entry })),
+    ];
+  }, [searchable, search, allTags, selectedTags]);
 
   function addTag(t: string) {
     const next = new Set(selectedTags);
     next.add(t);
     setSelectedTags(next);
-    setTagQuery('');
-    setTagDropdownOpen(false);
-    tagInputRef.current?.focus();
+    setSearchDropdownOpen(false);
+    searchInputRef.current?.focus();
   }
 
   function removeTag(t: string) {
@@ -177,14 +186,6 @@ export default function MusicasList({ entries, base }: Props) {
     next.delete(t);
     setSelectedTags(next);
   }
-
-  const tagSuggestions = useMemo(() => {
-    const q = normalize(tagQuery.trim());
-    return allTags
-      .filter(([tag]) => !selectedTags.has(tag))
-      .filter(([tag]) => (q === '' ? true : normalize(tag).includes(q)))
-      .slice(0, 12);
-  }, [allTags, selectedTags, tagQuery]);
 
   const sections: Section[] = ['congregacional', 'hinario', 'infantil', 'inadequada'];
 
@@ -205,12 +206,18 @@ export default function MusicasList({ entries, base }: Props) {
             onKeyDown={(e) => {
               if (e.key === 'Enter' && searchSuggestions.length > 0) {
                 e.preventDefault();
-                window.location.href = `${base}musicas/${searchSuggestions[0].entry.slug}`;
+                const first = searchSuggestions[0];
+                if (first.kind === 'tag') {
+                  addTag(first.tag);
+                  setSearch('');
+                } else {
+                  window.location.href = `${base}musicas/${first.entry.slug}`;
+                }
               } else if (e.key === 'Escape') {
                 setSearchDropdownOpen(false);
               }
             }}
-            placeholder="Buscar por nome da música ou trecho da letra…"
+            placeholder="Buscar por nome, trecho ou tema…"
             className="w-full border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800"
             aria-label="Buscar música"
           />
@@ -219,7 +226,29 @@ export default function MusicasList({ entries, base }: Props) {
               className="absolute z-20 mt-1 w-full bg-white dark:bg-gray-800 border rounded shadow-lg max-h-80 overflow-auto"
               role="listbox"
             >
-              {searchSuggestions.map(({ entry, kind }) => {
+              {searchSuggestions.map((sug) => {
+                if (sug.kind === 'tag') {
+                  return (
+                    <li key={`tag-${sug.tag}`} role="option">
+                      <button
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => {
+                          addTag(sug.tag);
+                          setSearch('');
+                        }}
+                        className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-mmu-green text-white">
+                          Tema
+                        </span>
+                        <span className="flex-1">{prettyTag(sug.tag)}</span>
+                        <span className="text-xs text-gray-500">{sug.tagCount}</span>
+                      </button>
+                    </li>
+                  );
+                }
+                const { entry, kind } = sug;
                 const snippet =
                   kind === 'lyric' ? findLyricSnippet(entry, normalize(search.trim())) : null;
                 return (
@@ -279,81 +308,35 @@ export default function MusicasList({ entries, base }: Props) {
           </div>
         </div>
 
-        {allTags.length > 0 && (
+        {selectedTags.size > 0 && (
           <div>
             <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">
               Temas
             </h2>
-            <div className="relative">
-              <input
-                ref={tagInputRef}
-                type="text"
-                value={tagQuery}
-                onChange={(e) => {
-                  setTagQuery(e.target.value);
-                  setTagDropdownOpen(true);
-                }}
-                onFocus={() => setTagDropdownOpen(true)}
-                onBlur={() => setTimeout(() => setTagDropdownOpen(false), 150)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && tagSuggestions.length > 0) {
-                    e.preventDefault();
-                    addTag(tagSuggestions[0][0]);
-                  } else if (e.key === 'Escape') {
-                    setTagDropdownOpen(false);
-                  }
-                }}
-                placeholder="Buscar tema…"
-                className="w-full max-w-md border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800"
-                aria-label="Filtrar por tema"
-              />
-              {tagDropdownOpen && tagSuggestions.length > 0 && (
-                <ul
-                  className="absolute z-10 mt-1 w-full max-w-md bg-white dark:bg-gray-800 border rounded shadow-lg max-h-64 overflow-auto"
-                  role="listbox"
+            <div className="flex flex-wrap gap-2">
+              {[...selectedTags].map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-mmu-green text-white"
                 >
-                  {tagSuggestions.map(([tag, count]) => (
-                    <li key={tag} role="option">
-                      <button
-                        type="button"
-                        onMouseDown={(e) => e.preventDefault()}
-                        onClick={() => addTag(tag)}
-                        className="flex justify-between w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <span>{prettyTag(tag)}</span>
-                        <span className="text-xs text-gray-500">{count}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-            {selectedTags.size > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {[...selectedTags].map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-mmu-green text-white"
+                  {prettyTag(tag)}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    aria-label={`Remover ${tag}`}
+                    className="hover:opacity-70"
                   >
-                    {prettyTag(tag)}
-                    <button
-                      type="button"
-                      onClick={() => removeTag(tag)}
-                      aria-label={`Remover ${tag}`}
-                      className="hover:opacity-70"
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-                <button
-                  onClick={() => setSelectedTags(new Set())}
-                  className="text-xs text-gray-500 hover:underline"
-                >
-                  limpar todos
-                </button>
-              </div>
-            )}
+                    ×
+                  </button>
+                </span>
+              ))}
+              <button
+                onClick={() => setSelectedTags(new Set())}
+                className="text-xs text-gray-500 hover:underline"
+              >
+                limpar todos
+              </button>
+            </div>
           </div>
         )}
       </div>
