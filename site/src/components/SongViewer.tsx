@@ -8,6 +8,12 @@ interface Props {
   availableToms: string[];
   slug: string;
   base: string;
+  /**
+   * Título sem o tom (ex.: "HINO 108 – Aflição E Paz (Aline Barros)").
+   * O tom vem do estado dinâmico (`targetKey`) e é concatenado no render,
+   * refletindo transposição do usuário.
+   */
+  titleBase: string;
 }
 
 const NOTES_SHARP = [
@@ -45,7 +51,7 @@ function formatKey(rootIdx: number, isMinor: boolean, notation: Notation): strin
 // Resto vira uma linha em branco (mantém "duas linhas de espaço" entre seções).
 const SHOW_COMMENT_RE = /^(refr[ãa]o|introdu[çc][ãa]o|intro|coro|solo)$/i;
 
-export default function SongViewer({ song, availableToms, slug, base }: Props) {
+export default function SongViewer({ song, availableToms, slug, base, titleBase }: Props) {
   const initial = parseKeyToState(song.metadata.key);
   const [rootIdx, setRootIdx] = useState<number>(initial.rootIdx);
   const [isMinor, setIsMinor] = useState<boolean>(initial.isMinor);
@@ -294,6 +300,13 @@ export default function SongViewer({ song, availableToms, slug, base }: Props) {
           ))}
         </div>
       )}
+
+      <h1
+        className="song-title text-xl md:text-2xl font-bold uppercase mb-4"
+        style={{ fontFamily: 'var(--font-mono, monospace)' }}
+      >
+        {titleBase} – {targetKey}
+      </h1>
 
       <div
         className="cifra-body"

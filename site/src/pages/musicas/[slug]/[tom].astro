@@ -31,46 +31,39 @@ const { song, availableToms, qualifiers } = Astro.props;
 const { slug, tom } = Astro.params;
 const base = import.meta.env.BASE_URL;
 
-const printParenBits = [
+const parenBits = [
   song.metadata.artist,
   ...qualifiers.map(prettyQualifier),
 ].filter(Boolean);
-const printParen = printParenBits.length ? ` (${printParenBits.join(', ')})` : '';
+const paren = parenBits.length ? ` (${parenBits.join(', ')})` : '';
 const hinoPrefix = song.metadata.hinarioNum ? `HINO ${song.metadata.hinarioNum} – ` : '';
-const displayTitle = `${hinoPrefix}${song.metadata.title}`;
-const printHeader = `${hinoPrefix}${song.metadata.title.toUpperCase()}${printParen} – ${song.metadata.key}`;
+// titleBase é o título sem o tom — SongViewer concatena o tom dinâmico
+// (que atualiza quando o usuário transpõe).
+const titleBase = `${hinoPrefix}${song.metadata.title}${paren}`;
+const browserTitle = `${titleBase} – ${song.metadata.key}`;
 ---
 
-<BaseLayout title={displayTitle}>
+<BaseLayout title={browserTitle}>
   <article>
-    <header class="mb-4 no-print">
-      <h1 class="text-2xl font-bold uppercase">{displayTitle}</h1>
-      <div class="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
-        {song.metadata.artist && <span>{song.metadata.artist}</span>}
-        {song.metadata.artist && <span>·</span>}
-        <SectionBadge section={song.metadata.section} />
-        {song.metadata.tags.length > 0 && (
-          <>
-            <span>·</span>
-            <span>{song.metadata.tags.join(', ')}</span>
-          </>
-        )}
-      </div>
+    <div class="mb-4 no-print flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+      <SectionBadge section={song.metadata.section} />
+      {song.metadata.tags.length > 0 && (
+        <>
+          <span>·</span>
+          <span>{song.metadata.tags.join(', ')}</span>
+        </>
+      )}
       {song.metadata.youtube && (
         <a
           href={song.metadata.youtube}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-block mt-2 text-sm text-mmu-green hover:underline no-print"
+          class="text-mmu-green hover:underline"
         >
           ▶ YouTube (referência) ↗
         </a>
       )}
-    </header>
-
-    <h1 class="print-only text-xl font-bold mb-4" style="font-family: monospace;">
-      {printHeader}
-    </h1>
+    </div>
 
     <SongViewer
       client:load
@@ -78,6 +71,7 @@ const printHeader = `${hinoPrefix}${song.metadata.title.toUpperCase()}${printPar
       availableToms={availableToms}
       slug={slug!}
       base={base}
+      titleBase={titleBase}
     />
 
     <div class="mt-4 no-print">
