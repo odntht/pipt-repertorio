@@ -34,23 +34,14 @@ export function semitonesBetween(from: string, to: string): number {
 }
 
 /**
- * Transpõe uma Song pro tom-alvo, mutando in-place os acordes das segments.
- * Preserva 100% dos metadados (sem passar por Formatter/roundtrip).
- *
- * @param notation — 'sharp' (padrão) usa `#` pras notas alteradas; 'flat' usa `b`.
- *                   Reflete o gosto do usuário: subir tom → sharp, descer → flat.
+ * Transpõe um único acorde por `delta` semitons, aplicando notação (# ou b).
+ * Exposto pra outros módulos (ex.: transposição do texto ChordPro cru).
  */
-export function transposeSong(
-  song: Song,
-  targetKey: string,
+export function transposeChordString(
+  chord: string,
+  delta: number,
   notation: 'sharp' | 'flat' = 'sharp',
-): Song {
-  const delta = semitonesBetween(song.metadata.key, targetKey);
-
-  // Conversão de acidentes:
-  //   sharp mode: b → # (e resolve Fb → E, Cb → B — enarmônicos raros)
-  //   flat mode:  # → b (e resolve E# → F, B# → C)
-  // Naturais nunca são convertidos (evita C → B#).
+): string {
   const SHARP_TO_FLAT: Record<string, string> = {
     'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb',
     'E#': 'F', 'B#': 'C',
@@ -63,33 +54,41 @@ export function transposeSong(
     const map = notation === 'flat' ? SHARP_TO_FLAT : FLAT_TO_SHARP_MAP;
     return chordStr.replace(/([A-G])(#|b)/g, (match) => map[match] ?? match);
   };
-
-  // Fallback: transpõe manualmente a raiz (e o baixo, se houver) usando regex.
-  // Usado quando ChordSheetJS não parseia o acorde — típico com "º" (dim raro).
-  const manualTranspose = (chord: string): string => {
-    return chord.replace(/([A-G])(#|b)?/g, (match) => {
+  const manualTranspose = (input: string): string => {
+    return input.replace(/([A-G])(#|b)?/g, (match) => {
       const idx = (NOTES_SHARP as readonly string[]).indexOf(normalizeRoot(match));
       if (idx === -1) return match;
       const newIdx = (idx + delta + 12) % 12;
       return NOTES_SHARP[newIdx];
     });
   };
+  try {
+    const parsed = (ChordSheetJS as any).Chord.parse(chord);
+    if (!parsed) return applyNotation(manualTranspose(chord));
+    const shifted = delta === 0 ? parsed : parsed.transpose(delta);
+    if (!shifted) return applyNotation(manualTranspose(chord));
+    const raw = (shifted as { toString: () => string }).toString();
+    return applyNotation(raw);
+  } catch {
+    return applyNotation(manualTranspose(chord));
+  }
+}
 
-  const transposeChord = (chord: string): string => {
-    try {
-      const parsed = (ChordSheetJS as any).Chord.parse(chord);
-      if (!parsed) {
-        // Fallback manual — garante que o acorde acompanha a transposição
-        return applyNotation(manualTranspose(chord));
-      }
-      const shifted = delta === 0 ? parsed : parsed.transpose(delta);
-      if (!shifted) return applyNotation(manualTranspose(chord));
-      const raw = (shifted as { toString: () => string }).toString();
-      return applyNotation(raw);
-    } catch {
-      return applyNotation(manualTranspose(chord));
-    }
-  };
+/**
+ * Transpõe uma Song pro tom-alvo, mutando in-place os acordes das segments.
+ * Preserva 100% dos metadados (sem passar por Formatter/roundtrip).
+ *
+ * @param notation — 'sharp' (padrão) usa `#` pras notas alteradas; 'flat' usa `b`.
+ *                   Reflete o gosto do usuário: subir tom → sharp, descer → flat.
+ */
+export function transposeSong(
+  song: Song,
+  targetKey: string,
+  notation: 'sharp' | 'flat' = 'sharp',
+): Song {
+  const delta = semitonesBetween(song.metadata.key, targetKey);
+  const transposeChord = (chord: string): string =>
+    transposeChordString(chord, delta, notation);
 
   if (delta === 0) {
     // Mesmo com delta 0, ainda queremos aplicar notação (ex: G# → Ab se flat)

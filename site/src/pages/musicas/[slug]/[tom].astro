@@ -18,7 +18,7 @@ export async function getStaticPaths() {
 }
 
 const { song, availableToms } = Astro.props;
-const { slug } = Astro.params;
+const { slug, tom } = Astro.params;
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -56,6 +56,25 @@ const base = import.meta.env.BASE_URL;
       slug={slug!}
       base={base}
     />
+
+    <div class="mt-4 no-print">
+      <button
+        id="new-version-btn"
+        type="button"
+        class="text-sm text-mmu-green hover:underline"
+      >
+        + Criar nova versão dessa música
+      </button>
+    </div>
+    <script is:inline define:vars={{ raw: song.raw, slug, tom, base }}>
+      document.getElementById('new-version-btn')?.addEventListener('click', () => {
+        sessionStorage.setItem(
+          'newVersion.source',
+          JSON.stringify({ raw, slug, tom }),
+        );
+        window.location.href = `${base}musicas/nova/`;
+      });
+    </script>
 
     {song.metadata.arrangements.length > 0 && (
       <section class="mt-8 border-t pt-4 no-print">

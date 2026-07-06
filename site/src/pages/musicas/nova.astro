@@ -1,0 +1,10 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import NewVersionEditor from '@/components/NewVersionEditor';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="Nova versão">
+  <NewVersionEditor client:load base={base} />
+</BaseLayout>
