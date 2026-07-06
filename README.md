@@ -1,6 +1,6 @@
 # PIPT Repertório
 
-Repositório e site do repertório musical do Ministério de Música da PIPT.
+Repositório e site do repertório musical do Ministério de Música da Primeira Igreja Presbiteriana de Taguatinga (PIPT).
 
 ## Estrutura
 
