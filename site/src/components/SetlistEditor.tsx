@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface SongOption {
   slug: string;
@@ -79,6 +79,40 @@ export default function SetlistEditor({ base, songs }: Props) {
   const [items, setItems] = useState<SetlistItem[]>([]);
   const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [editingFilename, setEditingFilename] = useState<string | null>(null);
+  const [hint, setHint] = useState<string | null>(null);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem('setlist.edit');
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored) as {
+        filename: string;
+        event: string;
+        date: string;
+        songs: Array<{
+          slug: string;
+          qualifier?: string;
+          tom: string;
+          notes?: string;
+        }>;
+      };
+      setEditingFilename(parsed.filename);
+      setEvent(parsed.event);
+      setDate(parsed.date);
+      setItems(
+        parsed.songs.map((s) => ({
+          slug: s.slug,
+          qualifier: s.qualifier ?? '',
+          tom: s.tom,
+          notes: s.notes ?? '',
+        })),
+      );
+      sessionStorage.removeItem('setlist.edit');
+    } catch {
+      // silencia — usuário volta pra novo em branco
+    }
+  }, []);
 
   const songByKey = useMemo(() => {
     const m = new Map<string, SongOption>();
@@ -150,13 +184,35 @@ export default function SetlistEditor({ base, songs }: Props) {
     return null;
   }
 
-  function handleSave() {
+  async function handleSave() {
     const err = validate();
     if (err) {
       setError(err);
+      setHint(null);
       return;
     }
     setError(null);
+    if (editingFilename) {
+      // Edit mode: GitHub não aceita prefill em URL de edit. Copia o YAML
+      // pro clipboard e abre a página de edit — usuário cola (Cmd+A → Cmd+V).
+      try {
+        await navigator.clipboard.writeText(yaml);
+        setHint(
+          `YAML copiado. Cole na aba do GitHub que abriu (Cmd+A pra selecionar tudo, depois Cmd+V).`,
+        );
+      } catch {
+        setHint(
+          `Copie o YAML manualmente do bloco acima e cole no editor do GitHub.`,
+        );
+      }
+      window.open(
+        `https://github.com/odntht/pipt-repertorio/edit/main/data/setlists/${editingFilename}`,
+        '_blank',
+        'noopener,noreferrer',
+      );
+      return;
+    }
+    // Create mode: usa o prefill de new file (funciona pra arquivos novos).
     const url =
       `${GITHUB_NEW_FILE}?filename=${encodeURIComponent(filename)}` +
       `&value=${encodeURIComponent(yaml)}`;
@@ -188,6 +244,13 @@ export default function SetlistEditor({ base, songs }: Props) {
 
   return (
     <div>
+      {editingFilename && (
+        <div className="mb-4 rounded border border-mmu-green bg-mmu-green/10 px-3 py-2 text-sm">
+          Editando <strong>{editingFilename}</strong>. Ao salvar, o YAML novo
+          é copiado pro clipboard e o GitHub abre no editor do arquivo — você
+          cola por cima do conteúdo antigo.
+        </div>
+      )}
       <div className="grid gap-3 mb-4 md:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
           <span>Evento</span>
@@ -355,13 +418,16 @@ export default function SetlistEditor({ base, songs }: Props) {
           {error}
         </p>
       )}
+      {hint && (
+        <p className="text-sm text-mmu-green mb-3">{hint}</p>
+      )}
 
       <div className="flex flex-wrap gap-3 items-center">
         <button
           onClick={handleSave}
           className="bg-mmu-green text-white px-4 py-2 rounded font-semibold hover:opacity-90"
         >
-          Salvar no GitHub ↗
+          {editingFilename ? 'Salvar edição ↗' : 'Salvar no GitHub ↗'}
         </button>
         <button
           onClick={handleDownload}

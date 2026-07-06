@@ -106,4 +106,40 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
       </li>
     ))}
   </ol>
+
+  <div class="mt-6 flex flex-wrap gap-2 no-print">
+    <button
+      id="edit-btn"
+      type="button"
+      class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+    >
+      Editar
+    </button>
+    <button
+      id="delete-btn"
+      type="button"
+      class="text-sm text-red-600 border border-red-300 dark:border-red-700 rounded px-3 py-2 hover:bg-red-50 dark:hover:bg-red-950"
+    >
+      Deletar
+    </button>
+  </div>
+  <script is:inline define:vars={{ setlist, base }}>
+    document.getElementById('edit-btn')?.addEventListener('click', () => {
+      sessionStorage.setItem('setlist.edit', JSON.stringify(setlist));
+      window.location.href = `${base}setlists/novo/`;
+    });
+    document.getElementById('delete-btn')?.addEventListener('click', () => {
+      const ok = confirm(
+        `Deletar a setlist "${setlist.event}" (${setlist.date})?\n\n` +
+        `Vamos abrir o GitHub pra você confirmar a exclusão do arquivo ` +
+        `data/setlists/${setlist.filename}.`,
+      );
+      if (!ok) return;
+      window.open(
+        `https://github.com/odntht/pipt-repertorio/delete/main/data/setlists/${setlist.filename}`,
+        '_blank',
+        'noopener,noreferrer',
+      );
+    });
+  </script>
 </BaseLayout>
