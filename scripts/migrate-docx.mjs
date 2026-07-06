@@ -213,10 +213,19 @@ const SECTION_LABEL_RE =
   /^(refr[ãa]o|coro|ponte|solo|final|fim|(primeira|segunda|terceira|quarta|quinta)\s+parte|estrofe(\s+\d+)?|verso(\s+\d+)?|instrumental|introdu[çc][ãa]o|vocal|tag(\s+final)?)$/i;
 
 // Uma linha é "chord-only" se todos os tokens não-vazios são acordes válidos.
-// Aceita sufixos comuns (m, M, maj, min, dim, aug, sus, °, º), extensões
+// Aceita sufixos comuns (m, M, maj, min, dim, aug, sus, °, º), o dash `-`
+// usado em alguns hinários como sinônimo de menor (E- = Em), extensões
 // numéricas, parênteses opcionais e baixo via `/`.
 const CHORD_TOKEN_RE =
-  /^[A-G][#b]?(?:[mM]|maj|min|dim|aug|sus|[°º0-9])*(?:\([^)]*\))?(?:\/[A-G][#b]?(?:[mM]|[°º0-9])*)?$/;
+  /^[A-G][#b]?(?:[mM\-]|maj|min|dim|aug|sus|[°º0-9])*(?:\([^)]*\))?(?:\/[A-G][#b]?(?:[mM\-]|[°º0-9])*)?$/;
+
+// Normaliza notação de menor "-" → "m" tanto na raiz quanto no baixo.
+// Ex.: "E-" → "Em", "C#-7" → "C#m7", "A/B-" → "A/Bm".
+function normalizeChord(chord) {
+  return chord
+    .replace(/^([A-G][#b]?)-/, '$1m')
+    .replace(/\/([A-G][#b]?)-/, '/$1m');
+}
 function isChordOnlyLine(line) {
   const trimmed = line.trim();
   if (!trimmed) return false;
@@ -521,7 +530,7 @@ function mergeChordOverLyric(chordLine, lyricLine) {
   const lastCol = tokens[tokens.length - 1].col;
   if (lastCol > padded.length) padded = padded.padEnd(lastCol, ' ');
   for (const { col, chord } of tokens) {
-    out += padded.slice(cursor, col) + `[${chord}]`;
+    out += padded.slice(cursor, col) + `[${normalizeChord(chord)}]`;
     cursor = col;
   }
   out += padded.slice(cursor);
@@ -533,7 +542,7 @@ function chordLineToChordPro(chordLine) {
   const parts = [];
   const re = /\S+/g;
   let m;
-  while ((m = re.exec(chordLine)) !== null) parts.push(`[${m[0]}]`);
+  while ((m = re.exec(chordLine)) !== null) parts.push(`[${normalizeChord(m[0])}]`);
   return parts.join(' ');
 }
 
@@ -583,7 +592,7 @@ function bodyToChordPro(bodyLines) {
         if (tokens.every((tok) => CHORD_TOKEN_RE.test(tok))) {
           const { tokens: all, endIdx } = absorbContinuation(tokens, i + 1);
           out.push('{comment: Intro}');
-          out.push(all.map((tok) => `[${tok}]`).join(' '));
+          out.push(all.map((tok) => `[${normalizeChord(tok)}]`).join(' '));
           i = endIdx;
         } else {
           out.push(`{comment: ${t}}`);
