@@ -6,8 +6,7 @@
 {added: 2026-07-06}
 
 {comment: Intro}
-[B9] [D#m9] [G#m] [A#m7] [D#m9]
-[B9] [D#m9] [G#m] [F#] [C#/F] [D#] [D] [C#]
+[B9] [D#m9] [G#m] [A#m7] [D#m9] [B9] [D#m9] [G#m] [F#] [C#/F] [D#] [D] [C#]
 
 Cada d[F#]ia que se passa, são [B9/C#]lutas sem cessar
 Que as ve[F#]zes você pe[F#/A#]nsa em desist[B]ir,[F#/A#] mas Deus [G#m]está contigo[C#/F]

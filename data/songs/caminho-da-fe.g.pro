@@ -6,8 +6,7 @@
 {added: 2026-07-06}
 
 {comment: Intro}
-[G9] [Bm9] [Em] [F#m7] [Bm9]
-[G9] [Bm9] [Em] [D] [A/C#] [B] [Bb] [A]
+[G9] [Bm9] [Em] [F#m7] [Bm9] [G9] [Bm9] [Em] [D] [A/C#] [B] [Bb] [A]
 
 Cada d[D]ia que se passa, são[G9/A] lutas sem cessar
 Que as ve[D]zes você p[D/F#]ensa em desi[G]sti[D/F#]r, mas De[Em]us está con[A/C#]tigo

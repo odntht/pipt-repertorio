@@ -549,22 +549,42 @@ function bodyToChordPro(bodyLines) {
 
     if (t === '') { out.push(''); i++; continue; }
     if (/^-{3,}$/.test(t)) { out.push(''); i++; continue; }
+    // Absorve linhas chord-only subsequentes (continuação visual do docx que
+    // foi quebrado em várias linhas por largura) e retorna todos os acordes
+    // como um único array. Consome as linhas absorvidas.
+    const absorbContinuation = (initialTokens, startIdx) => {
+      const all = [...initialTokens];
+      let j = startIdx;
+      while (j < bodyLines.length) {
+        const nx = bodyLines[j];
+        const nxt = nx.trim();
+        if (nxt === '' || /^-{3,}$/.test(nxt)) break;
+        if (!isChordOnlyLine(nx)) break;
+        all.push(...nxt.split(/\s+/));
+        j++;
+      }
+      return { tokens: all, endIdx: j };
+    };
+
     // "Intro: X Y Z" — extrai o rótulo como comment e os acordes como chord line.
     const intro = t.match(/^Intro[:\-]\s*(.*)$/i);
     if (intro) {
       const rest = intro[1].trim();
       if (rest === '') {
         out.push('{comment: Intro}');
+        i++;
       } else {
         const tokens = rest.split(/\s+/);
         if (tokens.every((tok) => CHORD_TOKEN_RE.test(tok))) {
+          const { tokens: all, endIdx } = absorbContinuation(tokens, i + 1);
           out.push('{comment: Intro}');
-          out.push(tokens.map((tok) => `[${tok}]`).join(' '));
+          out.push(all.map((tok) => `[${tok}]`).join(' '));
+          i = endIdx;
         } else {
           out.push(`{comment: ${t}}`);
+          i++;
         }
       }
-      i++;
       continue;
     }
     // Linha só com `[Label]` (comum: `[Intro]`, `[Refrão]`, `[Ponte]`).
@@ -580,9 +600,10 @@ function bodyToChordPro(bodyLines) {
       const rest = labelChords[2].trim();
       const tokens = rest.split(/\s+/);
       if (tokens.every((tok) => CHORD_TOKEN_RE.test(tok))) {
+        const { tokens: all, endIdx } = absorbContinuation(tokens, i + 1);
         out.push(`{comment: ${labelChords[1]}}`);
-        out.push(tokens.map((tok) => `[${tok}]`).join(' '));
-        i++;
+        out.push(all.map((tok) => `[${tok}]`).join(' '));
+        i = endIdx;
         continue;
       }
     }
