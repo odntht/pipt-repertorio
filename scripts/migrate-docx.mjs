@@ -30,12 +30,12 @@ function parseArgs(argv) {
   }
   if (!args.docx) {
     console.error(
-      'Uso: node scripts/migrate-docx.mjs [--phase 0|1] --docx <caminho.docx>',
+      'Uso: node scripts/migrate-docx.mjs [--phase 0|1|2] --docx <caminho.docx>',
     );
     process.exit(2);
   }
-  if (args.phase !== '0' && args.phase !== '1') {
-    console.error(`--phase inválida: ${args.phase} (esperado 0 ou 1)`);
+  if (args.phase !== '0' && args.phase !== '1' && args.phase !== '2') {
+    console.error(`--phase inválida: ${args.phase} (esperado 0, 1 ou 2)`);
     process.exit(2);
   }
   return args;
@@ -760,26 +760,54 @@ function runPhase0({ songs, canary, docxPath }) {
 }
 
 function runPhase1({ canary }) {
+  writeSongsBatch(canary, 'Fase 1 — batch-canário');
+}
+
+function runPhase2({ songs }) {
+  // Ordem canônica: seções em ordem do design → alfabético por título
+  // dentro de cada seção.
+  const SECTION_ORDER = {
+    congregacional: 0, hinario: 1, infantil: 2, inadequada: 3,
+  };
+  const sortKey = (t) =>
+    t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const sorted = songs.slice().sort((a, b) => {
+    const s = SECTION_ORDER[a.section] - SECTION_ORDER[b.section];
+    if (s !== 0) return s;
+    return sortKey(a.header.title).localeCompare(sortKey(b.header.title), 'pt-BR');
+  });
+  writeSongsBatch(sorted, 'Fase 2 — corpus completo');
+}
+
+function writeSongsBatch(songs, label) {
   const outDir = resolve(REPO_ROOT, 'data/songs');
   mkdirSync(outDir, { recursive: true });
   const written = [];
   const skipped = [];
-  for (const song of canary) {
-    const filename = filenameFor(song);
+  const collisions = new Map();
+  for (const song of songs) {
+    let filename = filenameFor(song);
+    // Colisão dentro da mesma batch (mesmo slug.qualifier.tom): sufixa .v2, .v3.
+    const seen = collisions.get(filename) ?? 0;
+    if (seen > 0) {
+      const parts = filename.split('.');
+      const tom = parts[parts.length - 2];
+      const rest = parts.slice(0, -2).concat([`v${seen + 1}`, tom, 'pro']);
+      filename = rest.join('.');
+    }
+    collisions.set(filename, (collisions.get(filename) ?? 0) + 1);
     const target = resolve(outDir, filename);
     if (existsSync(target)) {
-      skipped.push({ filename, reason: 'já existe' });
+      skipped.push({ filename });
       continue;
     }
     const content = buildProContent(song, song.features.urls);
     writeFileSync(target, content);
     written.push(filename);
   }
-  console.error(`Fase 1 — batch-canário:`);
+  console.error(`${label}:`);
   console.error(`  ${written.length} arquivos escritos em data/songs/`);
   console.error(`  ${skipped.length} pulados (já existiam)`);
-  for (const w of written) console.error(`    + ${w}`);
-  for (const s of skipped) console.error(`    ~ ${s.filename} (${s.reason})`);
 }
 
 function main() {
@@ -798,7 +826,8 @@ function main() {
   const canary = pickCanaryBatch(songs);
 
   if (args.phase === '0') runPhase0({ songs, canary, docxPath });
-  else runPhase1({ canary });
+  else if (args.phase === '1') runPhase1({ canary });
+  else runPhase2({ songs });
 }
 
 main();
