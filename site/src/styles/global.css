@@ -51,8 +51,17 @@ body {
 /* Elementos só visíveis em print/PDF (header docx-style da música, etc). */
 .print-only { display: none; }
 
-/* Print/PDF: forçar cores, ocultar chrome do site (mas manter conteúdo da página). */
+/* Print/PDF: fundo branco, texto preto, acordes laranja e negrito. */
 @media print {
+  /* Preserva cores dos elementos (não deixa o browser strip pra economia
+     de tinta) e ignora o dark mode do OS. */
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+    color-scheme: light !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
   .no-print,
   .site-header,
   body > nav,
@@ -69,14 +78,19 @@ body {
   .cifra-body {
     color: #000 !important;
     background: #fff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
     /* Não quebrar imediatamente antes da cifra — mantém colada ao header */
     page-break-before: avoid;
     break-before: avoid-page;
     /* Deliberadamente sem page-break-inside: avoid — cifras longas quebram
        naturalmente entre páginas em vez de pularem inteiras */
   }
+  /* Acordes: mantém a cor laranja e negrito da tela */
   .cifra-chord {
-    color: #000 !important;
-    font-weight: bold;
+    color: #f97316 !important;
+    font-weight: 700 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
