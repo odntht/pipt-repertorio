@@ -61,11 +61,17 @@ body {
   }
   .print-only { display: block !important; }
   /* Header docx-style não pode ficar sozinho no final da página */
-  .print-only { page-break-after: avoid; break-after: avoid; }
+  .print-only {
+    page-break-after: avoid;
+    break-after: avoid-page;
+  }
   .cifra-body {
     color: #000 !important;
     background: #fff !important;
-    /* deliberadamente sem page-break-inside: avoid — cifras longas quebram
+    /* Não quebrar imediatamente antes da cifra — mantém colada ao header */
+    page-break-before: avoid;
+    break-before: avoid-page;
+    /* Deliberadamente sem page-break-inside: avoid — cifras longas quebram
        naturalmente entre páginas em vez de pularem inteiras */
   }
   .cifra-chord {
