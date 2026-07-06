@@ -12,3 +12,6 @@ dist/
 .env
 .env.local
 demo/
+
+# Claude Code — overrides pessoais
+.claude/settings.local.json

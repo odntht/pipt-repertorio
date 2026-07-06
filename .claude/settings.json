@@ -1,0 +1,11 @@
+{
+  "enabledPlugins": {
+    "superpowers@ws-claude-marketplace": false,
+    "episodic-memory@ws-claude-marketplace": false,
+    "double-shot-latte@ws-claude-marketplace": false,
+    "graphite@ws-claude-marketplace": false,
+    "magic-site-upload@ws-claude-marketplace": false,
+    "task-orchestration@ws-claude-marketplace": false,
+    "code-review-team@ws-claude-marketplace": false
+  }
+}
