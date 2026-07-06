@@ -24,6 +24,15 @@ const SECTION_LABEL: Record<Section, string> = {
   inadequada: 'Inadequada',
 };
 
+// Ordem canônica das categorias — bate com o design (§4.5) e com a estrutura
+// do docx original: 1ª Congregacional, 2ª Hinário, 3ª Infantil, 4ª Inadequada.
+const SECTION_ORDER: Record<Section, number> = {
+  congregacional: 0,
+  hinario: 1,
+  infantil: 2,
+  inadequada: 3,
+};
+
 const SECTION_BG: Record<Section, string> = {
   congregacional: 'bg-section-congregacional',
   hinario: 'bg-section-hinario',
@@ -66,7 +75,11 @@ export default function MusicasList({ entries, base }: Props) {
     if (selectedTags.size > 0) {
       out = out.filter((e) => e.tags.some((t) => selectedTags.has(t)));
     }
-    return out.slice().sort((a, b) => sortKey(a).localeCompare(sortKey(b), 'pt-BR'));
+    return out.slice().sort((a, b) => {
+      const bySection = SECTION_ORDER[a.section] - SECTION_ORDER[b.section];
+      if (bySection !== 0) return bySection;
+      return sortKey(a).localeCompare(sortKey(b), 'pt-BR');
+    });
   }, [entries, selectedSection, selectedTags]);
 
   function toggleTag(t: string) {
