@@ -36,7 +36,7 @@ npm run dev       # sobe dev server em http://localhost:4321
 
 ```bash
 cd site
-npm test          # roda Vitest (142 testes)
+npm test          # roda Vitest
 npx astro check   # type-check
 ```
 

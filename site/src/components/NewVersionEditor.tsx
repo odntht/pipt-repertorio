@@ -4,6 +4,7 @@ import { renderChordsOverLyrics } from '@/lib/chordpro/render';
 import {
   transposeRawChordPro,
   setHeader,
+  readHeader,
 } from '@/lib/chordpro/transpose-raw';
 import { slugifyTom } from '@/lib/chordpro/slugify-tom';
 
@@ -43,11 +44,6 @@ function normalizeTargetToNotation(
 ): string {
   if (notation === 'flat') return SHARP_TO_FLAT[key] ?? key;
   return FLAT_TO_SHARP[key] ?? key;
-}
-
-function readHeader(raw: string, name: string): string {
-  const m = raw.match(new RegExp(`^\\{${name}:\\s*([^}]*)\\}`, 'm'));
-  return m ? m[1].trim() : '';
 }
 
 export default function NewVersionEditor({ base }: Props) {
