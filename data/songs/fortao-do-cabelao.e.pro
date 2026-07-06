@@ -6,7 +6,8 @@
 {added: 2026-07-06}
 
 
-{comment: Intro: E   A   E   C#m7   B}
+{comment: Intro}
+[E] [A] [E] [C#m7] [B]
 
 [E]Sansão, o fortão do cabelão
 M[A]as que tinha a cabeça do tamanho de um feijão (2X)

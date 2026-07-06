@@ -549,12 +549,32 @@ function bodyToChordPro(bodyLines) {
 
     if (t === '') { out.push(''); i++; continue; }
     if (/^-{3,}$/.test(t)) { out.push(''); i++; continue; }
-    if (/^Intro[:\-]/i.test(t)) {
-      out.push(`{comment: ${t}}`);
+    // "Intro: X Y Z" — extrai o rótulo como comment e os acordes como chord line.
+    const intro = t.match(/^Intro[:\-]\s*(.*)$/i);
+    if (intro) {
+      const rest = intro[1].trim();
+      if (rest === '') {
+        out.push('{comment: Intro}');
+      } else {
+        const tokens = rest.split(/\s+/);
+        if (tokens.every((tok) => CHORD_TOKEN_RE.test(tok))) {
+          out.push('{comment: Intro}');
+          out.push(tokens.map((tok) => `[${tok}]`).join(' '));
+        } else {
+          out.push(`{comment: ${t}}`);
+        }
+      }
       i++;
       continue;
     }
-    // Padrão `[Label] chord1 chord2 ...` (comum em hinário).
+    // Linha só com `[Label]` (comum: `[Intro]`, `[Refrão]`, `[Ponte]`).
+    const bareLabel = t.match(/^\[([^\]]+)\]\s*$/);
+    if (bareLabel) {
+      out.push(`{comment: ${bareLabel[1]}}`);
+      i++;
+      continue;
+    }
+    // Padrão `[Label] chord chord ...` (label seguido de acordes na mesma linha).
     const labelChords = t.match(/^\[([^\]]+)\]\s+(.+)$/);
     if (labelChords) {
       const rest = labelChords[2].trim();

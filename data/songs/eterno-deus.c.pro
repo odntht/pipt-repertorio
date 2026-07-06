@@ -6,7 +6,7 @@
 {added: 2026-07-06}
 
 
-[Intro]
+{comment: Intro}
 
 [C/E]Oh, oh[F], oh,[G]...[Am]..oh [C/E]     [F]  [C/E]     [Dm]
 

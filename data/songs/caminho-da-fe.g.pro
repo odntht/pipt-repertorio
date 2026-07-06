@@ -5,7 +5,8 @@
 {status: em-revisao}
 {added: 2026-07-06}
 
-{comment: Intro: G9  Bm9  Em  F#m7  Bm9}
+{comment: Intro}
+[G9] [Bm9] [Em] [F#m7] [Bm9]
 [G9] [Bm9] [Em] [D] [A/C#] [B] [Bb] [A]
 
 Cada d[D]ia que se passa, são[G9/A] lutas sem cessar
