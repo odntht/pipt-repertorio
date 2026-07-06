@@ -1,0 +1,23 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LocalSetlistView from '@/components/LocalSetlistView';
+import { loadAllSongs } from '@/lib/songs/load';
+
+const base = import.meta.env.BASE_URL;
+const rawSongs = loadAllSongs();
+
+// Passa metadata compacta pro resolvedor client-side. Chave completa
+// (slug + qualifier + tom) pra bater com o item exato da setlist.
+const songs = rawSongs.map((s) => ({
+  slug: s.slug,
+  qualifier: s.qualifiers.join('.'),
+  tom: s.tom,
+  title: s.song.metadata.title,
+  hinarioNum: s.song.metadata.hinarioNum,
+  artist: s.song.metadata.artist,
+}));
+---
+
+<BaseLayout title="Setlist">
+  <LocalSetlistView client:load base={base} songs={songs} />
+</BaseLayout>

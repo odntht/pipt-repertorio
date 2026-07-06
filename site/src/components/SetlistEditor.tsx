@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { saveLocalSetlist } from '@/lib/setlists/local';
 
 interface SongOption {
   slug: string;
@@ -80,6 +81,7 @@ export default function SetlistEditor({ base, songs }: Props) {
   const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [editingFilename, setEditingFilename] = useState<string | null>(null);
+  const [editingLocalId, setEditingLocalId] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
 
   useEffect(() => {
@@ -87,7 +89,9 @@ export default function SetlistEditor({ base, songs }: Props) {
     if (!stored) return;
     try {
       const parsed = JSON.parse(stored) as {
-        filename: string;
+        source?: 'committed' | 'local';
+        filename?: string;
+        id?: string;
         event: string;
         date: string;
         songs: Array<{
@@ -97,7 +101,11 @@ export default function SetlistEditor({ base, songs }: Props) {
           notes?: string;
         }>;
       };
-      setEditingFilename(parsed.filename);
+      if (parsed.source === 'local' && parsed.id) {
+        setEditingLocalId(parsed.id);
+      } else if (parsed.filename) {
+        setEditingFilename(parsed.filename);
+      }
       setEvent(parsed.event);
       setDate(parsed.date);
       setItems(
@@ -184,6 +192,28 @@ export default function SetlistEditor({ base, songs }: Props) {
     return null;
   }
 
+  function handleSaveLocal() {
+    const err = validate();
+    if (err) {
+      setError(err);
+      setHint(null);
+      return;
+    }
+    setError(null);
+    const record = saveLocalSetlist({
+      id: editingLocalId ?? undefined,
+      event,
+      date,
+      songs: items.map((it) => ({
+        slug: it.slug,
+        qualifier: it.qualifier || undefined,
+        tom: it.tom.toLowerCase(),
+        notes: it.notes.trim() || undefined,
+      })),
+    });
+    window.location.href = `${base}setlists/local/?id=${encodeURIComponent(record.id)}`;
+  }
+
   async function handleSave() {
     const err = validate();
     if (err) {
@@ -246,11 +276,22 @@ export default function SetlistEditor({ base, songs }: Props) {
     <div>
       {editingFilename && (
         <div className="mb-4 rounded border border-mmu-green bg-mmu-green/10 px-3 py-2 text-sm">
-          Editando <strong>{editingFilename}</strong>. Ao salvar, o YAML novo
-          é copiado pro clipboard e o GitHub abre no editor do arquivo — você
-          cola por cima do conteúdo antigo.
+          Editando <strong>{editingFilename}</strong>. Ao salvar no GitHub, o
+          YAML novo é copiado pro clipboard e a página de edit do arquivo abre
+          — você cola por cima do conteúdo antigo.
         </div>
       )}
+      {editingLocalId && (
+        <div className="mb-4 rounded border border-mmu-green bg-mmu-green/10 px-3 py-2 text-sm">
+          Editando setlist salva no seu navegador. Alterações ficam só neste
+          dispositivo até você publicar no GitHub.
+        </div>
+      )}
+      <p className="mb-4 text-xs text-gray-500 dark:text-gray-400">
+        <strong>Salvar no navegador</strong> guarda a setlist só neste
+        dispositivo (não precisa de conta GitHub). <strong>Publicar no
+        GitHub</strong> deixa disponível pra todo mundo depois do commit.
+      </p>
       <div className="grid gap-3 mb-4 md:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
           <span>Evento</span>
@@ -424,14 +465,20 @@ export default function SetlistEditor({ base, songs }: Props) {
 
       <div className="flex flex-wrap gap-3 items-center">
         <button
-          onClick={handleSave}
+          onClick={handleSaveLocal}
           className="bg-mmu-green text-white px-4 py-2 rounded font-semibold hover:opacity-90"
         >
-          {editingFilename ? 'Salvar edição ↗' : 'Salvar no GitHub ↗'}
+          {editingLocalId ? 'Atualizar (navegador)' : 'Salvar no navegador'}
+        </button>
+        <button
+          onClick={handleSave}
+          className="border rounded px-4 py-2 text-sm"
+        >
+          {editingFilename ? 'Salvar edição no GitHub ↗' : 'Publicar no GitHub ↗'}
         </button>
         <button
           onClick={handleDownload}
-          className="border rounded px-4 py-2"
+          className="border rounded px-4 py-2 text-sm"
         >
           Baixar .yml
         </button>
