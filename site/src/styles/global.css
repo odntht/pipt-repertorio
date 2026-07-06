@@ -48,6 +48,12 @@ body {
   font-weight: 700;
 }
 
+/* Section-comments consecutivos (ex.: "Refrão" seguido de "Final") não devem
+   somar suas margens verticais — visualmente eles são um rótulo composto. */
+.section-comment-label + .section-comment-label {
+  margin-top: 0;
+}
+
 /* Bloco do refrão: barra lateral verde MMU + leve tinta de fundo pra facilitar
    localizar visualmente enquanto rola a cifra. */
 .refrain-block {

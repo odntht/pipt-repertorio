@@ -326,10 +326,13 @@ export default function SongViewer({ song, availableToms, slug, base, titleBase 
 }
 
 const REFRAIN_LABEL_RE = /^(refr[ãa]o|coro)$/i;
+// Rótulos "modificadores" que descrevem uma variação da seção atual
+// (última vez, repetição, ending) — NÃO devem quebrar o bloco.
+const MODIFIER_LABEL_RE = /^(final|fim|bis|repete|2x|3x|tag(\s+final)?)$/i;
 
-// Agrupa linhas em blocos: cada section-comment inicia um novo bloco.
-// O bloco herda `isRefrain=true` se o rótulo for Refrão/Coro; a flag
-// persiste pra linhas seguintes até bater em outro section-comment.
+// Agrupa linhas em blocos: cada section-comment "real" inicia um novo bloco.
+// Rótulos modificadores (Final, Bis, etc.) ficam no bloco corrente sem
+// disparar reset da flag isRefrain — mantém o refrão como uma unidade.
 function groupIntoBlocks(
   lines: SongLine[],
 ): Array<{ isRefrain: boolean; lines: SongLine[] }> {
@@ -337,7 +340,14 @@ function groupIntoBlocks(
   let inRefrain = false;
   for (const line of lines) {
     if (line.kind === 'section-comment') {
-      inRefrain = !!line.comment && REFRAIN_LABEL_RE.test(line.comment.trim());
+      const label = line.comment?.trim() ?? '';
+      if (MODIFIER_LABEL_RE.test(label)) {
+        const last = blocks[blocks.length - 1];
+        if (last) last.lines.push(line);
+        else blocks.push({ isRefrain: inRefrain, lines: [line] });
+        continue;
+      }
+      inRefrain = REFRAIN_LABEL_RE.test(label);
       blocks.push({ isRefrain: inRefrain, lines: [line] });
     } else {
       const last = blocks[blocks.length - 1];
@@ -358,7 +368,7 @@ function CifraLine({ line }: { line: SongLine }) {
       return <div>{' '}</div>;
     }
     return (
-      <div className="text-gray-500 dark:text-gray-400 italic mt-2 mb-1 font-semibold">
+      <div className="section-comment-label text-gray-500 dark:text-gray-400 italic mt-2 mb-1 font-semibold">
         {line.comment}
       </div>
     );
