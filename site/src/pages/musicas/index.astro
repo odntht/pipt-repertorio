@@ -1,56 +1,49 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import SectionBadge from '@/components/SectionBadge.astro';
+import MusicasList from '@/components/MusicasList';
 import { loadAllSongs } from '@/lib/songs/load';
 
 const base = import.meta.env.BASE_URL;
 
 const songs = loadAllSongs();
+
+// Consolida versões (múltiplos toms) numa entrada por slug.
 const bySlug = new Map<
   string,
-  { slug: string; song: (typeof songs)[0]['song']; toms: string[] }
+  {
+    slug: string;
+    title: string;
+    artist?: string;
+    section: 'congregacional' | 'hinario' | 'infantil' | 'inadequada';
+    tags: string[];
+    toms: string[];
+    hinarioNum?: string;
+  }
 >();
 for (const s of songs) {
   const existing = bySlug.get(s.slug);
   if (existing) {
     existing.toms.push(s.tom);
+    // Tags: união dos tags de todas as versões (raro divergirem).
+    for (const t of s.song.metadata.tags) {
+      if (!existing.tags.includes(t)) existing.tags.push(t);
+    }
   } else {
-    bySlug.set(s.slug, { slug: s.slug, song: s.song, toms: [s.tom] });
+    bySlug.set(s.slug, {
+      slug: s.slug,
+      title: s.song.metadata.title,
+      artist: s.song.metadata.artist,
+      section: s.song.metadata.section,
+      tags: [...s.song.metadata.tags],
+      toms: [s.tom],
+      hinarioNum: s.song.metadata.hinarioNum,
+    });
   }
 }
-const entries = Array.from(bySlug.values()).sort((a, b) =>
-  a.song.metadata.title.localeCompare(b.song.metadata.title, 'pt-BR'),
-);
+const entries = Array.from(bySlug.values());
 ---
 
 <BaseLayout title="Músicas">
   <h1 class="text-2xl font-bold mb-4">Músicas</h1>
-  <p class="text-sm text-gray-500 mb-4">
-    {entries.length} músicas · {songs.length} versões
-  </p>
-
-  <ul class="space-y-2">
-    {
-      entries.map(({ slug, song, toms }) => (
-        <li class="border-b pb-2">
-          <a
-            href={`${base}musicas/${slug}`}
-            class="flex flex-wrap items-center gap-2 hover:text-mmu-green"
-          >
-            <span class="font-semibold uppercase">
-              {song.metadata.hinarioNum && `HINO ${song.metadata.hinarioNum} – `}
-              {song.metadata.title}
-            </span>
-            {song.metadata.artist && (
-              <span class="text-sm text-gray-500">{song.metadata.artist}</span>
-            )}
-            <SectionBadge section={song.metadata.section} />
-            <span class="ml-auto text-sm text-gray-500">
-              {toms.map((t) => t.toUpperCase()).join(' · ')}
-            </span>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
+  <MusicasList client:load entries={entries} base={base} />
 </BaseLayout>
