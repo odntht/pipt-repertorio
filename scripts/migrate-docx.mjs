@@ -219,12 +219,14 @@ const SECTION_LABEL_RE =
 const CHORD_TOKEN_RE =
   /^[A-G][#b]?(?:[mM\-]|maj|min|dim|aug|sus|[°º0-9])*(?:\([^)]*\))?(?:\/[A-G][#b]?(?:[mM\-]|[°º0-9])*)?$/;
 
-// Normaliza notação de menor "-" → "m" tanto na raiz quanto no baixo.
-// Ex.: "E-" → "Em", "C#-7" → "C#m7", "A/B-" → "A/Bm".
+// Strippa o dash "-" após a raiz. Alguns hinários usam "E-", "B-" onde
+// presumivelmente havia uma extensão (7, 9, add4, etc.) que se perdeu
+// na cópia — não é notação de menor. Deixa o acorde como maior; o admin
+// pode ajustar depois se identificar a variação correta pela harmonia.
 function normalizeChord(chord) {
   return chord
-    .replace(/^([A-G][#b]?)-/, '$1m')
-    .replace(/\/([A-G][#b]?)-/, '/$1m');
+    .replace(/^([A-G][#b]?)-/, '$1')
+    .replace(/\/([A-G][#b]?)-/, '/$1');
 }
 function isChordOnlyLine(line) {
   const trimmed = line.trim();
