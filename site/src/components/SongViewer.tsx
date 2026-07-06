@@ -313,12 +313,39 @@ export default function SongViewer({ song, availableToms, slug, base, titleBase 
         className="cifra-body"
         style={{ fontSize: `${fontSize}px` }}
       >
-        {displayedLines.map((line, i) => (
-          <CifraLine key={i} line={line} />
+        {groupIntoBlocks(displayedLines).map((block, i) => (
+          <div key={i} className={block.isRefrain ? 'refrain-block' : undefined}>
+            {block.lines.map((line, j) => (
+              <CifraLine key={j} line={line} />
+            ))}
+          </div>
         ))}
       </div>
     </div>
   );
+}
+
+const REFRAIN_LABEL_RE = /^(refr[ãa]o|coro)$/i;
+
+// Agrupa linhas em blocos: cada section-comment inicia um novo bloco.
+// O bloco herda `isRefrain=true` se o rótulo for Refrão/Coro; a flag
+// persiste pra linhas seguintes até bater em outro section-comment.
+function groupIntoBlocks(
+  lines: SongLine[],
+): Array<{ isRefrain: boolean; lines: SongLine[] }> {
+  const blocks: Array<{ isRefrain: boolean; lines: SongLine[] }> = [];
+  let inRefrain = false;
+  for (const line of lines) {
+    if (line.kind === 'section-comment') {
+      inRefrain = !!line.comment && REFRAIN_LABEL_RE.test(line.comment.trim());
+      blocks.push({ isRefrain: inRefrain, lines: [line] });
+    } else {
+      const last = blocks[blocks.length - 1];
+      if (last && last.isRefrain === inRefrain) last.lines.push(line);
+      else blocks.push({ isRefrain: inRefrain, lines: [line] });
+    }
+  }
+  return blocks;
 }
 
 function CifraLine({ line }: { line: SongLine }) {
