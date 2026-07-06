@@ -3,7 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, cruz, santidade}
+{tags: santidade, cruz}
 {added: 2026-07-06}
 
 

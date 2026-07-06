@@ -2,7 +2,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
-{tags: graca, louvor, paz, amor-de-deus}
+{tags: graca, louvor, paz, oracao}
 {added: 2026-07-06}
 
 

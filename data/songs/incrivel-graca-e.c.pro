@@ -3,7 +3,7 @@
 {key: C}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, graca, santidade}
+{tags: santidade, graca}
 {added: 2026-07-06}
 
 Base: C     F7M    Am7     G4      F7M

@@ -4,7 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=iiaHGoh_qk0}
 {section: infantil}
 {status: em-revisao}
-{tags: salvacao, jesus-cristo}
+{tags: biblia, salvacao, lar-celestial, discipulado}
 {added: 2026-07-06}
 
 

@@ -2,7 +2,6 @@
 {key: C}
 {section: congregacional}
 {status: em-revisao}
-{tags: amor-de-deus, jesus-cristo}
 {added: 2026-07-06}
 
 [C]Como é preci[Am]oso irmão, es[F]tar bem junto a[G] ti

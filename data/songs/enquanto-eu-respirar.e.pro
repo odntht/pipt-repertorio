@@ -3,7 +3,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
-{tags: adoracao, oracao, louvor}
+{tags: oracao, adoracao, louvor}
 {added: 2026-07-06}
 
 [E]Enquanto eu respirar

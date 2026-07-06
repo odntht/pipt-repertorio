@@ -3,7 +3,7 @@
 {youtube: http://www.youtube.com/watch?v=o51-9PUDEEA}
 {section: inadequada}
 {status: em-revisao}
-{tags: alegria}
+{tags: oracao, alegria, segunda-vinda}
 {added: 2026-07-06}
 
 {comment: Intro: Bb7M/9    C/Bb     Bb/D     C/E    F    Gm}

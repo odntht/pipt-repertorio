@@ -2,7 +2,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, louvor}
+{tags: louvor, advento}
 {added: 2026-07-06}
 
 {comment: Intro}

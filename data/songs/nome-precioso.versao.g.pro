@@ -5,7 +5,7 @@
 {status: em-revisao}
 {hinario_num: 164}
 {notes: qualifier=versao (revisar)}
-{tags: esperanca, jesus-cristo}
+{tags: esperanca}
 {added: 2026-07-06}
 
 Intro (2x): C7M  Bm7  Am7 – 2x 

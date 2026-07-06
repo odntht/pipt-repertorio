@@ -5,7 +5,7 @@
 {status: em-revisao}
 {hinario_num: 062}
 {notes: qualifier=versao (revisar)}
-{tags: gratidao, salvacao, amor-de-deus, arrependimento}
+{tags: gratidao, arrependimento, salvacao}
 {added: 2026-07-06}
 
 Graças te dou p[F7M]or tudo q[F/A]ue me deste,   [Bb7M]         [D/F#]

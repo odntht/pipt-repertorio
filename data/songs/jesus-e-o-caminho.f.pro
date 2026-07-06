@@ -4,7 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=WslP9kFKBVI}
 {section: congregacional}
 {status: em-revisao}
-{tags: amor-de-deus}
+{tags: amor-de-deus, oracao}
 {added: 2026-07-06}
 
 Tom: F

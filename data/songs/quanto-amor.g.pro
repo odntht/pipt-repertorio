@@ -3,7 +3,6 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
-{tags: amor-de-deus}
 {added: 2026-07-06}
 
 {comment: Intro}

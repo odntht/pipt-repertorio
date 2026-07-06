@@ -3,7 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
-{tags: adoracao, jesus-cristo, oracao, poder-de-deus}
+{tags: oracao, adoracao, deus-criador, deus-soberano}
 {added: 2026-07-06}
 
 {comment: Intro}

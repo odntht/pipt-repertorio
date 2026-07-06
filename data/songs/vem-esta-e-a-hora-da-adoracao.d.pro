@@ -3,7 +3,7 @@
 {key: D}
 {section: congregacional}
 {status: em-revisao}
-{tags: adoracao, oracao, arrependimento}
+{tags: oracao, adoracao, arrependimento}
 {added: 2026-07-06}
 
 Introdução: D

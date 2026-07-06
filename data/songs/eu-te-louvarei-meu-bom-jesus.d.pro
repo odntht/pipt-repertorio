@@ -4,7 +4,7 @@
 {youtube: https://www.youtube.com/watch?time_continue=65&v=_xVuItEPVQE&embeds_referring_euri=https%3A%2F%2Fwww.cifraclub.com.br%2F&embeds_referring_origin=https%3A%2F%2Fwww.cifraclub.com.br&source_ve_path=Mjg2NjY}
 {section: congregacional}
 {status: em-revisao}
-{tags: louvor, jesus-cristo, adoracao, oracao}
+{tags: louvor, oracao, adoracao}
 {added: 2026-07-06}
 
 

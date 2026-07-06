@@ -3,7 +3,7 @@
 {key: F}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, louvor}
+{tags: louvor}
 {added: 2026-07-06}
 
 {comment: Intro}

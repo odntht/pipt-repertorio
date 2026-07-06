@@ -2,7 +2,7 @@
 {key: C}
 {section: congregacional}
 {status: em-revisao}
-{tags: louvor, jesus-cristo}
+{tags: louvor}
 {added: 2026-07-06}
 
 Ao R[C]ei dos reis con[G/B]sagro t[Gm/Bb]udo o que so[F/A]u

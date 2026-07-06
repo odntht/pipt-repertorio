@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 type Section = 'congregacional' | 'hinario' | 'infantil' | 'inadequada';
 
@@ -49,9 +49,23 @@ function sortKey(e: Entry): string {
     .toLowerCase();
 }
 
+// Normaliza texto pra buscar tags (case + acento insensível).
+function normalize(s: string): string {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+// Converte "santo-espirito" pra "Santo espirito" — só primeira letra em caps.
+function prettyTag(tag: string): string {
+  const label = tag.replace(/-/g, ' ');
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
 export default function MusicasList({ entries, base }: Props) {
   const [selectedSection, setSelectedSection] = useState<Section | null>(null);
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+  const [tagQuery, setTagQuery] = useState('');
+  const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
+  const tagInputRef = useRef<HTMLInputElement>(null);
 
   const allTags = useMemo(() => {
     const counts = new Map<string, number>();
@@ -82,12 +96,28 @@ export default function MusicasList({ entries, base }: Props) {
     });
   }, [entries, selectedSection, selectedTags]);
 
-  function toggleTag(t: string) {
+  function addTag(t: string) {
     const next = new Set(selectedTags);
-    if (next.has(t)) next.delete(t);
-    else next.add(t);
+    next.add(t);
+    setSelectedTags(next);
+    setTagQuery('');
+    setTagDropdownOpen(false);
+    tagInputRef.current?.focus();
+  }
+
+  function removeTag(t: string) {
+    const next = new Set(selectedTags);
+    next.delete(t);
     setSelectedTags(next);
   }
+
+  const tagSuggestions = useMemo(() => {
+    const q = normalize(tagQuery.trim());
+    return allTags
+      .filter(([tag]) => !selectedTags.has(tag))
+      .filter(([tag]) => (q === '' ? true : normalize(tag).includes(q)))
+      .slice(0, 12);
+  }, [allTags, selectedTags, tagQuery]);
 
   const sections: Section[] = ['congregacional', 'hinario', 'infantil', 'inadequada'];
 
@@ -125,25 +155,76 @@ export default function MusicasList({ entries, base }: Props) {
             <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">
               Temas
             </h2>
-            <div className="flex flex-wrap gap-2">
-              {allTags.map(([tag, count]) => (
-                <FilterChip
-                  key={tag}
-                  active={selectedTags.has(tag)}
-                  onClick={() => toggleTag(tag)}
+            <div className="relative">
+              <input
+                ref={tagInputRef}
+                type="text"
+                value={tagQuery}
+                onChange={(e) => {
+                  setTagQuery(e.target.value);
+                  setTagDropdownOpen(true);
+                }}
+                onFocus={() => setTagDropdownOpen(true)}
+                onBlur={() => setTimeout(() => setTagDropdownOpen(false), 150)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && tagSuggestions.length > 0) {
+                    e.preventDefault();
+                    addTag(tagSuggestions[0][0]);
+                  } else if (e.key === 'Escape') {
+                    setTagDropdownOpen(false);
+                  }
+                }}
+                placeholder="Buscar tema…"
+                className="w-full max-w-md border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800"
+                aria-label="Filtrar por tema"
+              />
+              {tagDropdownOpen && tagSuggestions.length > 0 && (
+                <ul
+                  className="absolute z-10 mt-1 w-full max-w-md bg-white dark:bg-gray-800 border rounded shadow-lg max-h-64 overflow-auto"
+                  role="listbox"
                 >
-                  {tag} ({count})
-                </FilterChip>
-              ))}
-              {selectedTags.size > 0 && (
+                  {tagSuggestions.map(([tag, count]) => (
+                    <li key={tag} role="option">
+                      <button
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => addTag(tag)}
+                        className="flex justify-between w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <span>{prettyTag(tag)}</span>
+                        <span className="text-xs text-gray-500">{count}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {selectedTags.size > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {[...selectedTags].map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-mmu-green text-white"
+                  >
+                    {prettyTag(tag)}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      aria-label={`Remover ${tag}`}
+                      className="hover:opacity-70"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
                 <button
                   onClick={() => setSelectedTags(new Set())}
                   className="text-xs text-gray-500 hover:underline"
                 >
-                  limpar
+                  limpar todos
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
       </div>

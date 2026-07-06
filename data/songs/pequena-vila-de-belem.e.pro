@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 232}
-{tags: jesus-cristo, natal, louvor, amor-de-deus}
+{tags: natal, louvor, paz, lar-celestial}
 {added: 2026-07-06}
 
 

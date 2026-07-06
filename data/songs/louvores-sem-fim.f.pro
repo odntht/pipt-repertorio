@@ -3,7 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 038}
-{tags: louvor, salvacao, jesus-cristo}
+{tags: louvor, salvacao}
 {added: 2026-07-06}
 
 

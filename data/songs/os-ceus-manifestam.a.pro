@@ -3,6 +3,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
+{tags: deus-criador}
 {added: 2026-07-06}
 
 

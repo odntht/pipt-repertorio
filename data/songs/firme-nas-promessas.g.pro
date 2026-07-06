@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 177}
-{tags: jesus-cristo, louvor}
+{tags: louvor}
 {added: 2026-07-06}
 
 

@@ -3,7 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 382}
-{tags: jesus-cristo, missoes}
+{tags: testemunho}
 {added: 2026-07-06}
 
 

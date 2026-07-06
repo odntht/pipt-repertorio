@@ -2,7 +2,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
-{tags: poder-de-deus}
+{tags: deus-soberano}
 {added: 2026-07-06}
 
 

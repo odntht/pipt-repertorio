@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 297}
-{tags: graca, jesus-cristo, vitoria}
+{tags: graca, vitoria}
 {added: 2026-07-06}
 
 Quando lá do[F9] céu descendo

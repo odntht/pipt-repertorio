@@ -2,7 +2,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, adoracao, arrependimento}
+{tags: arrependimento}
 {added: 2026-07-06}
 
 [E]Glória pra [C#m]sempre ao [F#m]cordeiro de De[B]us, 

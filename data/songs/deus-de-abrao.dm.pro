@@ -5,7 +5,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 021}
-{tags: louvor, salvacao, amor-de-deus}
+{tags: lar-celestial, louvor, salvacao}
 {added: 2026-07-06}
 
 

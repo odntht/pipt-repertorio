@@ -3,7 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 147}
-{tags: jesus-cristo, louvor, paz}
+{tags: louvor, paz}
 {added: 2026-07-06}
 
 {comment: Intro: | G  Bm  B/D#  Em  |  Am  G/B  C  D  G |}

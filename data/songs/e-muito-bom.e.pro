@@ -4,7 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=cNUsOdEZaWk}
 {section: infantil}
 {status: em-revisao}
-{tags: oracao, jesus-cristo}
+{tags: oracao}
 {added: 2026-07-06}
 
 

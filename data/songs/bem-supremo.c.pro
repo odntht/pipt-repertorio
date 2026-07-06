@@ -4,7 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=uUMIN4faGYs}
 {section: congregacional}
 {status: em-revisao}
-{tags: amor-de-deus, familia}
+{tags: amor-de-deus}
 {added: 2026-07-06}
 
 

@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 011}
-{tags: santidade, poder-de-deus, louvor, arrependimento}
+{tags: santidade, deus-soberano, louvor, deus-criador}
 {added: 2026-07-06}
 
 Intro/Inter: Bm7   G

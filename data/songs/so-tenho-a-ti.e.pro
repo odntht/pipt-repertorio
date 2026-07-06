@@ -3,7 +3,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, amor-de-deus}
+{tags: deus-providente}
 {added: 2026-07-06}
 
 Intro 2x: E  B  C#m7  A9

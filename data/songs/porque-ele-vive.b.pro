@@ -3,7 +3,7 @@
 {key: B}
 {section: congregacional}
 {status: em-revisao}
-{tags: pascoa, perdao, jesus-cristo}
+{tags: ressurreicao, perdao}
 {added: 2026-07-06}
 
 Deus en[B]viou  [B/D#]seu Filho ama[E]do

@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 359}
-{tags: jesus-cristo}
+{tags: biblia}
 {added: 2026-07-06}
 
 [C]Sei que Cristo me quer bem,

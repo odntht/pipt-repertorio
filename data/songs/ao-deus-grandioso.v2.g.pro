@@ -4,7 +4,7 @@
 {status: em-revisao}
 {hinario_num: 026}
 {notes: qualifier=v2 (revisar)}
-{tags: oracao, jesus-cristo}
+{tags: oracao}
 {added: 2026-07-06}
 
 Primeira estrofe e refrão somente PAD e vozes, todos os instrumentos entrarão ao final da primeira vez que cantarem o refrão

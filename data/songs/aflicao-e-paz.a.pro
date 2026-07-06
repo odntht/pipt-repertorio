@@ -3,7 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 108}
-{tags: jesus-cristo, paz}
+{tags: paz}
 {added: 2026-07-06}
 
 {comment: Intro}

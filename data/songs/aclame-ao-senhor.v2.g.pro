@@ -3,7 +3,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=v2 (revisar)}
-{tags: louvor, poder-de-deus, alegria}
+{tags: louvor, poder-de-deus, protecao, alegria}
 {added: 2026-07-06}
 
 {comment: Intro}

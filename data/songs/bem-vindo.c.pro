@@ -3,7 +3,7 @@
 {key: C}
 {section: congregacional}
 {status: em-revisao}
-{tags: santo-espirito, jesus-cristo, santidade}
+{tags: santo-espirito, santidade}
 {added: 2026-07-06}
 
 Intr. { C , G/C , Bb/C , F/C  G/D }

@@ -2,7 +2,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
-{tags: gratidao, jesus-cristo}
+{tags: gratidao}
 {added: 2026-07-06}
 
 

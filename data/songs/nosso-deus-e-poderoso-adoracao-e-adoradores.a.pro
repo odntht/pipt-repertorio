@@ -2,7 +2,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
-{tags: adoracao}
+{tags: deus-fiel, adoracao}
 {added: 2026-07-06}
 
 {comment: Intro}

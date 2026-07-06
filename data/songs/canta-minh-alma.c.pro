@@ -3,7 +3,7 @@
 {key: C}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, salvacao, amor-de-deus, santidade}
+{tags: santidade, santo-espirito, salvacao}
 {added: 2026-07-06}
 
 {comment: Intro: C    F (2x)}

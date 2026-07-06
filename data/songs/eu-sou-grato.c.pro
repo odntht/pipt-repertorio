@@ -3,7 +3,7 @@
 {key: C}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, louvor, gratidao}
+{tags: louvor, gratidao}
 {added: 2026-07-06}
 
 Eu sou[C9] grato por tudo o que [F]tenho

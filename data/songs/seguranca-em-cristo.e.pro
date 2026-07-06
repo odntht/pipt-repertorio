@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 157}
-{tags: arrependimento, jesus-cristo}
+{tags: arrependimento}
 {added: 2026-07-06}
 
 Por me[B]us delitos expiro[E]u

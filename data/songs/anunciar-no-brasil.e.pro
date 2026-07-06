@@ -2,7 +2,7 @@
 {key: E}
 {section: hinario}
 {status: em-revisao}
-{tags: jesus-cristo, adoracao, oracao}
+{tags: oracao}
 {added: 2026-07-06}
 
 

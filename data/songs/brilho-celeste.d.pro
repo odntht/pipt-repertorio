@@ -3,7 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 114}
-{tags: jesus-cristo, louvor, salvacao}
+{tags: louvor, salvacao, lar-celestial}
 {added: 2026-07-06}
 
 

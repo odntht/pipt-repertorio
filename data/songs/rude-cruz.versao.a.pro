@@ -4,7 +4,7 @@
 {status: em-revisao}
 {hinario_num: 266}
 {notes: qualifier=versao (revisar)}
-{tags: cruz, jesus-cristo, arrependimento}
+{tags: cruz, arrependimento}
 {added: 2026-07-06}
 
 

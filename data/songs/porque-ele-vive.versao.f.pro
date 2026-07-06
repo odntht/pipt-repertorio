@@ -3,7 +3,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=versao (revisar)}
-{tags: pascoa, perdao, jesus-cristo}
+{tags: ressurreicao, perdao}
 {added: 2026-07-06}
 
 {comment: Jazz-Bossa Nova – 94 bpm}

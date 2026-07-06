@@ -2,7 +2,7 @@
 {key: E}
 {section: congregacional}
 {status: em-revisao}
-{tags: louvor, jesus-cristo, amor-de-deus, oracao}
+{tags: louvor, oracao, alegria}
 {added: 2026-07-06}
 
 [E]A alegria está no coração

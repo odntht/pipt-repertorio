@@ -3,7 +3,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, poder-de-deus}
+{tags: poder-de-deus}
 {added: 2026-07-06}
 
 [D9]Todos necessitam[A9] de um amor perfeito[F#m]

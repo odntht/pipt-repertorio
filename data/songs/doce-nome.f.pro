@@ -3,7 +3,6 @@
 {key: F}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo}
 {added: 2026-07-06}
 
 

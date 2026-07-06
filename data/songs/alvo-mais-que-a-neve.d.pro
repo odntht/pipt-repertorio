@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 269}
-{tags: arrependimento, sangue-de-jesus, jesus-cristo}
+{tags: arrependimento, sangue-de-jesus, perdao}
 {added: 2026-07-06}
 
 S[D]eja bendito o Cordeiro, [D/F#]

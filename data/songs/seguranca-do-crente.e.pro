@@ -4,7 +4,6 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 146}
-{tags: jesus-cristo}
 {added: 2026-07-06}
 
 Oh! Quão preciosa e r[E]ica promessa      [A]

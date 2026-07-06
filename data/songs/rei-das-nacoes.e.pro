@@ -4,7 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=DQIQpTZdox0}
 {section: congregacional}
 {status: em-revisao}
-{tags: adoracao, louvor}
+{tags: louvor}
 {added: 2026-07-06}
 
 

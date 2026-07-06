@@ -3,7 +3,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, oracao, amor-de-deus, perdao}
+{tags: oracao, perdao, amor-de-deus, paz}
 {added: 2026-07-06}
 
 

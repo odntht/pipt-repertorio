@@ -3,7 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 266}
-{tags: cruz, jesus-cristo, arrependimento}
+{tags: cruz, arrependimento}
 {added: 2026-07-06}
 
 {comment: Intro}

@@ -2,7 +2,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, oracao}
+{tags: oracao}
 {added: 2026-07-06}
 
 {comment: Intro}

@@ -4,7 +4,7 @@
 {status: em-revisao}
 {hinario_num: 026}
 {notes: qualifier=v1 (revisar)}
-{tags: oracao, jesus-cristo}
+{tags: oracao}
 {added: 2026-07-06}
 
 {comment: Intro: G    C (2X)}

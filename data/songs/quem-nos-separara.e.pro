@@ -3,7 +3,7 @@
 {youtube: https://www.youtube.com/watch?v=0s-jdsoPTO4}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo, amor-de-deus, salvacao, cruz}
+{tags: poder-de-deus, arrependimento, amor-de-deus, salvacao}
 {added: 2026-07-06}
 
 {comment: Intro}

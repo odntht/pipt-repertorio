@@ -3,7 +3,6 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 155}
-{tags: jesus-cristo}
 {added: 2026-07-06}
 
 

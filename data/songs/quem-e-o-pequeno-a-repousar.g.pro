@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 234}
-{tags: arrependimento, paz, jesus-cristo}
+{tags: arrependimento, paz}
 {added: 2026-07-06}
 
 

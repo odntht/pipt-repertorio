@@ -5,7 +5,6 @@
 {status: em-revisao}
 {hinario_num: 155}
 {notes: qualifier=versao (revisar)}
-{tags: jesus-cristo}
 {added: 2026-07-06}
 
 {comment: Intro}

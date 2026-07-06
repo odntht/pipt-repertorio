@@ -4,6 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 116}
+{tags: oracao}
 {added: 2026-07-06}
 
    D E- F#- G              DB-  A

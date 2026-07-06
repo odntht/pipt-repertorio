@@ -3,7 +3,7 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
-{tags: pascoa}
+{tags: ressurreicao}
 {added: 2026-07-06}
 
 {comment: Intro}

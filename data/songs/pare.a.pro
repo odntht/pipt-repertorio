@@ -4,7 +4,6 @@
 {youtube: https://www.youtube.com/watch?v=2v9_6cs_p74}
 {section: infantil}
 {status: em-revisao}
-{tags: jesus-cristo}
 {added: 2026-07-06}
 
 A                                                                     (Bass: ABCC#D)

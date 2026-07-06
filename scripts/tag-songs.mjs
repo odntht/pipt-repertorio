@@ -12,24 +12,27 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
 const SONGS_DIR = resolve(REPO_ROOT, 'data/songs');
 
-// Cada tema é uma lista de regexes que "pontuam" quando batem no texto.
-// Regex globais (com /gi) — todas as ocorrências contam pra pontuação.
-// Diacríticos ficam explícitos porque o texto original preserva acentos.
+// Vocabulário de temas inspirado no índice por assunto do Hinário Novo
+// Cântico (novocantico.com.br/indice/assunto). Cada tema é uma lista de
+// regexes globais que pontuam sempre que batem. Regex distintos aumentam
+// especificidade — evita falso-positivo em palavras comuns.
 const THEMES = {
+  // ── Louvor e Adoração ────────────────────────────────────────────────
   adoracao: [
     /ador(a|o|ando|ar|amos|ai)/gi,
     /adorar-te/gi,
-    /adorar[a-zãáâéêíóôõúç]*/gi,
     /prostrado/gi,
     /me\s+curvo/gi,
+    /te\s+exalt/gi,
+    /exaltado\s+seja/gi,
   ],
   louvor: [
     /louv(o|a|ar|amos|ai|arei|aremos|ando)/gi,
     /aleluia/gi,
     /cantarei/gi,
     /cantai/gi,
-    /levanto\s+meu\s+louvor/gi,
     /glorificar/gi,
+    /glor[íi]a\s+a\s+deus/gi,
   ],
   gratidao: [
     /gratid[ãa]o/gi,
@@ -38,6 +41,97 @@ const THEMES = {
     /a[çc][õo]es\s+de\s+gra[çc]a/gi,
     /obrigado,?\s+jesus/gi,
     /obrigado,?\s+senhor/gi,
+  ],
+  'deus-trino': [
+    /trindade/gi,
+    /pai,?\s+filho\s+e\s+esp[íi]rito/gi,
+    /trino/gi,
+    /pai,\s+filho/gi,
+  ],
+  'deus-criador': [
+    /criador/gi,
+    /criaste/gi,
+    /criou/gi,
+    /toda\s+cria[çc][ãa]o/gi,
+    /obra\s+de\s+tuas?\s+m[ãa]os/gi,
+    /o\s+universo/gi,
+    /os\s+c[ée]us\s+e\s+a\s+terra/gi,
+  ],
+  'deus-providente': [
+    /prov[ée]/gi,
+    /prov[êe]s/gi,
+    /provedor/gi,
+    /sustent/gi,
+    /provid[êe]nci/gi,
+  ],
+  'deus-fiel': [
+    /fiel/gi,
+    /fidelidade/gi,
+    /nunca\s+falha/gi,
+    /n[ãa]o\s+falha/gi,
+  ],
+  'deus-soberano': [
+    /soberano/gi,
+    /soberania/gi,
+    /senhor\s+dos\s+senhores/gi,
+    /rei\s+dos\s+reis/gi,
+    /todo-?poderoso/gi,
+    /onipoten/gi,
+  ],
+  santidade: [
+    /\bsanto\b/gi,
+    /santidade/gi,
+    /santifica/gi,
+    /consagra-me/gi,
+    /puro\s+cora[çc][ãa]o/gi,
+  ],
+  'poder-de-deus': [
+    /\bpoder\b/gi,
+    /grande\s+for[çc]a/gi,
+    /forte\s+e\s+poderoso/gi,
+  ],
+
+  // ── Confissão ────────────────────────────────────────────────────────
+  arrependimento: [
+    /arrepen/gi,
+    /peca[dt]/gi,
+    /pecador/gi,
+    /confess/gi,
+    /contri[çc][ãa]o/gi,
+    /contrito/gi,
+  ],
+  perdao: [
+    /perd[ãa]o/gi,
+    /perdoar/gi,
+    /perdoa/gi,
+    /perdoou/gi,
+    /perdoaste/gi,
+    /purifica/gi,
+  ],
+
+  // ── Edificação ───────────────────────────────────────────────────────
+  'santo-espirito': [
+    /esp[íi]rito\s+santo/gi,
+    /santo\s+esp[íi]rito/gi,
+    /consolador/gi,
+    /vento\s+forte/gi,
+    /esp[íi]rito\s+de\s+deus/gi,
+  ],
+  'amor-de-deus': [
+    /amor\s+de\s+deus/gi,
+    /teu\s+amor/gi,
+    /seu\s+amor/gi,
+    /me\s+ama/gi,
+    /ama-me/gi,
+    /amor\s+eterno/gi,
+    /amor\s+incondicional/gi,
+  ],
+  fe: [
+    /\bf[ée]\b/gi,
+    /crer/gi,
+    /confio/gi,
+    /confian[çc]a/gi,
+    /confiar/gi,
   ],
   salvacao: [
     /salva[çc][ãa]o/gi,
@@ -48,51 +142,57 @@ const THEMES = {
     /redimiu/gi,
     /redentor/gi,
   ],
-  cruz: [
-    /cruz/gi,
-    /calv[áa]rio/gi,
-    /crucific/gi,
+  testemunho: [
+    /testemunh/gi,
+    /testific/gi,
+    /contarei\s+ao\s+mundo/gi,
+    /narrarei/gi,
+    /publicar[ãa]/gi,
   ],
-  'sangue-de-jesus': [
-    /sangue/gi,
+  'companhia-do-senhor': [
+    /est[áa]s\s+comigo/gi,
+    /junto\s+de\s+mim/gi,
+    /ao\s+meu\s+lado/gi,
+    /nunca\s+me\s+deixa/gi,
+    /vais\s+comigo/gi,
+    /caminha\s+comigo/gi,
   ],
-  graca: [
-    /gra[çc]a\b/gi,
-    /gra[çc]as?\s+divin/gi,
-    /pela\s+gra[çc]a/gi,
+  oracao: [
+    /ora[çc][ãa]o/gi,
+    /orar/gi,
+    /orei/gi,
+    /orando/gi,
+    /joelhos/gi,
+    /clamo\s+a\s+ti/gi,
+    /aos\s+seus\s+p[ée]s/gi,
+    /rogar/gi,
   ],
-  'amor-de-deus': [
-    /amor\s+de\s+deus/gi,
-    /o\s+amor/gi,
-    /me\s+ama/gi,
-    /ama-me/gi,
-    /amor\s+eterno/gi,
-    /amor\s+incondicional/gi,
-    /teu\s+amor/gi,
-    /seu\s+amor/gi,
-  ],
-  fe: [
-    /\bf[ée]\b/gi,
-    /crer/gi,
-    /confio/gi,
-    /confiança/gi,
-    /confiar/gi,
+  protecao: [
+    /ref[úu]gio/gi,
+    /escudo/gi,
+    /torre\s+forte/gi,
+    /me\s+guardas/gi,
+    /me\s+guarda/gi,
+    /minha\s+rocha/gi,
+    /abrigo/gi,
+    /alta\s+torre/gi,
   ],
   esperanca: [
     /esperan[çc]a/gi,
-    /esperar/gi,
+    /aguardar\s+em\s+ti/gi,
+    /esperar\s+no\s+senhor/gi,
   ],
-  santidade: [
-    /\bsanto\b/gi,
-    /santidade/gi,
-    /santifica/gi,
+  paz: [
+    /\bpaz\b/gi,
+    /aquieta/gi,
+    /descanso\s+em\s+ti/gi,
   ],
-  'poder-de-deus': [
-    /\bpoder\b/gi,
-    /todo-?poderoso/gi,
-    /onipoten/gi,
-    /soberano/gi,
-    /soberania/gi,
+  alegria: [
+    /alegria/gi,
+    /alegres?/gi,
+    /regozij/gi,
+    /rejubila/gi,
+    /jubilos/gi,
   ],
   vitoria: [
     /vit[óo]ria/gi,
@@ -100,33 +200,45 @@ const THEMES = {
     /vencedor/gi,
     /conquistar/gi,
     /triunfante/gi,
+    /venceremos/gi,
   ],
+  'lar-celestial': [
+    /\bc[ée]u\b/gi,
+    /nos?\s+c[ée]us/gi,
+    /mans[ãa]o/gi,
+    /jerusal[ée]m\s+celeste/gi,
+    /eterna\s+morada/gi,
+    /vida\s+eterna/gi,
+    /nova\s+jerusal[ée]m/gi,
+    /cidade\s+santa/gi,
+  ],
+
+  // ── Consagração / Apelo ──────────────────────────────────────────────
   consagracao: [
     /consagra/gi,
     /me\s+entrego/gi,
     /entrego-me/gi,
     /entrega\s+total/gi,
     /rendido/gi,
-    /rende-te/gi,
+    /submisso/gi,
+    /submet/gi,
   ],
-  arrependimento: [
-    /arrepen/gi,
-    /peca[dt]/gi,
-    /pecador/gi,
-    /confess/gi,
+  convite: [
+    /vem\s+a\s+jesus/gi,
+    /vinde\s+a\s+mim/gi,
+    /venha\s+a\s+cristo/gi,
+    /hoje\s+[ée]\s+o\s+dia/gi,
+    /aceita/gi,
+    /decide/gi,
+    /decis[ãa]o/gi,
+    /clamai\s+ao\s+senhor/gi,
   ],
-  perdao: [
-    /perd[ãa]o/gi,
-    /perdoar/gi,
-    /perdoa/gi,
-    /perdoou/gi,
-    /perdoaste/gi,
-  ],
-  'santo-espirito': [
-    /esp[íi]rito\s+santo/gi,
-    /santo\s+esp[íi]rito/gi,
-    /consolador/gi,
-    /vento\s+forte/gi,
+
+  // ── Cristo — Sua Vida ────────────────────────────────────────────────
+  advento: [
+    /advento/gi,
+    /vem,?\s+senhor/gi,
+    /esperado\s+de\s+todas\s+as/gi,
   ],
   natal: [
     /natal/gi,
@@ -136,80 +248,147 @@ const THEMES = {
     /jesus\s+nasceu/gi,
     /noite\s+feliz/gi,
     /menino\s+jesus/gi,
-    /rei\s+dos\s+reis[^,\.]*nasceu/gi,
+    /rei\s+dos\s+reis[^,\.\n]{0,20}nasceu/gi,
   ],
-  pascoa: [
-    /p[áa]scoa/gi,
+  paixao: [
+    /paix[ãa]o/gi,
+    /padeceu/gi,
+    /sofreu/gi,
+    /crucific/gi,
+    /via\s+dolorosa/gi,
+    /getsemani/gi,
+  ],
+  ressurreicao: [
     /ressur/gi,
     /ele\s+vive/gi,
     /venceu\s+a\s+morte/gi,
     /tumba\s+vazia/gi,
-    /venceu\s+a\s+cruz/gi,
+    /pascoa/gi,
+    /p[áa]scoa/gi,
   ],
   'segunda-vinda': [
-    /virá\s+outra\s+vez/gi,
+    /vir[áa]\s+outra\s+vez/gi,
     /volta\s+de\s+cristo/gi,
     /volta\s+de\s+jesus/gi,
     /segunda\s+vinda/gi,
     /trombeta/gi,
     /nas\s+nuvens/gi,
-    /vem\s+vindo/gi,
+    /jesus\s+vem/gi,
+    /voltar[áa]/gi,
   ],
-  oracao: [
-    /ora[çc][ãa]o/gi,
-    /orar/gi,
-    /or(o|amos|ei)\b/gi,
-    /joelhos/gi,
-    /clamo\s+a\s+ti/gi,
-    /aos\s+seus\s+p[ée]s/gi,
+  'grande-comissao': [
+    /ide\s+por\s+todo/gi,
+    /todas\s+as\s+na[çc][õo]es/gi,
+    /grande\s+comiss[ãa]o/gi,
   ],
-  paz: [
-    /\bpaz\b/gi,
-    /aquieta/gi,
-    /descanso\s+em/gi,
+
+  // ── Igreja — Seu Ministério ──────────────────────────────────────────
+  igreja: [
+    /\bigreja\b/gi,
+    /corpo\s+de\s+cristo/gi,
+    /seu\s+povo/gi,
+    /o\s+povo\s+de\s+deus/gi,
+    /povo\s+eleito/gi,
   ],
-  alegria: [
-    /alegria/gi,
-    /alegres?/gi,
-    /regozij/gi,
-    /rejubila/gi,
+  evangelizacao: [
+    /evangelh?o/gi,
+    /pregar\s+a/gi,
+    /anunciar\s+a/gi,
+    /levar\s+a\s+palavra/gi,
+    /boas\s+novas/gi,
+    /miss[ãa]o/gi,
+    /almas\s+p[ea]/gi,
   ],
-  'jesus-cristo': [
-    /\bjesus\b/gi,
-    /\bcristo\b/gi,
-    /messias/gi,
-    /cordeiro/gi,
-    /emanuel/gi,
-    /emmanuel/gi,
-  ],
-  reino: [
-    /reino/gi,
-    /reina/gi,
-  ],
-  familia: [
-    /fam[íi]lia/gi,
-    /lar\b/gi,
-    /filhos/gi,
-  ],
-  'santa-ceia': [
-    /santa\s+ceia/gi,
-    /p[ãa]o\s+partido/gi,
-    /c[áa]lice/gi,
-    /vinho\s+e\s+p[ãa]o/gi,
-    /corpo\s+e\s+sangue/gi,
+  discipulado: [
+    /disc[íi]pulo/gi,
+    /seguir\s+a\s+cristo/gi,
+    /seguir\s+a\s+jesus/gi,
+    /andar\s+com\s+jesus/gi,
   ],
   batismo: [
     /batism/gi,
     /batiza/gi,
     /nas\s+[áa]guas/gi,
   ],
-  missoes: [
-    /miss[ãa]o/gi,
-    /ide\s+por\s+todo/gi,
-    /todas\s+as\s+na[çc][õo]es/gi,
-    /evangelh?o/gi,
-    /pregar/gi,
-    /anunciar\s+a/gi,
+  'santa-ceia': [
+    /santa\s+ceia/gi,
+    /ceia\s+do\s+senhor/gi,
+    /p[ãa]o\s+partido/gi,
+    /c[áa]lice/gi,
+    /vinho\s+e\s+p[ãa]o/gi,
+    /corpo\s+e\s+sangue/gi,
+    /da\s+ceia/gi,
+  ],
+  'dia-do-senhor': [
+    /dia\s+do\s+senhor/gi,
+    /santo\s+domingo/gi,
+    /culto\s+dominic/gi,
+  ],
+  'trabalho-cristao': [
+    /trabalh(o|adores?|amos)\s+(no|na|para)/gi,
+    /servos?\s+de\s+cristo/gi,
+    /servos?\s+de\s+jesus/gi,
+    /obra\s+do\s+senhor/gi,
+    /vinha\s+do\s+senhor/gi,
+  ],
+
+  // ── Assuntos diversos ────────────────────────────────────────────────
+  biblia: [
+    /\bb[íi]blia\b/gi,
+    /palavra\s+de\s+deus/gi,
+    /tua\s+palavra/gi,
+    /a\s+escritura/gi,
+    /sagrada\s+escritura/gi,
+  ],
+  'ano-novo': [
+    /ano\s+novo/gi,
+    /come[çc]o\s+de\s+ano/gi,
+    /novos\s+dias/gi,
+  ],
+  casamento: [
+    /matrimonial/gi,
+    /matrimônio/gi,
+    /noivos/gi,
+    /casal/gi,
+    /esposa/gi,
+    /esposo/gi,
+  ],
+  'lar-cristao': [
+    /lar\s+crist[ãa]o/gi,
+    /lar\s+feliz/gi,
+    /aben[çc]oa[st]?\s+meu\s+lar/gi,
+    /nosso\s+lar/gi,
+  ],
+  familia: [
+    /fam[íi]lia/gi,
+    /filhos/gi,
+    /nossos\s+filhos/gi,
+  ],
+  mae: [
+    /\bm[ãa]e\b/gi,
+    /m[ãa]es/gi,
+    /dia\s+das\s+m[ãa]es/gi,
+  ],
+
+  // ── Meta / mais gerais ───────────────────────────────────────────────
+  cruz: [
+    /\bcruz\b/gi,
+    /\bcruzes\b/gi,
+    /calv[áa]rio/gi,
+  ],
+  'sangue-de-jesus': [
+    /sangue/gi,
+  ],
+  graca: [
+    /gra[çc]a\b/gi,
+    /gra[çc]as?\s+divin/gi,
+    /pela\s+gra[çc]a/gi,
+    /gra[çc]a\s+de\s+deus/gi,
+  ],
+  reino: [
+    /\breino\b/gi,
+    /reina/gi,
+    /reinar[áa]/gi,
   ],
   'boas-novas': [
     /boas\s+novas/gi,
@@ -242,9 +421,8 @@ function extractLyrics(content) {
   return kept.join('\n');
 }
 
-function hasExistingTags(content) {
-  const m = content.match(/^\{tags:\s*([^}]*)\}/m);
-  return !!m && m[1].trim().length > 0;
+function isApproved(content) {
+  return /^\{status:\s*aprovada\}/m.test(content);
 }
 
 function scoreThemes(text) {
@@ -263,14 +441,19 @@ function scoreThemes(text) {
     .map(([t]) => t);
 }
 
-function insertTagsLine(content, tags) {
+// Escreve `{tags: ...}` no arquivo: substitui a linha existente se houver,
+// ou insere antes de `{added:...}`. Se `tags` vazio, remove a linha se
+// existir e retorna o conteúdo sem tags.
+function setTagsLine(content, tags) {
+  const has = /^\{tags:[^}]*\}\n?/m.test(content);
+  if (tags.length === 0) {
+    return has ? content.replace(/^\{tags:[^}]*\}\n?/m, '') : content;
+  }
   const tagsLine = `{tags: ${tags.join(', ')}}`;
-  // Insere antes de {added:...} (ancoragem estável). Fallback: no fim
-  // do bloco de metadata.
+  if (has) return content.replace(/^\{tags:[^}]*\}/m, tagsLine);
   if (/^\{added:/m.test(content)) {
     return content.replace(/^(\{added:)/m, `${tagsLine}\n$1`);
   }
-  // Insere depois da primeira linha em branco após o cabeçalho.
   const idx = content.indexOf('\n\n');
   if (idx === -1) return content + '\n' + tagsLine;
   return content.slice(0, idx) + '\n' + tagsLine + content.slice(idx);
@@ -287,24 +470,19 @@ function main() {
   for (const filename of files) {
     const path = resolve(SONGS_DIR, filename);
     const content = readFileSync(path, 'utf-8');
-    if (hasExistingTags(content)) {
+    if (isApproved(content)) {
       skipped++;
       continue;
     }
-    // Título entra no texto pra ajudar (2x peso implicitamente pq costuma
-    // repetir na letra também).
     const titleMatch = content.match(/^\{title:\s*([^}]*)\}/m);
     const title = titleMatch ? titleMatch[1] : '';
     const lyrics = extractLyrics(content);
     const text = title + '\n' + lyrics;
     const tags = scoreThemes(text);
-    if (tags.length === 0) {
-      noTags++;
-      continue;
-    }
+    if (tags.length === 0) noTags++;
     for (const t of tags) distribution.set(t, (distribution.get(t) ?? 0) + 1);
     if (!dryRun) {
-      const next = insertTagsLine(content, tags);
+      const next = setTagsLine(content, tags);
       writeFileSync(path, next);
     }
     updated++;

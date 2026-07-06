@@ -3,7 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 254}
-{tags: oracao}
+{tags: lar-celestial}
 {added: 2026-07-06}
 
 {comment: Intro: G7M   C9  (4x)}

@@ -4,7 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=WkyKd3Nr3JA}
 {section: congregacional}
 {status: em-revisao}
-{tags: fe}
+{tags: fe, protecao}
 {added: 2026-07-06}
 
 {comment: Intro}

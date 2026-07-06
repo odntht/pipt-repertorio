@@ -3,7 +3,6 @@
 {key: A}
 {section: congregacional}
 {status: em-revisao}
-{tags: jesus-cristo}
 {added: 2026-07-06}
 
 [A]Nas estrel[F#m]as vejo a[Bm] Sua mão[E],

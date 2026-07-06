@@ -3,7 +3,7 @@
 {key: D}
 {section: congregacional}
 {status: em-revisao}
-{tags: graca, louvor, jesus-cristo, adoracao}
+{tags: graca, louvor}
 {added: 2026-07-06}
 
 {comment: Intro}

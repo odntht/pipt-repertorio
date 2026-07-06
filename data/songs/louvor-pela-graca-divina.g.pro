@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 041}
-{tags: louvor, jesus-cristo, graca, arrependimento}
+{tags: louvor, arrependimento, graca, perdao}
 {added: 2026-07-06}
 
 [G]Louvai, louv[E]ai Crist[C]o, o bom Mestre divino!         [G]

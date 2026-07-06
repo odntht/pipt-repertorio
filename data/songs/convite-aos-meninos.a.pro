@@ -4,7 +4,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 367}
-{tags: salvacao, jesus-cristo}
+{tags: salvacao}
 {added: 2026-07-06}
 
 

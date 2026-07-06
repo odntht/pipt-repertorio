@@ -4,7 +4,7 @@
 {section: congregacional}
 {status: em-revisao}
 {notes: qualifier=versao (revisar)}
-{tags: consagracao, jesus-cristo}
+{tags: consagracao}
 {added: 2026-07-06}
 
 

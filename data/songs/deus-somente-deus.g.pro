@@ -2,7 +2,7 @@
 {key: G}
 {section: congregacional}
 {status: em-revisao}
-{tags: adoracao, louvor}
+{tags: deus-criador, louvor}
 {added: 2026-07-06}
 
 [Intro] G  C/E  D/F# (2X)

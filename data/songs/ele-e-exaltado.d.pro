@@ -4,6 +4,7 @@
 {youtube: https://www.youtube.com/watch?v=-qNAQdISIRM}
 {section: congregacional}
 {status: em-revisao}
+{tags: lar-celestial}
 {added: 2026-07-06}
 
 {comment: INTRO: D7+ D/F# G G/B  A/C#}

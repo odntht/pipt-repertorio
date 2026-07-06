@@ -3,7 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 128}
-{tags: jesus-cristo, cruz, poder-de-deus, arrependimento}
+{tags: poder-de-deus, arrependimento, cruz}
 {added: 2026-07-06}
 
 1- Prec[G]iosas são as horas na [C]presença de Jesus![D]                 [G]

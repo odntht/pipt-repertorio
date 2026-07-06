@@ -3,7 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 147}
-{tags: jesus-cristo, louvor}
+{tags: louvor}
 {added: 2026-07-06}
 
 Qu[A]ando a alma sequiosa Chega à voz do Salvador,

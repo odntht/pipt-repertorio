@@ -3,6 +3,7 @@
 {section: hinario}
 {status: em-revisao}
 {hinario_num: 032}
+{tags: deus-fiel}
 {added: 2026-07-06}
 
 

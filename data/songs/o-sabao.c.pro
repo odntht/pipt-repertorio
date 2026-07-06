@@ -4,7 +4,6 @@
 {youtube: https://www.youtube.com/watch?v=r87JrGEC45s}
 {section: infantil}
 {status: em-revisao}
-{tags: jesus-cristo}
 {added: 2026-07-06}
 
 
