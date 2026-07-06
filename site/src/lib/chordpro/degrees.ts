@@ -45,18 +45,17 @@ export function chordToDegree(chord: string, keyTom: string): string {
   const idxKey = noteIndex(keyMatch[0]);
   if (idxKey === -1) return chord;
 
-  const m = chord.match(
-    /^([A-G])(#|b)?(m(?![a-z])|maj|min|dim|aug|sus|º)?([0-9]+)?(\((#|b)?[0-9]+([+-][0-9]+)?\))?(\/([A-G])(#|b)?)?$/,
-  );
+  // Parseia: root + acidente, resto do sufixo (tudo até `/`), e opcional
+  // baixo. Deixa o "resto do sufixo" livre — cobre casos como `B7sus4`,
+  // `Am7(11)`, `Cmaj7`, `Csus2`, etc. sem regex específica por sufixo.
+  const m = chord.match(/^([A-G])(#|b)?([^\/]*)(?:\/([A-G])(#|b)?([^\/]*))?$/);
   if (!m) return chord;
 
   const root = m[1];
   const acc = m[2] ?? '';
-  const qual = m[3];
-  const num = m[4];
-  const tension = m[5];
-  const bassRoot = m[9];
-  const bassAcc = m[10];
+  const suffix = m[3] ?? '';
+  const bassRoot = m[4];
+  const bassAcc = m[5] ?? '';
 
   const idxChord = noteIndex(root + acc);
   if (idxChord === -1) return chord;
@@ -64,26 +63,30 @@ export function chordToDegree(chord: string, keyTom: string): string {
   const interval = ((idxChord - idxKey) + 12) % 12;
   let degree = MAJOR_DEGREE_MAP[interval] ?? '?';
 
-  const isMinor = qual === 'm' || qual === 'min';
-  const isDim = qual === 'dim' || qual === 'º';
-  const isAug = qual === 'aug';
-  const isMaj = qual === 'maj';
-  const isSus = qual === 'sus';
-
+  // Qualidade principal do sufixo: só o começo importa pro case do numeral.
+  const isMinor = /^m(?![a-z])/.test(suffix) || /^min\b/.test(suffix);
+  const isDim = /^dim/.test(suffix) || /^[°º]/.test(suffix);
   if (isMinor || isDim) {
     degree = degree.replace(/[IVX]+/, (r) => r.toLowerCase());
   }
 
-  let out = degree;
-  if (isDim) out += '°';
-  else if (isAug) out += '+';
-  else if (isSus) out += 'sus';
-  else if (isMaj) out += 'maj';
-  if (num) out += num;
-  if (tension) out += tension;
+  // Normaliza o sufixo pra saída:
+  //   `m` (sem letra depois) → '' (case do numeral já indica minor)
+  //   `min` → ''
+  //   `dim`/`º` → '°'
+  //   `aug` → '+'
+  //   Resto (`maj`, `sus`, números, tensões `(...)`) mantém.
+  const cleanSuffix = suffix
+    .replace(/^m(?![a-z])/, '')
+    .replace(/^min\b/, '')
+    .replace(/^dim/, '°')
+    .replace(/^º/, '°')
+    .replace(/^aug/, '+');
+
+  let out = degree + cleanSuffix;
 
   if (bassRoot) {
-    const idxBass = noteIndex(bassRoot + (bassAcc ?? ''));
+    const idxBass = noteIndex(bassRoot + bassAcc);
     if (idxBass !== -1) {
       const bassInterval = ((idxBass - idxKey) + 12) % 12;
       out += '/' + (MAJOR_DEGREE_MAP[bassInterval] ?? '?');

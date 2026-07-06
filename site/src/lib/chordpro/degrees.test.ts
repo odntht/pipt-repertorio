@@ -39,6 +39,24 @@ describe('chordToDegree in different keys', () => {
   });
 });
 
+describe('chordToDegree com sufixos após o número', () => {
+  it('B7sus4 in E é V7sus4', () => {
+    expect(chordToDegree('B7sus4', 'E')).toBe('V7sus4');
+  });
+  it('Csus4 in C é Isus4', () => {
+    expect(chordToDegree('Csus4', 'C')).toBe('Isus4');
+  });
+  it('Cmaj7 in C é Imaj7', () => {
+    expect(chordToDegree('Cmaj7', 'C')).toBe('Imaj7');
+  });
+  it('Am7add9 in G é ii7add9', () => {
+    expect(chordToDegree('Am7add9', 'G')).toBe('ii7add9');
+  });
+  it('D7sus in G é V7sus', () => {
+    expect(chordToDegree('D7sus', 'G')).toBe('V7sus');
+  });
+});
+
 describe('chordToDegree com enarmônicos raros', () => {
   // E# = F. Em Ab (idx 8), F (idx 5) é vi natural.
   // Interval = (5-8+12)%12 = 9 → VI. Sem 'm' na string original, fica maiúsculo.
