@@ -26,13 +26,11 @@ O j[E]usto se ent[D]regou
 Não foi o f[F#m]im
 El[E]e ressus[D]citou
 
-
 Canta minh'[A]alma, canta minh'[F#m]alma
 Que amor tão gr[E]ande
 Que amor tão gr[D]ande   (2X)
 
 Que grande [A]amor!
-
 
 V[A9]eja comigo está
 O Esp[D]irito queimando em meu ser

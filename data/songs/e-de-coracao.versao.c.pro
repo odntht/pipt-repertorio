@@ -9,8 +9,8 @@
 {comment: Intro}
 [F9]
 
-Primeira parte
-Segunda parte
+{comment: Primeira parte}
+{comment: Segunda parte}
 Como descrev[F9]er  [G4]
 Como explic[Am]ar  [C/E]
 O amor que vai de l[F9]este a oest[G4]e
@@ -31,8 +31,8 @@ Do meu coraçã[Am]o   [C/E]
 És o caminho, a v[F9]ida e a verd[G4/B]ade
 Te dou a minh[C]a gratid[C4]ão  [C]
 
-Refrão
-Final
+{comment: Refrão}
+{comment: Final}
 [C/E]       É de c[F9]oraç[G4/F]ão
 Tudo que [C/E]eu disser
 Num hino de louv[F9]or  [G4/F]
@@ -42,18 +42,6 @@ Se as palavras n[F9]ão mostrarem
 Mesmo assim Senh[Dm7]or
 Recebe o meu louv[G/B]or
 É de co[C]raç[C4]ão  [C]
-
-
-
-
-
-
-
-
-
-
-
-
 
 Mesmo assim Senh[Dm7]or
 Recebe o meu louv[G/B]or

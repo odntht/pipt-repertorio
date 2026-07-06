@@ -12,10 +12,9 @@
 [E]Sansão, o fortão do cabelão
 M[A]as que tinha a cabeça do tamanho de um feijão (2X)
 
-FIM
+{comment: FIM}
 [F]Sansão, o fortão do cabelão
 Qu[Bb]e pediu a Deus uma nova mente e coração (2X)
-
 
 [C#m]Antes de nascer foi escolhido por Deus
 Pr[A]a livrar o povo de Israel dos Filisteus

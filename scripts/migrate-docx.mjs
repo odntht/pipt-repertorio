@@ -207,6 +207,11 @@ function splitIntoSongs(paragraphs) {
 // ────────────────────────────────────────────────────────────────────────────
 // 4. Extração de features por música
 
+// Rótulos de seção em português que aparecem sozinhos numa linha no docx
+// e devem virar `{comment: ...}` em vez de texto de letra.
+const SECTION_LABEL_RE =
+  /^(refr[ãa]o|coro|ponte|solo|final|fim|(primeira|segunda|terceira|quarta|quinta)\s+parte|estrofe(\s+\d+)?|verso(\s+\d+)?|instrumental|introdu[çc][ãa]o|vocal|tag(\s+final)?)$/i;
+
 // Uma linha é "chord-only" se todos os tokens não-vazios são acordes válidos.
 // Aceita sufixos comuns (m, M, maj, min, dim, aug, sus, °, º), extensões
 // numéricas, parênteses opcionais e baixo via `/`.
@@ -612,6 +617,12 @@ function bodyToChordPro(bodyLines) {
       i++;
       continue;
     }
+    // Rótulos de seção em português que aparecem soltos no docx.
+    if (SECTION_LABEL_RE.test(t)) {
+      out.push(`{comment: ${t}}`);
+      i++;
+      continue;
+    }
     if (isChordOnlyLine(line)) {
       const next = bodyLines[i + 1];
       if (next != null && next.trim() !== '' && !isChordOnlyLine(next) &&
@@ -629,7 +640,19 @@ function bodyToChordPro(bodyLines) {
   }
   // Remove blank lines no fim
   while (out.length && out[out.length - 1] === '') out.pop();
-  return out;
+  // Colapsa runs de blank lines em uma só (docx original abusa de blanks).
+  const collapsed = [];
+  let prevBlank = false;
+  for (const line of out) {
+    if (line === '') {
+      if (!prevBlank) collapsed.push('');
+      prevBlank = true;
+    } else {
+      collapsed.push(line);
+      prevBlank = false;
+    }
+  }
+  return collapsed;
 }
 
 // Monta o texto ChordPro completo de uma música.

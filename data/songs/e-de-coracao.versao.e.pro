@@ -9,8 +9,8 @@
 {comment: Intro}
 [A9]
 
-Primeira parte
-Segunda parte
+{comment: Primeira parte}
+{comment: Segunda parte}
 Como descrev[A9]er  [B4]
 Como explic[C#m]ar   [E/G#]
 O amor que vai de l[A9]este a oest[B4]e
@@ -31,8 +31,8 @@ Do meu coraçã[C#m]o    [E/G#]
 És o caminho, a v[A9]ida e a verd[B4/D#]ade
 Te dou a minh[E]a gratid[E4]ão  [E]
 
-Refrão
-Final
+{comment: Refrão}
+{comment: Final}
 
 [E/G#]       É de co[A9]raçã[B4/A]o
 Tudo que [E/G#]eu disser
@@ -43,18 +43,6 @@ Se as palavras n[A9]ão mostrarem
 Mesmo assim Senh[Eº]or
 Recebe o meu louv[E4]or
 É de coraçã[B/D#]o        [E]   [E4]    [E]
-
-
-
-
-
-
-
-
-
-
-
-
 
 [C#m]Mesmo assim Senhor [Eº]
 Recebe o meu louv[E4]or

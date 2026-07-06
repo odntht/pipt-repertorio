@@ -49,7 +49,8 @@ function formatKey(rootIdx: number, isMinor: boolean, notation: Notation): strin
 
 // Só mostra marcador visual pras seções importantes.
 // Resto vira uma linha em branco (mantém "duas linhas de espaço" entre seções).
-const SHOW_COMMENT_RE = /^(refr[ãa]o|introdu[çc][ãa]o|intro|coro|solo)$/i;
+const SHOW_COMMENT_RE =
+  /^(refr[ãa]o|introdu[çc][ãa]o|intro|coro|solo|ponte|final|fim|(primeira|segunda|terceira|quarta|quinta)\s+parte|estrofe(\s+\d+)?|verso(\s+\d+)?|instrumental|vocal|tag(\s+final)?)$/i;
 
 export default function SongViewer({ song, availableToms, slug, base, titleBase }: Props) {
   const initial = parseKeyToState(song.metadata.key);
