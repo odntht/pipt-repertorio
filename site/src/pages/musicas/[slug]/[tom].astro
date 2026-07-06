@@ -10,6 +10,7 @@ export async function getStaticPaths() {
     params: { slug: entry.slug, tom: entry.tom },
     props: {
       song: entry.song,
+      qualifiers: entry.qualifiers,
       availableToms: songs
         .filter((s) => s.slug === entry.slug)
         .map((s) => s.tom),
@@ -17,14 +18,31 @@ export async function getStaticPaths() {
   }));
 }
 
-const { song, availableToms } = Astro.props;
+function prettyQualifier(q: string): string {
+  const m1 = q.match(/^v(\d+)$/);
+  if (m1) return `versão ${m1[1]}`;
+  const m2 = q.match(/^arranjo-(\d+)$/);
+  if (m2) return `arranjo ${m2[1]}`;
+  if (q === 'versao') return 'versão';
+  return q.replace(/-/g, ' ');
+}
+
+const { song, availableToms, qualifiers } = Astro.props;
 const { slug, tom } = Astro.params;
 const base = import.meta.env.BASE_URL;
+
+const printParenBits = [
+  song.metadata.artist,
+  ...qualifiers.map(prettyQualifier),
+].filter(Boolean);
+const printParen = printParenBits.length ? ` (${printParenBits.join(', ')})` : '';
+const printPrefix = song.metadata.hinarioNum ? `HINO ${song.metadata.hinarioNum} – ` : '';
+const printHeader = `${printPrefix}${song.metadata.title.toUpperCase()}${printParen} – ${song.metadata.key}`;
 ---
 
 <BaseLayout title={song.metadata.title}>
   <article>
-    <header class="mb-4">
+    <header class="mb-4 no-print">
       <h1 class="text-2xl font-bold">{song.metadata.title}</h1>
       <div class="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
         {song.metadata.artist && <span>{song.metadata.artist}</span>}
@@ -48,6 +66,10 @@ const base = import.meta.env.BASE_URL;
         </a>
       )}
     </header>
+
+    <h1 class="print-only text-xl font-bold mb-4" style="font-family: monospace;">
+      {printHeader}
+    </h1>
 
     <SongViewer
       client:load

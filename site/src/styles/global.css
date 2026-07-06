@@ -48,14 +48,18 @@ body {
   font-weight: 700;
 }
 
-/* Print/PDF: forçar cores, ocultar navegação */
+/* Elementos só visíveis em print/PDF (header docx-style da música, etc). */
+.print-only { display: none; }
+
+/* Print/PDF: forçar cores, ocultar chrome do site (mas manter conteúdo da página). */
 @media print {
   .no-print,
-  nav,
-  header,
-  footer {
+  .site-header,
+  body > nav,
+  body > footer {
     display: none !important;
   }
+  .print-only { display: block !important; }
   .cifra-body {
     color: #000 !important;
     background: #fff !important;
