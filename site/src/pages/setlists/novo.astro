@@ -1,0 +1,49 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SetlistEditor from '@/components/SetlistEditor';
+import { loadAllSongs } from '@/lib/songs/load';
+
+const base = import.meta.env.BASE_URL;
+const rawSongs = loadAllSongs();
+
+// Consolida versões (múltiplos toms) numa entrada por slug.
+type Section = 'congregacional' | 'hinario' | 'infantil' | 'inadequada';
+const bySlug = new Map<
+  string,
+  {
+    slug: string;
+    title: string;
+    artist?: string;
+    section: Section;
+    toms: string[];
+    hinarioNum?: string;
+  }
+>();
+for (const s of rawSongs) {
+  const existing = bySlug.get(s.slug);
+  if (existing) {
+    if (!existing.toms.includes(s.tom)) existing.toms.push(s.tom);
+  } else {
+    bySlug.set(s.slug, {
+      slug: s.slug,
+      title: s.song.metadata.title,
+      artist: s.song.metadata.artist,
+      section: s.song.metadata.section,
+      toms: [s.tom],
+      hinarioNum: s.song.metadata.hinarioNum,
+    });
+  }
+}
+const songs = Array.from(bySlug.values()).sort((a, b) =>
+  a.title.localeCompare(b.title, 'pt-BR'),
+);
+---
+
+<BaseLayout title="Nova setlist">
+  <h1 class="text-2xl font-bold mb-4">Nova setlist</h1>
+  <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+    Monte a ordem do culto adicionando músicas do repertório. Ao salvar,
+    o site abre o GitHub com o YAML pré-preenchido pra você commitar.
+  </p>
+  <SetlistEditor client:load base={base} songs={songs} />
+</BaseLayout>
