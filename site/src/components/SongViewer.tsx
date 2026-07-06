@@ -49,8 +49,10 @@ function formatKey(rootIdx: number, isMinor: boolean, notation: Notation): strin
 
 // Só mostra marcador visual pras seções importantes.
 // Resto vira uma linha em branco (mantém "duas linhas de espaço" entre seções).
-const SHOW_COMMENT_RE =
-  /^(refr[ãa]o|introdu[çc][ãa]o|intro|coro|solo|ponte|final|fim|(primeira|segunda|terceira|quarta|quinta)\s+parte|estrofe(\s+\d+)?|verso(\s+\d+)?|instrumental|vocal|tag(\s+final)?)$/i;
+// Só rótulos que ajudam a orientar visualmente durante o culto (Intro e
+// Refrão/Coro). Outros rótulos estruturais (Primeira parte, Estrofe, Final,
+// Ponte, Verso, Vocal, etc.) ficam preservados no .pro mas invisíveis na UI.
+const SHOW_COMMENT_RE = /^(refr[ãa]o|coro|introdu[çc][ãa]o|intro)$/i;
 
 export default function SongViewer({ song, availableToms, slug, base, titleBase }: Props) {
   const initial = parseKeyToState(song.metadata.key);
@@ -364,8 +366,8 @@ function CifraLine({ line }: { line: SongLine }) {
   }
   if (line.kind === 'section-comment') {
     if (!line.comment || !SHOW_COMMENT_RE.test(line.comment.trim())) {
-      // Comentário oculto → linha em branco pra preservar "duas linhas de espaço"
-      return <div>{' '}</div>;
+      // Comentário oculto → sem espaço; blank lines reais já dão respiro visual.
+      return null;
     }
     return (
       <div className="section-comment-label text-gray-500 dark:text-gray-400 italic mt-2 mb-1 font-semibold">
