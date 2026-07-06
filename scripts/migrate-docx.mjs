@@ -1,18 +1,18 @@
 #!/usr/bin/env node
-// Plano B — Fase 0: análise estrutural do docx original.
+// Plano B — migração do docx original.
 //
 // Uso:
-//   node scripts/migrate-docx.mjs --docx ~/Downloads/'Repertório PIPT.docx'
+//   node scripts/migrate-docx.mjs --phase 0 --docx <path>   # análise (default)
+//   node scripts/migrate-docx.mjs --phase 1 --docx <path>   # gera .pro do canário
 //
-// Não escreve `.pro` nem commita nada. Só gera:
-//   - docs/migration/analysis-report.md   (relatório human-readable)
-//   - docs/migration/analysis-data.json   (dados por música pra Fase 1 usar)
+// Fase 0 escreve só relatório em docs/migration/.
+// Fase 1 escreve .pro em data/songs/ (pula arquivos já existentes).
 //
 // Sem dependências externas — usa `unzip` do sistema + regex + XML parsing.
 // Ver docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md §8.
 
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -23,12 +23,19 @@ const REPO_ROOT = resolve(__dirname, '..');
 // 1. CLI
 
 function parseArgs(argv) {
-  const args = { docx: null };
+  const args = { docx: null, phase: '0' };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--docx') args.docx = argv[++i];
+    else if (argv[i] === '--phase') args.phase = argv[++i];
   }
   if (!args.docx) {
-    console.error('Uso: node scripts/migrate-docx.mjs --docx <caminho.docx>');
+    console.error(
+      'Uso: node scripts/migrate-docx.mjs [--phase 0|1] --docx <caminho.docx>',
+    );
+    process.exit(2);
+  }
+  if (args.phase !== '0' && args.phase !== '1') {
+    console.error(`--phase inválida: ${args.phase} (esperado 0 ou 1)`);
     process.exit(2);
   }
   return args;
@@ -201,7 +208,10 @@ function splitIntoSongs(paragraphs) {
 // 4. Extração de features por música
 
 // Uma linha é "chord-only" se todos os tokens não-vazios são acordes válidos.
-const CHORD_TOKEN_RE = /^[A-G][#b]?(m|maj|min|dim|aug|sus)?[0-9]*(\([^)]*\))?(\/[A-G][#b]?)?$/;
+// Aceita sufixos comuns (m, M, maj, min, dim, aug, sus, °, º), extensões
+// numéricas, parênteses opcionais e baixo via `/`.
+const CHORD_TOKEN_RE =
+  /^[A-G][#b]?(?:[mM]|maj|min|dim|aug|sus|[°º0-9])*(?:\([^)]*\))?(?:\/[A-G][#b]?(?:[mM]|[°º0-9])*)?$/;
 function isChordOnlyLine(line) {
   const trimmed = line.trim();
   if (!trimmed) return false;
@@ -446,21 +456,196 @@ function renderReport({ songs, canary, docxPath }) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// 9. Main
+// 9. Fase 1 — conversão chord-over-lyrics → ChordPro
 
-function main() {
-  const args = parseArgs(process.argv.slice(2));
-  const docxPath = resolve(args.docx.replace(/^~/, process.env.HOME ?? ''));
+function slugifyTom(tom) {
+  return tom.toLowerCase().replace('#', 's');
+}
 
-  console.error(`Extraindo texto de ${docxPath}…`);
-  const paragraphs = extractDocxText(docxPath);
-  console.error(`  ${paragraphs.length} parágrafos.`);
+// Deriva o qualifier (arranjo-1, v2, simples, grande-lucas...) a partir do
+// header. Retorna null se for artista puro. Usado no nome de arquivo.
+function extractQualifier(header) {
+  const bits = [header.parenContent, header.trailer]
+    .filter(Boolean)
+    .map((s) => s.toLowerCase());
+  for (const b of bits) {
+    const arranjo = b.match(/arranjo\s*(\d+)/);
+    if (arranjo) return `arranjo-${arranjo[1]}`;
+    const versao = b.match(/vers[ãa]o\s*(\d+)/);
+    if (versao) return `v${versao[1]}`;
+    if (/vers[ãa]o(?!\s*\d)/.test(b)) return 'versao';
+    if (/simples/.test(b)) return 'simples';
+    if (/grande[\s-]?lucas/.test(b)) return 'grande-lucas';
+    if (/youtube/.test(b) && b === 'youtube') return null; // marcador, não qualifier
+  }
+  return null;
+}
 
-  console.error('Segmentando em músicas…');
-  const rawSongs = splitIntoSongs(paragraphs);
-  console.error(`  ${rawSongs.length} músicas detectadas.`);
+// Extrai artist do header quando parenContent não é qualifier.
+function extractArtist(header) {
+  if (header.parenContent && !extractQualifier(header)) {
+    // Se preTitle existe (hinário), parenContent geralmente é "versão" — pulou
+    // acima. Se não, é candidato a artista.
+    if (!/^\s*youtube\s*$/i.test(header.parenContent)) {
+      return header.parenContent;
+    }
+  }
+  return null;
+}
 
-  const songs = rawSongs.map((s) => {
+function extractHinarioNum(header) {
+  if (!header.preTitle) return null;
+  const m = header.preTitle.match(/HINO\s*(\d+)/i);
+  return m ? m[1] : null;
+}
+
+// Casa uma linha de acordes com a linha de letra imediatamente abaixo. Cada
+// acorde é inserido em `[chord]` na coluna correspondente. Se a letra é mais
+// curta que a coluna do acorde, padeia com espaços.
+function mergeChordOverLyric(chordLine, lyricLine) {
+  const tokens = [];
+  const re = /\S+/g;
+  let m;
+  while ((m = re.exec(chordLine)) !== null) {
+    tokens.push({ col: m.index, chord: m[0] });
+  }
+  if (tokens.length === 0) return lyricLine;
+  let out = '';
+  let cursor = 0;
+  let padded = lyricLine;
+  const lastCol = tokens[tokens.length - 1].col;
+  if (lastCol > padded.length) padded = padded.padEnd(lastCol, ' ');
+  for (const { col, chord } of tokens) {
+    out += padded.slice(cursor, col) + `[${chord}]`;
+    cursor = col;
+  }
+  out += padded.slice(cursor);
+  return out;
+}
+
+// Emite uma linha só com acordes como ChordPro (`[C] [G] [Am]`).
+function chordLineToChordPro(chordLine) {
+  const parts = [];
+  const re = /\S+/g;
+  let m;
+  while ((m = re.exec(chordLine)) !== null) parts.push(`[${m[0]}]`);
+  return parts.join(' ');
+}
+
+// Converte o corpo cru de uma música (linhas do docx) em linhas ChordPro.
+// Regras:
+//   - "Intro: X Y Z" → {comment: Intro: X Y Z}
+//   - "-----" → linha em branco
+//   - "(Repete Tudo)" ou similares → {comment: Repete Tudo}
+//   - chord-only line + lyric line seguinte → merge posicional
+//   - chord-only line isolada → linha `[C] [G] ...`
+//   - lyric line sem chord acima → linha de letra sem acordes
+function bodyToChordPro(bodyLines) {
+  const out = [];
+  let i = 0;
+  while (i < bodyLines.length) {
+    const line = bodyLines[i];
+    const t = line.trim();
+
+    if (t === '') { out.push(''); i++; continue; }
+    if (/^-{3,}$/.test(t)) { out.push(''); i++; continue; }
+    if (/^Intro[:\-]/i.test(t)) {
+      out.push(`{comment: ${t}}`);
+      i++;
+      continue;
+    }
+    // Padrão `[Label] chord1 chord2 ...` (comum em hinário).
+    const labelChords = t.match(/^\[([^\]]+)\]\s+(.+)$/);
+    if (labelChords) {
+      const rest = labelChords[2].trim();
+      const tokens = rest.split(/\s+/);
+      if (tokens.every((tok) => CHORD_TOKEN_RE.test(tok))) {
+        out.push(`{comment: ${labelChords[1]}}`);
+        out.push(tokens.map((tok) => `[${tok}]`).join(' '));
+        i++;
+        continue;
+      }
+    }
+    if (/^\([^)]+\)$/.test(t) && t.length < 60) {
+      out.push(`{comment: ${t.slice(1, -1)}}`);
+      i++;
+      continue;
+    }
+    if (isChordOnlyLine(line)) {
+      const next = bodyLines[i + 1];
+      if (next != null && next.trim() !== '' && !isChordOnlyLine(next) &&
+          !/^-{3,}$/.test(next.trim())) {
+        out.push(mergeChordOverLyric(line, next));
+        i += 2;
+        continue;
+      }
+      out.push(chordLineToChordPro(line));
+      i++;
+      continue;
+    }
+    out.push(line);
+    i++;
+  }
+  // Remove blank lines no fim
+  while (out.length && out[out.length - 1] === '') out.pop();
+  return out;
+}
+
+// Monta o texto ChordPro completo de uma música.
+function buildProContent(song, urls) {
+  const { header } = song;
+  const artist = extractArtist(header);
+  const qualifier = extractQualifier(header);
+  const hinarioNum = extractHinarioNum(header);
+  const youtube = urls.find((u) => /youtube|youtu\.be/.test(u)) ?? null;
+
+  const meta = [];
+  meta.push(`{title: ${titleCase(header.title)}}`);
+  if (artist) meta.push(`{artist: ${titleCase(artist)}}`);
+  meta.push(`{key: ${header.key}}`);
+  if (youtube) meta.push(`{youtube: ${youtube}}`);
+  meta.push(`{section: ${song.section}}`);
+  meta.push('{status: em-revisao}');
+  if (hinarioNum) meta.push(`{hinario_num: ${hinarioNum}}`);
+  if (qualifier) meta.push(`{notes: qualifier=${qualifier} (revisar)}`);
+  meta.push(`{added: ${today()}}`);
+
+  // Filtra as URLs do body (já viraram metadata) antes de converter
+  const filteredBody = song.bodyLines.filter(
+    (l) => !/https?:\/\/\S+/.test(l.trim()),
+  );
+  const body = bodyToChordPro(filteredBody);
+
+  return meta.join('\n') + '\n\n' + body.join('\n') + '\n';
+}
+
+function titleCase(s) {
+  return s
+    .toLowerCase()
+    .replace(/(^|[\s'-])(\p{L})/gu, (_, sep, ch) => sep + ch.toUpperCase());
+}
+
+function today() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function filenameFor(song) {
+  const slug = song.slug;
+  const qualifier = extractQualifier(song.header);
+  const tomSlug = slugifyTom(song.header.key);
+  const parts = [slug];
+  if (qualifier) parts.push(qualifier);
+  parts.push(tomSlug);
+  return parts.join('.') + '.pro';
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// 10. Main
+
+function annotate(rawSongs) {
+  return rawSongs.map((s) => {
     const features = extractFeatures(s);
     const cluster = clusterOf(s, features);
     const risks = riskFlags(s, features);
@@ -472,9 +657,9 @@ function main() {
       risks,
     };
   });
+}
 
-  const canary = pickCanaryBatch(songs);
-
+function runPhase0({ songs, canary, docxPath }) {
   const outDir = resolve(REPO_ROOT, 'docs/migration');
   mkdirSync(outDir, { recursive: true });
   const report = renderReport({ songs, canary, docxPath });
@@ -497,6 +682,48 @@ function main() {
   );
   console.error(`Escrito: ${resolve(outDir, 'analysis-report.md')}`);
   console.error(`Escrito: ${resolve(outDir, 'analysis-data.json')}`);
+}
+
+function runPhase1({ canary }) {
+  const outDir = resolve(REPO_ROOT, 'data/songs');
+  mkdirSync(outDir, { recursive: true });
+  const written = [];
+  const skipped = [];
+  for (const song of canary) {
+    const filename = filenameFor(song);
+    const target = resolve(outDir, filename);
+    if (existsSync(target)) {
+      skipped.push({ filename, reason: 'já existe' });
+      continue;
+    }
+    const content = buildProContent(song, song.features.urls);
+    writeFileSync(target, content);
+    written.push(filename);
+  }
+  console.error(`Fase 1 — batch-canário:`);
+  console.error(`  ${written.length} arquivos escritos em data/songs/`);
+  console.error(`  ${skipped.length} pulados (já existiam)`);
+  for (const w of written) console.error(`    + ${w}`);
+  for (const s of skipped) console.error(`    ~ ${s.filename} (${s.reason})`);
+}
+
+function main() {
+  const args = parseArgs(process.argv.slice(2));
+  const docxPath = resolve(args.docx.replace(/^~/, process.env.HOME ?? ''));
+
+  console.error(`Extraindo texto de ${docxPath}…`);
+  const paragraphs = extractDocxText(docxPath);
+  console.error(`  ${paragraphs.length} parágrafos.`);
+
+  console.error('Segmentando em músicas…');
+  const rawSongs = splitIntoSongs(paragraphs);
+  console.error(`  ${rawSongs.length} músicas detectadas.`);
+
+  const songs = annotate(rawSongs);
+  const canary = pickCanaryBatch(songs);
+
+  if (args.phase === '0') runPhase0({ songs, canary, docxPath });
+  else runPhase1({ canary });
 }
 
 main();
