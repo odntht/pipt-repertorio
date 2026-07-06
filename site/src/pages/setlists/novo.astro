@@ -6,12 +6,15 @@ import { loadAllSongs } from '@/lib/songs/load';
 const base = import.meta.env.BASE_URL;
 const rawSongs = loadAllSongs();
 
-// Consolida versões (múltiplos toms) numa entrada por slug.
+// Consolida versões por (slug + qualifier) — músicas com mesma slug mas
+// qualifiers diferentes (ex.: v2, arranjo-1, simples) são variantes
+// distintas que precisam aparecer separadas no picker.
 type Section = 'congregacional' | 'hinario' | 'infantil' | 'inadequada';
-const bySlug = new Map<
+const byVariant = new Map<
   string,
   {
     slug: string;
+    qualifier: string; // string vazia se sem qualifier
     title: string;
     artist?: string;
     section: Section;
@@ -20,12 +23,15 @@ const bySlug = new Map<
   }
 >();
 for (const s of rawSongs) {
-  const existing = bySlug.get(s.slug);
+  const qualifier = s.qualifiers.join('.');
+  const key = `${s.slug}::${qualifier}`;
+  const existing = byVariant.get(key);
   if (existing) {
     if (!existing.toms.includes(s.tom)) existing.toms.push(s.tom);
   } else {
-    bySlug.set(s.slug, {
+    byVariant.set(key, {
       slug: s.slug,
+      qualifier,
       title: s.song.metadata.title,
       artist: s.song.metadata.artist,
       section: s.song.metadata.section,
@@ -34,7 +40,7 @@ for (const s of rawSongs) {
     });
   }
 }
-const songs = Array.from(bySlug.values()).sort((a, b) =>
+const songs = Array.from(byVariant.values()).sort((a, b) =>
   a.title.localeCompare(b.title, 'pt-BR'),
 );
 ---

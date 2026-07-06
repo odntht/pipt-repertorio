@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 
 interface SongOption {
   slug: string;
+  /** String vazia quando não há qualifier. Ex.: 'v2', 'arranjo-1', 'simples'. */
+  qualifier: string;
   title: string;
   artist?: string;
   toms: string[];
@@ -11,6 +13,7 @@ interface SongOption {
 
 interface SetlistItem {
   slug: string;
+  qualifier: string;
   tom: string;
   notes: string;
 }
@@ -50,12 +53,24 @@ function buildYaml(event: string, date: string, items: SetlistItem[]): string {
   lines.push('songs:');
   for (const it of items) {
     lines.push(`  - slug: ${it.slug}`);
+    if (it.qualifier) lines.push(`    qualifier: ${it.qualifier}`);
     lines.push(`    tom: ${it.tom.toLowerCase()}`);
     if (it.notes.trim()) {
       lines.push(`    notes: "${it.notes.replace(/"/g, '\\"')}"`);
     }
   }
   return lines.join('\n') + '\n';
+}
+
+// Rótulo pra distinguir variantes na dropdown (ex.: "v2" → "versão 2").
+function prettyQualifier(q: string): string {
+  if (!q) return '';
+  const m1 = q.match(/^v(\d+)$/);
+  if (m1) return `versão ${m1[1]}`;
+  const m2 = q.match(/^arranjo-(\d+)$/);
+  if (m2) return `arranjo ${m2[1]}`;
+  if (q === 'versao') return 'versão';
+  return q.replace(/-/g, ' ');
 }
 
 export default function SetlistEditor({ base, songs }: Props) {
@@ -65,9 +80,9 @@ export default function SetlistEditor({ base, songs }: Props) {
   const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const songBySlug = useMemo(() => {
+  const songByKey = useMemo(() => {
     const m = new Map<string, SongOption>();
-    for (const s of songs) m.set(s.slug, s);
+    for (const s of songs) m.set(`${s.slug}::${s.qualifier}`, s);
     return m;
   }, [songs]);
 
@@ -87,7 +102,7 @@ export default function SetlistEditor({ base, songs }: Props) {
   function addSong(s: SongOption) {
     setItems((prev) => [
       ...prev,
-      { slug: s.slug, tom: s.toms[0], notes: '' },
+      { slug: s.slug, qualifier: s.qualifier, tom: s.toms[0], notes: '' },
     ]);
     setSearch('');
     setError(null);
@@ -128,7 +143,8 @@ export default function SetlistEditor({ base, songs }: Props) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return 'Data inválida.';
     if (items.length === 0) return 'Adicione pelo menos uma música.';
     for (const it of items) {
-      if (!songBySlug.has(it.slug)) return `Música desconhecida: ${it.slug}.`;
+      if (!songByKey.has(`${it.slug}::${it.qualifier}`))
+        return `Música desconhecida: ${it.slug}.`;
       if (!it.tom) return `Escolha um tom pra ${it.slug}.`;
     }
     return null;
@@ -209,7 +225,7 @@ export default function SetlistEditor({ base, songs }: Props) {
           {search && searchResults.length > 0 && (
             <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border rounded shadow-lg max-h-72 overflow-auto">
               {searchResults.map((s) => (
-                <li key={s.slug}>
+                <li key={`${s.slug}::${s.qualifier}`}>
                   <button
                     type="button"
                     onClick={() => addSong(s)}
@@ -220,6 +236,11 @@ export default function SetlistEditor({ base, songs }: Props) {
                         {s.hinarioNum && `HINO ${s.hinarioNum} – `}
                         {s.title}
                       </span>
+                      {s.qualifier && (
+                        <span className="text-xs text-mmu-green ml-2">
+                          ({prettyQualifier(s.qualifier)})
+                        </span>
+                      )}
                       {s.artist && (
                         <span className="text-xs text-gray-500 ml-2">{s.artist}</span>
                       )}
@@ -245,7 +266,7 @@ export default function SetlistEditor({ base, songs }: Props) {
       ) : (
         <ol className="space-y-2 mb-4">
           {items.map((it, idx) => {
-            const song = songBySlug.get(it.slug);
+            const song = songByKey.get(`${it.slug}::${it.qualifier}`);
             return (
               <li
                 key={idx}
@@ -275,6 +296,11 @@ export default function SetlistEditor({ base, songs }: Props) {
                   <div className="font-semibold uppercase">
                     {song?.hinarioNum && `HINO ${song.hinarioNum} – `}
                     {song?.title ?? it.slug}
+                    {it.qualifier && (
+                      <span className="ml-2 text-xs text-mmu-green normal-case">
+                        ({prettyQualifier(it.qualifier)})
+                      </span>
+                    )}
                   </div>
                   {song?.artist && (
                     <div className="text-xs text-gray-500">{song.artist}</div>

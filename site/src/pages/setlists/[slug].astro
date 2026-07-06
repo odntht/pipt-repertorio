@@ -12,8 +12,14 @@ const { setlist } = Astro.props;
 const base = import.meta.env.BASE_URL;
 
 const songs = loadAllSongs();
-const bySlugTom = new Map(
-  songs.map((s) => [`${s.slug}.${s.tom}`, s]),
+// Chave completa `slug.qualifier?.tom` casa com o arquivo exato.
+const byFullKey = new Map(
+  songs.map((s) => {
+    const key = s.qualifiers.length > 0
+      ? `${s.slug}.${s.qualifiers.join('.')}.${s.tom}`
+      : `${s.slug}.${s.tom}`;
+    return [key, s];
+  }),
 );
 const bySlug = new Map<string, typeof songs[number]>();
 for (const s of songs) if (!bySlug.has(s.slug)) bySlug.set(s.slug, s);
@@ -26,6 +32,7 @@ function formatDate(iso: string): string {
 
 interface ResolvedItem {
   slug: string;
+  qualifier: string;
   tom: string;
   notes?: string;
   title: string;
@@ -34,11 +41,16 @@ interface ResolvedItem {
   hasFile: boolean;
 }
 const resolved: ResolvedItem[] = setlist.songs.map((item) => {
-  const exact = bySlugTom.get(`${item.slug}.${item.tom.toLowerCase()}`);
+  const qualifier = (item.qualifier ?? '').trim();
+  const key = qualifier
+    ? `${item.slug}.${qualifier}.${item.tom.toLowerCase()}`
+    : `${item.slug}.${item.tom.toLowerCase()}`;
+  const exact = byFullKey.get(key);
   const fallback = bySlug.get(item.slug);
   const meta = exact?.song.metadata ?? fallback?.song.metadata;
   return {
     slug: item.slug,
+    qualifier,
     tom: item.tom,
     notes: item.notes,
     title: meta?.title ?? item.slug,

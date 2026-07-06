@@ -5,6 +5,8 @@
 
 export interface SetlistSong {
   slug: string;
+  /** Qualifier do arquivo `.pro`, ex.: 'v2', 'arranjo-1'. Vazio se não há. */
+  qualifier?: string;
   tom: string;
   notes?: string;
 }
@@ -61,7 +63,7 @@ function parseSetlist(raw: string): Omit<Setlist, 'filename' | 'slug'> {
       current = { slug: stripQuotes(m[1].trim()) };
       continue;
     }
-    if ((m = line.match(/^\s+(tom|notes):\s*(.*)$/))) {
+    if ((m = line.match(/^\s+(tom|notes|qualifier):\s*(.*)$/))) {
       if (current) {
         (current as Record<string, string>)[m[1]] = stripQuotes(m[2].trim());
       }
