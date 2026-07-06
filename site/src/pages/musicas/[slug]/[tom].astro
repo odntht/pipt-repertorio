@@ -43,7 +43,7 @@ const printHeader = `${printPrefix}${song.metadata.title.toUpperCase()}${printPa
 <BaseLayout title={song.metadata.title}>
   <article>
     <header class="mb-4 no-print">
-      <h1 class="text-2xl font-bold">{song.metadata.title}</h1>
+      <h1 class="text-2xl font-bold uppercase">{song.metadata.title}</h1>
       <div class="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-1">
         {song.metadata.artist && <span>{song.metadata.artist}</span>}
         {song.metadata.artist && <span>·</span>}

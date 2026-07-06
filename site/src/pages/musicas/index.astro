@@ -37,7 +37,7 @@ const entries = Array.from(bySlug.values()).sort((a, b) =>
             href={`${base}musicas/${slug}`}
             class="flex flex-wrap items-center gap-2 hover:text-mmu-green"
           >
-            <span class="font-semibold">{song.metadata.title}</span>
+            <span class="font-semibold uppercase">{song.metadata.title}</span>
             {song.metadata.artist && (
               <span class="text-sm text-gray-500">{song.metadata.artist}</span>
             )}
