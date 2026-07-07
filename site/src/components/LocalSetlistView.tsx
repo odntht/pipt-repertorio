@@ -36,15 +36,6 @@ const MOMENT_LABELS: Record<string, string> = {
   posludio: 'Poslúdio',
 };
 
-function prettyQualifier(q: string): string {
-  const m1 = q.match(/^v(\d+)$/);
-  if (m1) return `versão ${m1[1]}`;
-  const m2 = q.match(/^arranjo-(\d+)$/);
-  if (m2) return `arranjo ${m2[1]}`;
-  if (q === 'versao') return 'versão';
-  return q.replace(/-/g, ' ');
-}
-
 function groupBySlug<T extends { slug: string }>(items: T[]): T[][] {
   const groups: T[][] = [];
   for (const it of items) {
@@ -53,6 +44,18 @@ function groupBySlug<T extends { slug: string }>(items: T[]): T[][] {
     else groups.push([it]);
   }
   return groups;
+}
+
+function uniqueByTom<T extends { tom: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const it of items) {
+    const t = it.tom.toLowerCase();
+    if (seen.has(t)) continue;
+    seen.add(t);
+    out.push(it);
+  }
+  return out;
 }
 
 function buildYaml(sl: Omit<LocalSetlist, 'id' | 'updatedAt'>): string {
@@ -253,6 +256,8 @@ export default function LocalSetlistView({ base, songs }: Props) {
       <ol className="space-y-3">
         {groupBySlug(resolvedItems).map((group, i) => {
           const head = group[0];
+          const uniqTomEntries = uniqueByTom(group);
+          const showTomHeaders = uniqTomEntries.length > 1;
           return (
             <li key={i} className="border-b pb-3">
               <div className="flex items-baseline gap-3">
@@ -264,7 +269,7 @@ export default function LocalSetlistView({ base, songs }: Props) {
                     {head.hinarioNum && `HINO ${head.hinarioNum} – `}
                     {head.title}
                     {' – '}
-                    {group.map((item, j) => (
+                    {uniqTomEntries.map((item, j) => (
                       <span key={j}>
                         {j > 0 && ', '}
                         <a
@@ -282,11 +287,6 @@ export default function LocalSetlistView({ base, songs }: Props) {
                           }
                         >
                           {item.tom.toUpperCase()}
-                          {item.qualifier && (
-                            <span className="text-xs text-mmu-green ml-1 normal-case">
-                              ({prettyQualifier(item.qualifier)})
-                            </span>
-                          )}
                         </a>
                       </span>
                     ))}
@@ -294,7 +294,7 @@ export default function LocalSetlistView({ base, songs }: Props) {
                   {head.artist && (
                     <div className="text-sm text-gray-500">{head.artist}</div>
                   )}
-                  {group.map((item, j) => {
+                  {uniqTomEntries.map((item, j) => {
                     const hasExtra =
                       (item.moments && item.moments.length > 0) ||
                       item.notes ||
@@ -305,11 +305,9 @@ export default function LocalSetlistView({ base, songs }: Props) {
                         key={j}
                         className="mt-1 ml-1 border-l-2 border-gray-200 dark:border-gray-700 pl-2"
                       >
-                        {group.length > 1 && (
+                        {showTomHeaders && (
                           <div className="text-xs text-gray-500">
                             {item.tom.toUpperCase()}
-                            {item.qualifier &&
-                              ` (${prettyQualifier(item.qualifier)})`}
                           </div>
                         )}
                         {item.moments && item.moments.length > 0 && (

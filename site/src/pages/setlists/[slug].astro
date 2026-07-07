@@ -74,16 +74,21 @@ const MOMENT_LABELS: Record<string, string> = {
   preludio: 'Prelúdio',
   posludio: 'Poslúdio',
 };
-function prettyQualifier(q: string): string {
-  const m1 = q.match(/^v(\d+)$/);
-  if (m1) return `versão ${m1[1]}`;
-  const m2 = q.match(/^arranjo-(\d+)$/);
-  if (m2) return `arranjo ${m2[1]}`;
-  if (q === 'versao') return 'versão';
-  return q.replace(/-/g, ' ');
-}
 function tomUrlKey(qualifier: string, tom: string): string {
   return qualifier ? `${qualifier}.${tom.toLowerCase()}` : tom.toLowerCase();
+}
+// Dedup toms dentro de um grupo. Preserva a primeira ocorrência (ordem
+// da setlist), retornando o item completo pra manter link/notes coerentes.
+function uniqueByTom<T extends { tom: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const it of items) {
+    const t = it.tom.toLowerCase();
+    if (seen.has(t)) continue;
+    seen.add(t);
+    out.push(it);
+  }
+  return out;
 }
 // Agrupa entradas consecutivas com o mesmo slug — mesma música, versões
 // diferentes viram um item só com múltiplos tons/qualifiers.
@@ -139,6 +144,8 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
   <ol class="space-y-3">
     {groupBySlug(resolved).map((group, i) => {
       const head = group[0];
+      const uniqTomEntries = uniqueByTom(group);
+      const showTomHeaders = uniqTomEntries.length > 1;
       return (
         <li class="border-b pb-3">
           <div class="flex items-baseline gap-3">
@@ -150,7 +157,7 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
                 {head.hinarioNum && `HINO ${head.hinarioNum} – `}
                 {head.title}
                 {' – '}
-                {group.map((item, j) => (
+                {uniqTomEntries.map((item, j) => (
                   <>
                     {j > 0 && ', '}
                     <a
@@ -158,11 +165,6 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
                       class={item.hasFile ? 'hover:text-mmu-green underline' : 'opacity-50'}
                     >
                       {item.tom.toUpperCase()}
-                      {item.qualifier && (
-                        <span class="text-xs text-mmu-green ml-1 normal-case">
-                          ({prettyQualifier(item.qualifier)})
-                        </span>
-                      )}
                     </a>
                   </>
                 ))}
@@ -170,14 +172,13 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
               {head.artist && (
                 <div class="text-sm text-gray-500">{head.artist}</div>
               )}
-              {group.map((item) => (
+              {uniqTomEntries.map((item) => (
                 <>
                   {(item.moments && item.moments.length > 0) || item.notes || !item.hasFile ? (
                     <div class="mt-1 ml-1 border-l-2 border-gray-200 dark:border-gray-700 pl-2">
-                      {group.length > 1 && (
+                      {showTomHeaders && (
                         <div class="text-xs text-gray-500">
                           {item.tom.toUpperCase()}
-                          {item.qualifier && ` (${prettyQualifier(item.qualifier)})`}
                         </div>
                       )}
                       {item.moments && item.moments.length > 0 && (
