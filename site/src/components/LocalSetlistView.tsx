@@ -242,7 +242,9 @@ export default function LocalSetlistView({ base, songs }: Props) {
                 <a
                   href={
                     item.hasFile
-                      ? `${base}musicas/${item.slug}/${item.tom.toLowerCase()}`
+                      ? `${base}musicas/${item.slug}/${
+                          item.qualifier ? `${item.qualifier}.` : ''
+                        }${item.tom.toLowerCase()}`
                       : '#'
                   }
                   className={

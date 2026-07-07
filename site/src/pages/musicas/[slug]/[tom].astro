@@ -6,14 +6,24 @@ import { loadAllSongs } from '@/lib/songs/load';
 
 export async function getStaticPaths() {
   const songs = loadAllSongs();
+  // URL segment do tom inclui qualifier quando existe — evita colisão
+  // entre `slug.g.pro` e `slug.v2.g.pro` no mesmo path.
+  const tomKeyOf = (entry: (typeof songs)[number]) =>
+    entry.qualifiers.length > 0
+      ? `${entry.qualifiers.join('.')}.${entry.tom}`
+      : entry.tom;
   return songs.map((entry) => ({
-    params: { slug: entry.slug, tom: entry.tom },
+    params: { slug: entry.slug, tom: tomKeyOf(entry) },
     props: {
       song: entry.song,
       qualifiers: entry.qualifiers,
       availableToms: songs
         .filter((s) => s.slug === entry.slug)
-        .map((s) => s.tom),
+        .map((s) => ({
+          key: tomKeyOf(s),
+          tom: s.tom,
+          qualifier: s.qualifiers.join('.'),
+        })),
     },
   }));
 }
@@ -28,7 +38,7 @@ function prettyQualifier(q: string): string {
 }
 
 const { song, availableToms, qualifiers } = Astro.props;
-const { slug, tom } = Astro.params;
+const { slug } = Astro.params;
 const base = import.meta.env.BASE_URL;
 
 const parenBits = [
@@ -37,8 +47,6 @@ const parenBits = [
 ].filter(Boolean);
 const paren = parenBits.length ? ` (${parenBits.join(', ')})` : '';
 const hinoPrefix = song.metadata.hinarioNum ? `HINO ${song.metadata.hinarioNum} – ` : '';
-// titleBase é o título sem o tom — SongViewer concatena o tom dinâmico
-// (que atualiza quando o usuário transpõe).
 const titleBase = `${hinoPrefix}${song.metadata.title}${paren}`;
 const browserTitle = `${titleBase} – ${song.metadata.key}`;
 ---
@@ -83,7 +91,7 @@ const browserTitle = `${titleBase} – ${song.metadata.key}`;
         + Criar nova versão dessa música
       </button>
     </div>
-    <script is:inline define:vars={{ raw: song.raw, slug, tom, base }}>
+    <script is:inline define:vars={{ raw: song.raw, slug, tom: Astro.params.tom, base }}>
       document.getElementById('new-version-btn')?.addEventListener('click', () => {
         sessionStorage.setItem(
           'newVersion.source',

@@ -123,7 +123,7 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
           </span>
           <div class="flex-1">
             <a
-              href={item.hasFile ? `${base}musicas/${item.slug}/${item.tom.toLowerCase()}` : '#'}
+              href={item.hasFile ? `${base}musicas/${item.slug}/${item.qualifier ? `${item.qualifier}.` : ''}${item.tom.toLowerCase()}` : '#'}
               class={item.hasFile ? 'font-semibold uppercase hover:text-mmu-green' : 'font-semibold uppercase opacity-50'}
             >
               {item.hinarioNum && `HINO ${item.hinarioNum} – `}

@@ -4,9 +4,15 @@ import { transposeSong } from '@/lib/chordpro/transpose';
 import { chordToDegree } from '@/lib/chordpro/degrees';
 import CifraBody from './CifraBody';
 
+export interface TomOption {
+  key: string; // segmento de URL (ex.: 'g' ou 'v2.g')
+  tom: string; // só o tom (ex.: 'g')
+  qualifier: string; // '' quando não há
+}
+
 interface Props {
   song: Song;
-  availableToms: string[];
+  availableToms: TomOption[];
   slug: string;
   base: string;
   /**
@@ -15,6 +21,15 @@ interface Props {
    * refletindo transposição do usuário.
    */
   titleBase: string;
+}
+
+function prettyQualifier(q: string): string {
+  const m1 = q.match(/^v(\d+)$/);
+  if (m1) return `versão ${m1[1]}`;
+  const m2 = q.match(/^arranjo-(\d+)$/);
+  if (m2) return `arranjo ${m2[1]}`;
+  if (q === 'versao') return 'versão';
+  return q.replace(/-/g, ' ');
 }
 
 const NOTES_SHARP = [
@@ -271,15 +286,20 @@ export default function SongViewer({ song, availableToms, slug, base, titleBase 
       )}
 
       {availableToms.length > 1 && (
-        <div className="flex gap-2 mb-4 no-print text-sm">
+        <div className="flex flex-wrap gap-2 mb-4 no-print text-sm">
           <span>Versões:</span>
           {availableToms.map((t) => (
             <a
-              key={t}
-              href={`${base}musicas/${slug}/${t}`}
+              key={t.key}
+              href={`${base}musicas/${slug}/${t.key}`}
               className="underline hover:text-mmu-green"
             >
-              {t.toUpperCase()}
+              {t.tom.toUpperCase()}
+              {t.qualifier && (
+                <span className="text-xs text-mmu-green ml-1">
+                  ({prettyQualifier(t.qualifier)})
+                </span>
+              )}
             </a>
           ))}
         </div>
