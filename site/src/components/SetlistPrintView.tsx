@@ -213,26 +213,46 @@ export default function SetlistPrintView({
             );
           })()}
         </div>
+
+        {items
+          .filter((it) => COVER_HIDDEN_SLUGS.has(it.slug))
+          .map((it, i) => (
+            <div key={i} className="cover-extra">
+              <h2 className="song-title">
+                {it.title.toUpperCase()} – {it.tom.toUpperCase()}
+              </h2>
+              {it.song ? (
+                <CifraBody lines={it.song.lines} lyricsOnly={lyricsOnly} />
+              ) : (
+                <p className="song-missing">
+                  ⚠ Cifra não encontrada pra {it.slug}
+                  {it.qualifier ? ` (${it.qualifier})` : ''} em {it.tom}.
+                </p>
+              )}
+            </div>
+          ))}
       </section>
 
-      {items.map((it, i) => (
-        <section key={i} className="print-song">
-          <h1 className="song-title">
-            {it.hinarioNum && `HINO ${it.hinarioNum} – `}
-            {it.title.toUpperCase()} – {it.tom.toUpperCase()}
-          </h1>
-          {it.artist && <p className="song-artist">{it.artist}</p>}
-          {it.notes && <p className="song-notes">{it.notes}</p>}
-          {it.song ? (
-            <CifraBody lines={it.song.lines} lyricsOnly={lyricsOnly} />
-          ) : (
-            <p className="song-missing">
-              ⚠ Cifra não encontrada pra {it.slug}
-              {it.qualifier ? ` (${it.qualifier})` : ''} em {it.tom}.
-            </p>
-          )}
-        </section>
-      ))}
+      {items
+        .filter((it) => !COVER_HIDDEN_SLUGS.has(it.slug))
+        .map((it, i) => (
+          <section key={i} className="print-song">
+            <h1 className="song-title">
+              {it.hinarioNum && `HINO ${it.hinarioNum} – `}
+              {it.title.toUpperCase()} – {it.tom.toUpperCase()}
+            </h1>
+            {it.artist && <p className="song-artist">{it.artist}</p>}
+            {it.notes && <p className="song-notes">{it.notes}</p>}
+            {it.song ? (
+              <CifraBody lines={it.song.lines} lyricsOnly={lyricsOnly} />
+            ) : (
+              <p className="song-missing">
+                ⚠ Cifra não encontrada pra {it.slug}
+                {it.qualifier ? ` (${it.qualifier})` : ''} em {it.tom}.
+              </p>
+            )}
+          </section>
+        ))}
     </div>
   );
 }

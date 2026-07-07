@@ -174,6 +174,22 @@ body {
   font-style: italic;
   opacity: 0.7;
 }
+/* Cifras "de referência" (Tríplice Amém etc.) ficam dentro da capa,
+   sem quebra de página. Título centralizado azul + progressão. */
+.print-setlist .cover-extra {
+  margin-top: 1.5rem;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.print-setlist .cover-extra .song-title {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  color: #2c5aa0;
+  margin: 0 0 0.5rem 0;
+}
 .print-setlist .print-song {
   margin-bottom: 2rem;
 }
