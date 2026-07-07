@@ -313,7 +313,18 @@ export default function LocalSetlistView({ base, songs }: Props) {
         {groupBySlug(resolvedItems).map((group, i) => {
           const head = group[0];
           const uniqTomEntries = uniqueByTom(group);
-          const showTomHeaders = uniqTomEntries.length > 1;
+          const allMoments: string[] = [];
+          const allNotes: string[] = [];
+          let anyMissing = false;
+          for (const it of group) {
+            if (it.moments) {
+              for (const m of it.moments) {
+                if (!allMoments.includes(m)) allMoments.push(m);
+              }
+            }
+            if (it.notes && !allNotes.includes(it.notes)) allNotes.push(it.notes);
+            if (!it.hasFile) anyMissing = true;
+          }
           return (
             <li key={i} className="border-b pb-3">
               <div className="flex items-baseline gap-3">
@@ -350,47 +361,31 @@ export default function LocalSetlistView({ base, songs }: Props) {
                   {head.artist && (
                     <div className="text-sm text-gray-500">{head.artist}</div>
                   )}
-                  {uniqTomEntries.map((item, j) => {
-                    const hasExtra =
-                      (item.moments && item.moments.length > 0) ||
-                      item.notes ||
-                      !item.hasFile;
-                    if (!hasExtra) return null;
-                    return (
-                      <div
-                        key={j}
-                        className="mt-1 ml-1 border-l-2 border-gray-200 dark:border-gray-700 pl-2"
-                      >
-                        {showTomHeaders && (
-                          <div className="text-xs text-gray-500">
-                            {item.tom.toUpperCase()}
-                          </div>
-                        )}
-                        {item.moments && item.moments.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {item.moments.map((m) => (
-                              <span
-                                key={m}
-                                className="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green"
-                              >
-                                {MOMENT_LABELS[m] ?? m}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        {item.notes && (
-                          <p className="text-sm italic text-gray-600 dark:text-gray-400 mt-1">
-                            {item.notes}
-                          </p>
-                        )}
-                        {!item.hasFile && (
-                          <span className="text-xs text-red-600 dark:text-red-400">
-                            ⚠ tom não encontrado
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {allMoments.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {allMoments.map((m) => (
+                        <span
+                          key={m}
+                          className="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green"
+                        >
+                          {MOMENT_LABELS[m] ?? m}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {allNotes.map((n, k) => (
+                    <p
+                      key={k}
+                      className="text-sm italic text-gray-600 dark:text-gray-400 mt-1"
+                    >
+                      {n}
+                    </p>
+                  ))}
+                  {anyMissing && (
+                    <span className="text-xs text-red-600 dark:text-red-400">
+                      ⚠ tom não encontrado
+                    </span>
+                  )}
                 </div>
               </div>
             </li>

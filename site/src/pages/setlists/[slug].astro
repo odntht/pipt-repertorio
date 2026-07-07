@@ -175,7 +175,19 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
     {groupBySlug(resolved).map((group, i) => {
       const head = group[0];
       const uniqTomEntries = uniqueByTom(group);
-      const showTomHeaders = uniqTomEntries.length > 1;
+      // Merge de momentos/notas ao longo de todas as versões do grupo.
+      const allMoments: string[] = [];
+      const allNotes: string[] = [];
+      let anyMissing = false;
+      for (const it of group) {
+        if (it.moments) {
+          for (const m of it.moments) {
+            if (!allMoments.includes(m)) allMoments.push(m);
+          }
+        }
+        if (it.notes && !allNotes.includes(it.notes)) allNotes.push(it.notes);
+        if (!it.hasFile) anyMissing = true;
+      }
       return (
         <li class="border-b pb-3">
           <div class="flex items-baseline gap-3">
@@ -202,38 +214,25 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
               {head.artist && (
                 <div class="text-sm text-gray-500">{head.artist}</div>
               )}
-              {uniqTomEntries.map((item) => (
-                <>
-                  {(item.moments && item.moments.length > 0) || item.notes || !item.hasFile ? (
-                    <div class="mt-1 ml-1 border-l-2 border-gray-200 dark:border-gray-700 pl-2">
-                      {showTomHeaders && (
-                        <div class="text-xs text-gray-500">
-                          {item.tom.toUpperCase()}
-                        </div>
-                      )}
-                      {item.moments && item.moments.length > 0 && (
-                        <div class="flex flex-wrap gap-1 mt-1">
-                          {item.moments.map((m) => (
-                            <span class="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green">
-                              {MOMENT_LABELS[m] ?? m}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      {item.notes && (
-                        <p class="text-sm italic text-gray-600 dark:text-gray-400 mt-1">
-                          {item.notes}
-                        </p>
-                      )}
-                      {!item.hasFile && (
-                        <span class="text-xs text-red-600 dark:text-red-400">
-                          ⚠ tom não encontrado
-                        </span>
-                      )}
-                    </div>
-                  ) : null}
-                </>
+              {allMoments.length > 0 && (
+                <div class="flex flex-wrap gap-1 mt-1">
+                  {allMoments.map((m) => (
+                    <span class="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green">
+                      {MOMENT_LABELS[m] ?? m}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {allNotes.map((n) => (
+                <p class="text-sm italic text-gray-600 dark:text-gray-400 mt-1">
+                  {n}
+                </p>
               ))}
+              {anyMissing && (
+                <span class="text-xs text-red-600 dark:text-red-400">
+                  ⚠ tom não encontrado
+                </span>
+              )}
             </div>
           </div>
         </li>
