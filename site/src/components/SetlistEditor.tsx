@@ -17,7 +17,16 @@ interface SetlistItem {
   qualifier: string;
   tom: string;
   notes: string;
+  moments: string[];
 }
+
+const MOMENT_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: 'manha', label: 'Manhã' },
+  { value: 'noite', label: 'Noite' },
+  { value: 'ceia', label: 'Ceia' },
+  { value: 'preludio', label: 'Prelúdio' },
+  { value: 'posludio', label: 'Poslúdio' },
+];
 
 interface Props {
   base: string;
@@ -56,6 +65,9 @@ function buildYaml(event: string, date: string, items: SetlistItem[]): string {
     lines.push(`  - slug: ${it.slug}`);
     if (it.qualifier) lines.push(`    qualifier: ${it.qualifier}`);
     lines.push(`    tom: ${it.tom.toLowerCase()}`);
+    if (it.moments.length > 0) {
+      lines.push(`    moments: [${it.moments.join(', ')}]`);
+    }
     if (it.notes.trim()) {
       lines.push(`    notes: "${it.notes.replace(/"/g, '\\"')}"`);
     }
@@ -99,6 +111,7 @@ export default function SetlistEditor({ base, songs }: Props) {
           qualifier?: string;
           tom: string;
           notes?: string;
+          moments?: string[];
         }>;
       };
       if (parsed.source === 'local' && parsed.id) {
@@ -114,6 +127,7 @@ export default function SetlistEditor({ base, songs }: Props) {
           qualifier: s.qualifier ?? '',
           tom: s.tom,
           notes: s.notes ?? '',
+          moments: Array.isArray(s.moments) ? s.moments : [],
         })),
       );
       sessionStorage.removeItem('setlist.edit');
@@ -128,26 +142,55 @@ export default function SetlistEditor({ base, songs }: Props) {
     return m;
   }, [songs]);
 
+  // Chaves (slug::qualifier) já adicionadas — filtram só a versão exata da
+  // busca. Outras versões do mesmo slug continuam aparecendo.
+  const addedKeys = useMemo(
+    () => new Set(items.map((it) => `${it.slug}::${it.qualifier}`)),
+    [items],
+  );
+
   const searchResults = useMemo(() => {
     const q = normalize(search.trim());
     if (q === '') return [] as SongOption[];
     return songs
       .filter((s) => {
+        if (addedKeys.has(`${s.slug}::${s.qualifier}`)) return false;
         const hay = normalize(
           `${s.title} ${s.artist ?? ''} ${s.hinarioNum ?? ''}`,
         );
         return hay.includes(q);
       })
       .slice(0, 12);
-  }, [songs, search]);
+  }, [songs, search, addedKeys]);
 
   function addSong(s: SongOption) {
     setItems((prev) => [
       ...prev,
-      { slug: s.slug, qualifier: s.qualifier, tom: s.toms[0], notes: '' },
+      {
+        slug: s.slug,
+        qualifier: s.qualifier,
+        tom: s.toms[0],
+        notes: '',
+        moments: [],
+      },
     ]);
     setSearch('');
     setError(null);
+  }
+
+  function toggleMoment(idx: number, moment: string) {
+    setItems((prev) =>
+      prev.map((it, i) => {
+        if (i !== idx) return it;
+        const has = it.moments.includes(moment);
+        return {
+          ...it,
+          moments: has
+            ? it.moments.filter((m) => m !== moment)
+            : [...it.moments, moment],
+        };
+      }),
+    );
   }
 
   function removeAt(idx: number) {
@@ -209,6 +252,7 @@ export default function SetlistEditor({ base, songs }: Props) {
         qualifier: it.qualifier || undefined,
         tom: it.tom.toLowerCase(),
         notes: it.notes.trim() || undefined,
+        moments: it.moments.length > 0 ? it.moments : undefined,
       })),
     });
     window.location.href = `${base}setlists/local/?id=${encodeURIComponent(record.id)}`;
@@ -409,6 +453,22 @@ export default function SetlistEditor({ base, songs }: Props) {
                   {song?.artist && (
                     <div className="text-xs text-gray-500">{song.artist}</div>
                   )}
+                  <fieldset className="mt-2 flex flex-wrap gap-3 text-xs">
+                    <legend className="sr-only">Momento do culto</legend>
+                    {MOMENT_OPTIONS.map((opt) => (
+                      <label
+                        key={opt.value}
+                        className="flex items-center gap-1 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={it.moments.includes(opt.value)}
+                          onChange={() => toggleMoment(idx, opt.value)}
+                        />
+                        <span>{opt.label}</span>
+                      </label>
+                    ))}
+                  </fieldset>
                   <input
                     type="text"
                     value={it.notes}

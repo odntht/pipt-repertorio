@@ -9,6 +9,8 @@ export interface SetlistSong {
   qualifier?: string;
   tom: string;
   notes?: string;
+  /** Momentos do culto: 'manha', 'noite', 'ceia', 'preludio', 'posludio'. */
+  moments?: string[];
 }
 export interface Setlist {
   /** ex.: `2026-07-12.yml` — nome do arquivo em `data/setlists/`. */
@@ -73,6 +75,15 @@ function parseSetlist(raw: string): Omit<Setlist, 'filename' | 'slug'> {
     if ((m = line.match(/^\s+(tom|notes|qualifier):\s*(.*)$/))) {
       if (current) {
         (current as Record<string, string>)[m[1]] = stripQuotes(m[2].trim());
+      }
+      continue;
+    }
+    if ((m = line.match(/^\s+moments:\s*\[(.*)\]\s*$/))) {
+      if (current) {
+        current.moments = m[1]
+          .split(',')
+          .map((x) => stripQuotes(x.trim()))
+          .filter((x) => x.length > 0);
       }
       continue;
     }

@@ -28,6 +28,14 @@ function formatDate(iso: string): string {
   return `${d}/${m}/${y}`;
 }
 
+const MOMENT_LABELS: Record<string, string> = {
+  manha: 'Manhã',
+  noite: 'Noite',
+  ceia: 'Ceia',
+  preludio: 'Prelúdio',
+  posludio: 'Poslúdio',
+};
+
 function buildYaml(sl: Omit<LocalSetlist, 'id' | 'updatedAt'>): string {
   const lines: string[] = [];
   lines.push(`event: "${sl.event.replace(/"/g, '\\"')}"`);
@@ -37,6 +45,9 @@ function buildYaml(sl: Omit<LocalSetlist, 'id' | 'updatedAt'>): string {
     lines.push(`  - slug: ${s.slug}`);
     if (s.qualifier) lines.push(`    qualifier: ${s.qualifier}`);
     lines.push(`    tom: ${s.tom.toLowerCase()}`);
+    if (s.moments && s.moments.length > 0) {
+      lines.push(`    moments: [${s.moments.join(', ')}]`);
+    }
     if (s.notes) lines.push(`    notes: "${s.notes.replace(/"/g, '\\"')}"`);
   }
   return lines.join('\n') + '\n';
@@ -239,6 +250,18 @@ export default function LocalSetlistView({ base, songs }: Props) {
                     </span>
                   )}
                 </div>
+                {item.moments && item.moments.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {item.moments.map((m) => (
+                      <span
+                        key={m}
+                        className="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green"
+                      >
+                        {MOMENT_LABELS[m] ?? m}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 {item.notes && (
                   <p className="text-sm italic text-gray-600 dark:text-gray-400 mt-1">
                     {item.notes}

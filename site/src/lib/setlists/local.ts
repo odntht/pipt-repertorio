@@ -11,6 +11,7 @@ export interface LocalSetlist {
     qualifier?: string;
     tom: string;
     notes?: string;
+    moments?: string[];
   }>;
   updatedAt: string; // ISO datetime
 }

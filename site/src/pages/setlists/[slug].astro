@@ -26,6 +26,9 @@ function buildYamlForSetlist(
     lines.push(`  - slug: ${s.slug}`);
     if (s.qualifier) lines.push(`    qualifier: ${s.qualifier}`);
     lines.push(`    tom: ${s.tom.toLowerCase()}`);
+    if (s.moments && s.moments.length > 0) {
+      lines.push(`    moments: [${s.moments.join(', ')}]`);
+    }
     if (s.notes) lines.push(`    notes: "${s.notes.replace(/"/g, '\\"')}"`);
   }
   return lines.join('\n') + '\n';
@@ -58,11 +61,19 @@ interface ResolvedItem {
   qualifier: string;
   tom: string;
   notes?: string;
+  moments?: string[];
   title: string;
   hinarioNum?: string;
   artist?: string;
   hasFile: boolean;
 }
+const MOMENT_LABELS: Record<string, string> = {
+  manha: 'Manhã',
+  noite: 'Noite',
+  ceia: 'Ceia',
+  preludio: 'Prelúdio',
+  posludio: 'Poslúdio',
+};
 const resolved: ResolvedItem[] = setlist.songs.map((item) => {
   const qualifier = (item.qualifier ?? '').trim();
   const key = qualifier
@@ -76,6 +87,7 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
     qualifier,
     tom: item.tom,
     notes: item.notes,
+    moments: item.moments,
     title: meta?.title ?? item.slug,
     hinarioNum: meta?.hinarioNum,
     artist: meta?.artist,
@@ -126,6 +138,15 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
                 </span>
               )}
             </div>
+            {item.moments && item.moments.length > 0 && (
+              <div class="flex flex-wrap gap-1 mt-1">
+                {item.moments.map((m) => (
+                  <span class="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green">
+                    {MOMENT_LABELS[m] ?? m}
+                  </span>
+                ))}
+              </div>
+            )}
             {item.notes && (
               <p class="text-sm italic text-gray-600 dark:text-gray-400 mt-1">
                 {item.notes}
