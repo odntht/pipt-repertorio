@@ -86,10 +86,17 @@ function prettyQualifier(q: string): string {
   return q.replace(/-/g, ' ');
 }
 
+// Padrões incluídos por default em qualquer setlist nova — usuário
+// pode remover como qualquer outra música. Match com data/songs/triplice-amem*.
+const DEFAULT_ITEMS: SetlistItem[] = [
+  { slug: 'triplice-amem', qualifier: '', tom: 'g', notes: '', moments: [] },
+  { slug: 'triplice-amem', qualifier: 'v2', tom: 'g', notes: '', moments: [] },
+];
+
 export default function SetlistEditor({ base, songs }: Props) {
   const [event, setEvent] = useState('Culto de Domingo');
   const [date, setDate] = useState(nextSunday());
-  const [items, setItems] = useState<SetlistItem[]>([]);
+  const [items, setItems] = useState<SetlistItem[]>(DEFAULT_ITEMS);
   const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [editingFilename, setEditingFilename] = useState<string | null>(null);

@@ -338,7 +338,7 @@ export default function LocalSetlistView({ base, songs }: Props) {
                     {' – '}
                     {uniqTomEntries.map((item, j) => (
                       <span key={j}>
-                        {j > 0 && ', '}
+                        {j > 0 && ' ou '}
                         <a
                           href={
                             item.hasFile

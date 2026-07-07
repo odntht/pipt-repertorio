@@ -201,7 +201,7 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
                 {' – '}
                 {uniqTomEntries.map((item, j) => (
                   <>
-                    {j > 0 && ', '}
+                    {j > 0 && ' ou '}
                     <a
                       href={item.hasFile ? `${base}musicas/${item.slug}/${tomUrlKey(item.qualifier, item.tom)}` : '#'}
                       class={item.hasFile ? 'hover:text-mmu-green underline' : 'opacity-50'}

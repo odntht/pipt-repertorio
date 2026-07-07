@@ -72,8 +72,12 @@ function uniqueToms(group: PrintItem[]): string[] {
 function groupTitleLine(group: PrintItem[]): string {
   const head = group[0];
   const hino = head.hinarioNum ? `HINO ${head.hinarioNum} - ` : '';
-  return `${hino}${head.title.toUpperCase()} - ${uniqueToms(group).join(', ')}`;
+  return `${hino}${head.title.toUpperCase()} - ${uniqueToms(group).join(' ou ')}`;
 }
+
+// Slugs que existem no repertório mas são "instrumentais/litúrgicos" —
+// não aparecem na capa (ficam na seção de cifras só, como referência).
+const COVER_HIDDEN_SLUGS = new Set(['triplice-amem']);
 
 export default function SetlistPrintView({
   event,
@@ -149,42 +153,66 @@ export default function SetlistPrintView({
 
       <section className="print-cover">
         <div className="cover-header">
-          <div className="cover-date">{formatDateShort(date)}</div>
-          <div className="cover-event">{event}</div>
+          {formatDateShort(date)} – {event}
         </div>
+        <div className="cover-box">
+          {(() => {
+            // Filtra do capa qualquer grupo que é só de músicas "hidden".
+            const filterCover = (groupsList: PrintItem[][]) =>
+              groupsList.filter((g) => !COVER_HIDDEN_SLUGS.has(g[0].slug));
 
-        {orderedMoments.length === 0 && noMoment.length > 0 ? (
-          <div className="cover-block">
-            <ul>
-              {groupBySlug(noMoment).map((g, i) => (
-                <li key={i}>{groupTitleLine(g)}</li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          <>
-            {orderedMoments.map((m) => (
-              <div key={m} className="cover-block">
-                <h2>{MOMENT_LABELS[m]}</h2>
-                <ul>
-                  {groupBySlug(groups.get(m)!).map((g, i) => (
-                    <li key={i}>{groupTitleLine(g)}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            {noMoment.length > 0 && (
-              <div className="cover-block">
-                <h2>Outras</h2>
-                <ul>
-                  {noMoment.map((it, i) => (
-                    <li key={i}>{titleLine(it)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </>
-        )}
+            const noMomentGroups = filterCover(groupBySlug(noMoment));
+            const momentSections = orderedMoments
+              .map((m) => ({
+                m,
+                groups: filterCover(groupBySlug(groups.get(m)!)),
+              }))
+              .filter((s) => s.groups.length > 0);
+
+            if (momentSections.length === 0 && noMomentGroups.length === 0) {
+              return (
+                <p className="cover-empty">
+                  Setlist sem músicas na capa.
+                </p>
+              );
+            }
+            if (momentSections.length === 0) {
+              return (
+                <div className="cover-block">
+                  <ul>
+                    {noMomentGroups.map((g, i) => (
+                      <li key={i}>{groupTitleLine(g)}</li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            }
+            return (
+              <>
+                {momentSections.map(({ m, groups: gs }) => (
+                  <div key={m} className="cover-block">
+                    <h2>{MOMENT_LABELS[m]}</h2>
+                    <ul>
+                      {gs.map((g, i) => (
+                        <li key={i}>{groupTitleLine(g)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+                {noMomentGroups.length > 0 && (
+                  <div className="cover-block">
+                    <h2>Outras</h2>
+                    <ul>
+                      {noMomentGroups.map((g, i) => (
+                        <li key={i}>{groupTitleLine(g)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
+            );
+          })()}
+        </div>
       </section>
 
       {items.map((it, i) => (

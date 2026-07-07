@@ -136,36 +136,43 @@ body {
   margin-bottom: 2rem;
 }
 .print-setlist .cover-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid currentColor;
-}
-.print-setlist .cover-date {
+  color: #2c5aa0;
   font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
-}
-.print-setlist .cover-event {
-  font-size: 1.5rem;
-  font-weight: 700;
+  margin-bottom: 0.75rem;
   text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
-.print-setlist .cover-block {
-  margin-top: 1.25rem;
+.print-setlist .cover-box {
+  border: 1px solid currentColor;
+  padding: 1rem 1.5rem;
+}
+.print-setlist .cover-block + .cover-block {
+  margin-top: 1rem;
 }
 .print-setlist .cover-block h2 {
   font-size: 1rem;
   font-weight: 700;
-  margin-bottom: 0.35rem;
+  margin: 0 0 0.35rem 0;
 }
 .print-setlist .cover-block ul {
   list-style: none;
-  padding-left: 0;
+  padding-left: 1rem;
   margin: 0;
 }
 .print-setlist .cover-block li {
   padding: 0.15rem 0;
-  font-weight: 600;
+  font-weight: 700;
+  position: relative;
+}
+.print-setlist .cover-block li::before {
+  content: '- ';
+  position: absolute;
+  left: -1rem;
+}
+.print-setlist .cover-empty {
+  font-style: italic;
+  opacity: 0.7;
 }
 .print-setlist .print-song {
   margin-bottom: 2rem;
@@ -175,7 +182,9 @@ body {
   font-size: 1.25rem;
   font-weight: 700;
   text-transform: uppercase;
-  margin: 0 0 0.35rem 0;
+  text-align: center;
+  color: #2c5aa0;
+  margin: 0 0 0.75rem 0;
 }
 .print-setlist .song-artist {
   font-size: 0.85rem;
