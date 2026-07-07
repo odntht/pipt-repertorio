@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import type { Song } from '@/lib/cifra-parser/types';
 import CifraBody from './CifraBody';
+import { tomOrder } from '@/lib/setlists/tom-order';
 
 export interface PrintItem {
   slug: string;
@@ -51,17 +52,19 @@ function groupBySlug(items: PrintItem[]): PrintItem[][] {
   return groups;
 }
 
-// Deduplica tons dentro do grupo (mesma nota vira só uma entrada).
+// Deduplica tons e ordena cromaticamente (C, C#, D, D#, E, F, F#, G, G#, A, A#, B).
 function uniqueToms(group: PrintItem[]): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
   for (const it of group) {
-    const t = it.tom.toUpperCase();
+    const t = it.tom.toLowerCase();
     if (seen.has(t)) continue;
     seen.add(t);
     out.push(t);
   }
-  return out;
+  return out
+    .sort((a, b) => tomOrder(a) - tomOrder(b))
+    .map((t) => t.toUpperCase());
 }
 
 function groupTitleLine(group: PrintItem[]): string {

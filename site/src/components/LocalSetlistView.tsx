@@ -7,6 +7,7 @@ import {
   saveLocalSetlist,
   type LocalSetlist,
 } from '@/lib/setlists/local';
+import { tomOrder } from '@/lib/setlists/tom-order';
 
 interface SongMeta {
   slug: string;
@@ -55,7 +56,7 @@ function uniqueByTom<T extends { tom: string }>(items: T[]): T[] {
     seen.add(t);
     out.push(it);
   }
-  return out;
+  return out.sort((a, b) => tomOrder(a.tom) - tomOrder(b.tom));
 }
 
 function buildYaml(sl: Omit<LocalSetlist, 'id' | 'updatedAt'>): string {

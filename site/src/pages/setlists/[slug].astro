@@ -2,6 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { loadAllSetlists } from '@/lib/setlists/load';
 import { loadAllSongs } from '@/lib/songs/load';
+import { tomOrder } from '@/lib/setlists/tom-order';
 
 export async function getStaticPaths() {
   const setlists = loadAllSetlists();
@@ -77,8 +78,8 @@ const MOMENT_LABELS: Record<string, string> = {
 function tomUrlKey(qualifier: string, tom: string): string {
   return qualifier ? `${qualifier}.${tom.toLowerCase()}` : tom.toLowerCase();
 }
-// Dedup toms dentro de um grupo. Preserva a primeira ocorrência (ordem
-// da setlist), retornando o item completo pra manter link/notes coerentes.
+// Dedup toms dentro de um grupo e ordena cromaticamente (C → B).
+// Preserva o item completo (link/notes) da primeira ocorrência de cada tom.
 function uniqueByTom<T extends { tom: string }>(items: T[]): T[] {
   const seen = new Set<string>();
   const out: T[] = [];
@@ -88,7 +89,7 @@ function uniqueByTom<T extends { tom: string }>(items: T[]): T[] {
     seen.add(t);
     out.push(it);
   }
-  return out;
+  return out.sort((a, b) => tomOrder(a.tom) - tomOrder(b.tom));
 }
 // Agrupa entradas consecutivas com o mesmo slug — mesma música, versões
 // diferentes viram um item só com múltiplos tons/qualifiers.
