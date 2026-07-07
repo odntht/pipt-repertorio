@@ -255,6 +255,58 @@ export default function LocalSetlistView({ base, songs }: Props) {
         >
           ← Todas as setlists
         </a>
+        <div className="mt-3 flex flex-wrap gap-2 no-print">
+          {fromUrl ? (
+            <button
+              onClick={saveToDevice}
+              className="bg-mmu-green text-white px-3 py-2 rounded text-sm font-semibold hover:opacity-90"
+            >
+              Salvar neste navegador
+            </button>
+          ) : (
+            <button
+              onClick={editHere}
+              className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              Editar
+            </button>
+          )}
+          <a
+            href={printHref}
+            className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Imprimir / PDF
+          </a>
+          <a
+            href={printLyricsHref}
+            className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Imprimir letras
+          </a>
+          <button
+            onClick={shareLink}
+            className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Compartilhar link
+          </button>
+          <button
+            onClick={publishToGitHub}
+            className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Publicar no GitHub ↗
+          </button>
+          {!fromUrl && (
+            <button
+              onClick={deleteHere}
+              className="text-sm text-red-600 border border-red-300 dark:border-red-700 rounded px-3 py-2 hover:bg-red-50 dark:hover:bg-red-950"
+            >
+              Excluir
+            </button>
+          )}
+        </div>
+        {hint && (
+          <p className="mt-3 text-sm text-mmu-green no-print break-all">{hint}</p>
+        )}
       </header>
 
       <ol className="space-y-3">
@@ -345,59 +397,6 @@ export default function LocalSetlistView({ base, songs }: Props) {
           );
         })}
       </ol>
-
-      <div className="mt-6 flex flex-wrap gap-2 no-print">
-        {fromUrl ? (
-          <button
-            onClick={saveToDevice}
-            className="bg-mmu-green text-white px-3 py-2 rounded text-sm font-semibold hover:opacity-90"
-          >
-            Salvar neste navegador
-          </button>
-        ) : (
-          <button
-            onClick={editHere}
-            className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            Editar
-          </button>
-        )}
-        <a
-          href={printHref}
-          className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          Imprimir / PDF
-        </a>
-        <a
-          href={printLyricsHref}
-          className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          Imprimir letras
-        </a>
-        <button
-          onClick={shareLink}
-          className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          Compartilhar link
-        </button>
-        <button
-          onClick={publishToGitHub}
-          className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          Publicar no GitHub ↗
-        </button>
-        {!fromUrl && (
-          <button
-            onClick={deleteHere}
-            className="text-sm text-red-600 border border-red-300 dark:border-red-700 rounded px-3 py-2 hover:bg-red-50 dark:hover:bg-red-950"
-          >
-            Excluir
-          </button>
-        )}
-      </div>
-      {hint && (
-        <p className="mt-3 text-sm text-mmu-green no-print break-all">{hint}</p>
-      )}
     </article>
   );
 }

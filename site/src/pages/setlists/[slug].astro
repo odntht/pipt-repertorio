@@ -140,6 +140,35 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
     <a href={`${base}setlists/`} class="text-sm text-mmu-green hover:underline no-print">
       ← Todas as setlists
     </a>
+    <div class="mt-3 flex flex-wrap gap-2 no-print">
+      <a
+        href={`${base}setlists/${setlist.slug}/imprimir/`}
+        class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+      >
+        Imprimir / PDF
+      </a>
+      <a
+        href={`${base}setlists/${setlist.slug}/imprimir/?letras=1`}
+        class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+      >
+        Imprimir letras
+      </a>
+      <button
+        id="edit-btn"
+        type="button"
+        class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+      >
+        Editar
+      </button>
+      <button
+        id="hide-btn"
+        type="button"
+        class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+      >
+        {setlist.hidden ? 'Mostrar novamente' : 'Ocultar'}
+      </button>
+      <p id="hide-hint" class="w-full text-sm text-mmu-green mt-2 hidden"></p>
+    </div>
   </header>
 
   <ol class="space-y-3">
@@ -212,35 +241,6 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
     })}
   </ol>
 
-  <div class="mt-6 flex flex-wrap gap-2 no-print">
-    <a
-      href={`${base}setlists/${setlist.slug}/imprimir/`}
-      class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-    >
-      Imprimir / PDF
-    </a>
-    <a
-      href={`${base}setlists/${setlist.slug}/imprimir/?letras=1`}
-      class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-    >
-      Imprimir letras
-    </a>
-    <button
-      id="edit-btn"
-      type="button"
-      class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-    >
-      Editar
-    </button>
-    <button
-      id="hide-btn"
-      type="button"
-      class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-    >
-      {setlist.hidden ? 'Mostrar novamente' : 'Ocultar'}
-    </button>
-    <p id="hide-hint" class="w-full text-sm text-mmu-green mt-2 hidden"></p>
-  </div>
   <script
     is:inline
     define:vars={{ setlist, base, yamlHidden, yamlVisible }}
