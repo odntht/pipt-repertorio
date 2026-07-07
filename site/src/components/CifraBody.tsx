@@ -3,6 +3,8 @@ import type { SongLine } from '@/lib/cifra-parser/types';
 interface Props {
   lines: SongLine[];
   fontSize?: number;
+  /** Se true, oculta a linha de acordes acima da letra (modo "só letras"). */
+  lyricsOnly?: boolean;
 }
 
 // Só mostra marcador visual pras seções importantes.
@@ -42,7 +44,7 @@ export function groupIntoBlocks(
   return blocks;
 }
 
-export function CifraLine({ line }: { line: SongLine }) {
+export function CifraLine({ line, lyricsOnly }: { line: SongLine; lyricsOnly?: boolean }) {
   if (line.kind === 'blank') {
     return <div>{' '}</div>;
   }
@@ -65,6 +67,15 @@ export function CifraLine({ line }: { line: SongLine }) {
     } else {
       segments = [{ text: trimmed }, ...segments.slice(1)];
     }
+  }
+
+  // Modo "só letras": junta o texto de todos os segments e ignora acordes.
+  // Se a linha inteira era só acordes (sem letra), suprime pra não gerar
+  // uma linha em branco desnecessária.
+  if (lyricsOnly) {
+    const lyric = segments.map((s) => s.text).join('');
+    if (lyric.trim() === '') return null;
+    return <div>{lyric}</div>;
   }
 
   let chordCursor = 0;
@@ -116,7 +127,7 @@ export function CifraLine({ line }: { line: SongLine }) {
   );
 }
 
-export default function CifraBody({ lines, fontSize }: Props) {
+export default function CifraBody({ lines, fontSize, lyricsOnly }: Props) {
   return (
     <div
       className="cifra-body"
@@ -125,7 +136,7 @@ export default function CifraBody({ lines, fontSize }: Props) {
       {groupIntoBlocks(lines).map((block, i) => (
         <div key={i} className={block.isRefrain ? 'refrain-block' : undefined}>
           {block.lines.map((line, j) => (
-            <CifraLine key={j} line={line} />
+            <CifraLine key={j} line={line} lyricsOnly={lyricsOnly} />
           ))}
         </div>
       ))}

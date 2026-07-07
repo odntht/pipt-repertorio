@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Song } from '@/lib/cifra-parser/types';
 import CifraBody from './CifraBody';
 import { tomOrder } from '@/lib/setlists/tom-order';
@@ -21,6 +21,8 @@ interface Props {
   items: PrintItem[];
   /** Se true, dispara window.print() automaticamente ao montar. */
   autoPrint?: boolean;
+  /** Override do modo "só letras" — se undefined, lê `?letras=1` da URL. */
+  lyricsOnly?: boolean;
 }
 
 const MOMENT_LABELS: Record<string, string> = {
@@ -78,10 +80,16 @@ export default function SetlistPrintView({
   date,
   items,
   autoPrint = false,
+  lyricsOnly: lyricsOnlyProp,
 }: Props) {
+  const [lyricsOnly, setLyricsOnly] = useState<boolean>(lyricsOnlyProp ?? false);
+  useEffect(() => {
+    if (lyricsOnlyProp !== undefined) return;
+    const params = new URLSearchParams(window.location.search);
+    setLyricsOnly(params.get('letras') === '1');
+  }, [lyricsOnlyProp]);
   useEffect(() => {
     if (autoPrint) {
-      // Pequeno delay pra garantir que fontes/layout carregaram antes do dialog.
       const t = window.setTimeout(() => window.print(), 300);
       return () => window.clearTimeout(t);
     }
@@ -120,9 +128,20 @@ export default function SetlistPrintView({
         >
           Voltar
         </button>
+        <button
+          type="button"
+          onClick={() => setLyricsOnly((v) => !v)}
+          className={`border rounded px-3 py-2 text-sm ${
+            lyricsOnly ? 'bg-mmu-green text-white border-mmu-green' : ''
+          }`}
+          aria-pressed={lyricsOnly}
+        >
+          {lyricsOnly ? '✓ Só letras' : 'Só letras'}
+        </button>
         <p className="w-full text-xs text-gray-500 dark:text-gray-400">
           O layout dessa página segue o modelo do <em>Próximo Louvor</em>: capa
           com a lista agrupada por momento e uma cifra por página em seguida.
+          Toque em <em>Só letras</em> pra ocultar acordes.
           Use <strong>Imprimir → Salvar como PDF</strong> no diálogo do
           navegador.
         </p>
@@ -177,7 +196,7 @@ export default function SetlistPrintView({
           {it.artist && <p className="song-artist">{it.artist}</p>}
           {it.notes && <p className="song-notes">{it.notes}</p>}
           {it.song ? (
-            <CifraBody lines={it.song.lines} />
+            <CifraBody lines={it.song.lines} lyricsOnly={lyricsOnly} />
           ) : (
             <p className="song-missing">
               ⚠ Cifra não encontrada pra {it.slug}

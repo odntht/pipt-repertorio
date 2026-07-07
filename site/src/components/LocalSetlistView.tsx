@@ -205,18 +205,21 @@ export default function LocalSetlistView({ base, songs }: Props) {
 
   // Link pra rota de print: preserva a origem (localStorage vs shared) via
   // query params — a rota de print decodifica igual à view atual.
-  const printHref = (() => {
+  function buildPrintHref(lyricsOnly: boolean): string {
     if (!setlist) return `${base}setlists/`;
+    const extra = lyricsOnly ? '&letras=1' : '';
     if (fromUrl) {
       const payload = encodeSetlistForUrl({
         event: setlist.event,
         date: setlist.date,
         songs: setlist.songs,
       });
-      return `${base}setlists/local-imprimir/?d=${payload}`;
+      return `${base}setlists/local-imprimir/?d=${payload}${extra}`;
     }
-    return `${base}setlists/local-imprimir/?id=${encodeURIComponent(setlist.id)}`;
-  })();
+    return `${base}setlists/local-imprimir/?id=${encodeURIComponent(setlist.id)}${extra}`;
+  }
+  const printHref = buildPrintHref(false);
+  const printLyricsHref = buildPrintHref(true);
 
   function publishToGitHub() {
     if (!setlist) return;
@@ -364,6 +367,12 @@ export default function LocalSetlistView({ base, songs }: Props) {
           className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
         >
           Imprimir / PDF
+        </a>
+        <a
+          href={printLyricsHref}
+          className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          Imprimir letras
         </a>
         <button
           onClick={shareLink}
