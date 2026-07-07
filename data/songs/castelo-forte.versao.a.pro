@@ -17,10 +17,8 @@ Em to[F#m]do t[E]ranse agud[D]o.  [A]
 
 Com fúr[F#m]ia p[B7]ertinaz[E4]   [E]
 Perse[C#m]gue S[D]at[E]aná[F#m]s
-      B7/4 B7    E7M    
-Com ânimo   cruel!
-      D7M                C#7/4  C#7
-Mui forte é o Deus fiel,
+Com ân[B7/4]imo  [B7] cruel[E7M]!
+Mui fo[D7M]rte é o Deus fiel, [C#7/4]       [C#7]
 Ig[F#7m]ual não [E]há na t[D]err[A]a.
 | F#m | E | D | %|
 3
@@ -31,10 +29,8 @@ Nem ver-[F#m]nos assu[E]stados[D].   [A]
 
 O p[F#m]rínc[B7]ipe do [E4]mal[E],
 Com seu [C#m]plano infe[D]rn[E]al,[F#m]
-    B7/4 B7    E7M
-Já condenado está!
-     D7M    C#7/4  C#7         
-Vencido cairá
+Já c[B7/4]onden[B7]ado es[E7M]tá!
+Venci[D7M]do cair[C#7/4]á      [C#7]
 Por [F#7m]uma s[E]ó pal[D]avr[A]a.
 | F#m | E | D | %|
 2
@@ -45,10 +41,8 @@ Em seu[F#m] Filho es[E]colhi[D]do. [A]
 
 Sab[F#m]eis quem é? [B7]Jesus, [E4]   [E]
 O q[C#m]ue venc[D]eu na[E] cru[F#m]z,
-    B7/4     B7    E7M
-Senhor dos altos céus,
-D7M                   C#7/4  C#7
-E sendo o próprio Deus,
+Senh[B7/4]or dos al[B7]tos cé[E7M]us,
+[D7M]E sendo o próprio Deus[C#7/4],      [C#7]
    F#7m  E      D  A |F#m|E|D|%|
 Triunfa    na batalha.
 | F#m | E | D | %|
@@ -60,9 +54,7 @@ Com Cri[F#m]sto po[E]r defesa[D]!  [A]
 
 Se te[F#m]mos de[B7] perder[E4]   [E]
 Famí[C#m]lia., b[D]ens, [E]praz[F#m]er,
-     B7/4   B7   E7M
-Se tudo se acabar
-D7M                      C#7/4 C#7
-E a morte enfim chegar,
+Se tu[B7/4]do se a[B7]cabar[E7M]
+[D7M]E a morte enfim chegar,  [C#7/4]      [C#7]
      F#7m  E     D  A   (INTRO)
 Com ele    reinaremos!

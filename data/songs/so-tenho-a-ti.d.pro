@@ -8,8 +8,7 @@
 
 Intro 2x: D  A  Bm7  G9
 
-      D          D7+         Bm7    G9
-O que tenho             a não ser
+O que [D]tenho      [D7+]       a não[Bm7] ser   [G9]
 Tanto amor              em Teu olhar
 Esse mundo              vai passar
 Mas Tua verdade         ficará

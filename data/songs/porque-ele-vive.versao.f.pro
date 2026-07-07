@@ -10,29 +10,17 @@
 
 {comment: Intro: |:F6/9 Db6/9 F6/9  Bb/C :|}
 
-              F6/9  Cm7    B7(b5)   Bb6/9  Bbm6/9
-Deus enviou        seu Filho amado
-                Am7  Dm7        Eb6/9  Bb/C  
-Pra me salvar         e perdoar
-                F6/9  Cm7    B7(b5)     Bb6/9  Eb7/9
-Na cruz morreu     por meus pecados
-               Dm7/9  Db7/9  Cm7/9  B7/9  Db6/9  Bb/C
-Mas ressurgiu e   vivo    com o  Pai está
+Deus enviou   [F6/9]     s[Cm7]eu Filh[B7(b5)]o amado  [Bb6/9]       [Bbm6/9]
+Pra me salvar   [Am7]     [Dm7] e perdoar [Eb6/9]       [Bb/C]
+Na cruz morreu  [F6/9]   por[Cm7] meus p[B7(b5)]ecados     [Bb6/9]       [Eb7/9]
+Mas ressurgiu e[Dm7/9]   vivo[Db7/9]    com[Cm7/9] o  Pai[B7/9] está [Db6/9]       [Bb/C]
 
-                 F6/9  Cm7        B7(b5)    Bb6/9    Bbm6/9
-Porque ele vive       posso crer no amanhã
-                Am7  Dm7                Eb6/9  Bb/C
-Porque Ele vive        temor não há
-                   F6/9  Gm7  Am7  A7(b13)         Bb6/9   Eb7/9
-Mas eu bem sei,   eu     sei,  que a minha vida
-             Dm7/9     Db7/9  Cm7/9    B7/9    Db6/9  Bb/C
-Está nas mãos do meu Jesus que vivo está (Final Eb6/9 Bbm7 F6/9)
+Porque ele vive  [F6/9]     p[Cm7]osso crer n[B7(b5)]o amanhã  [Bb6/9]         [Bbm6/9]
+Porque Ele vive [Am7]     [Dm7]  temor não há     [Eb6/9]       [Bb/C]
+Mas eu bem sei,   e[F6/9]u     [Gm7]sei, [Am7] que [A7(b13)]a minha vida    [Bb6/9]        [Eb7/9]
+Está nas mãos[Dm7/9] do meu Je[Db7/9]sus que[Cm7/9] vivo est[B7/9]á (Final[Db6/9] Eb6/9 [Bb/C]Bbm7 F6/9)
 
-                   F6/9  Cm7   B7(b5)  Bb6/9  Bbm6/9
-E quando enfim        chegar a hora
-               Am7  Dm7            Eb6/9  Bb/C  
-Em que a morte      enfrentarei
-                    F6/9  Cm7   B7(b5)  Bb6/9  Eb7/9
-Sem medo então         terei   vitória
-         Dm7/9     Db7/9  Cm7/9    B7/9    Db6/9  Bb/C
-Irei à glória ao meu Jesus que vivo está.
+E quando enfim     [F6/9]   che[Cm7]gar a [B7(b5)]hora    [Bb6/9]       [Bbm6/9]
+Em que a morte [Am7]     [Dm7]enfrentarei    [Eb6/9]       [Bb/C]
+Sem medo então      [F6/9]   ter[Cm7]ei   v[B7(b5)]itória  [Bb6/9]       [Eb7/9]
+Irei à gl[Dm7/9]ória ao me[Db7/9]u Jesus[Cm7/9] que vivo[B7/9] está.  [Db6/9]       [Bb/C]

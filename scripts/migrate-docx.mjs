@@ -216,8 +216,11 @@ const SECTION_LABEL_RE =
 // Aceita sufixos comuns (m, M, maj, min, dim, aug, sus, °, º), o dash `-`
 // usado em alguns hinários como sinônimo de menor (E- = Em), extensões
 // numéricas, parênteses opcionais e baixo via `/`.
+// Extensões aceitas: `7+` (equiv. 7M/maj7), `5+`, `4+`, dígitos, `mMaj`, dim,
+// aug, sus, `-`, `º`/`°`. Baixo slash aceita nota + extensão simples ou número
+// puro (ex.: `E7/11`, `A/C#`, `G/D`).
 const CHORD_TOKEN_RE =
-  /^[A-G][#b]?(?:[mM\-]|maj|min|dim|aug|sus|[°º0-9])*(?:\([^)]*\))?(?:\/[A-G][#b]?(?:[mM\-]|[°º0-9])*)?$/;
+  /^[A-G][#b]?(?:[mM\-+]|maj|min|dim|aug|sus|[°º0-9])*(?:\([^)]*\))?(?:\/(?:[A-G][#b]?(?:[mM\-+]|[°º0-9])*|[0-9]+))?$/;
 
 // Strippa o dash "-" após a raiz. Alguns hinários usam "E-", "B-" onde
 // presumivelmente havia uma extensão (7, 9, add4, etc.) que se perdeu

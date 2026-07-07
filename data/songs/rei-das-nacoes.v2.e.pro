@@ -17,11 +17,9 @@ Se[C#]nhor Todo-Podero[F#m]so
 [F#m7]Justos e v[G#m]erdadeiros [A]são
 [A#º]Os Teus camin[B4]hos [B]
 
-    E               E5+
-Oh! Rei das nações, quem não temerá?
+Oh! [E]Rei das nações, [E5+]quem não temerá?
 Quem não[E6] glorificará [C#sus4]Teu nome?[C#]
-    F#m7            D7+
-Oh! Rei das nações, quem não Te louvará?
+Oh! [F#m7]Rei das nações, [D7+]quem não Te louvará?
      A     F#m7        1ª vez: A/B  E
                               2ª vez: B7  E
 Pois só Teu nome é santo

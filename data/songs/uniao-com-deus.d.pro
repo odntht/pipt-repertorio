@@ -26,8 +26,7 @@ DD5+ GG#º        DAD        (G/A)
 Mais perto quero estar,   meu Deus de ti!”
 
 Min[D]ha[E] al[F#]ma c[G]antará[D] a [B] ti,[A] Senhor!
-D D5+   G7M  D     A      D
-Betel aqui verei por teu favor.
+[D]Be[D5+]tel aq[G7M]ui ve[D]rei po[A]r teu f[D]avor.
 D        D4                       DD4D  A
 Eu sempre hei de rogar: “Mais perto quero estar,
 DD5+ GG#º        DAD        (G/A)

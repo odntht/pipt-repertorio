@@ -7,13 +7,12 @@
 {added: 2026-07-06}
 
 {comment: Intro: Bb7M/9    C/Bb     Bb/D     C/E    F    Gm}
-   Bb7M/9    C/Bb     Dm7/9
+[Bb7M/9] [C/Bb] [Dm7/9]
 
 [Bb9] como um d[C/E]eserto [F/A]  minha alma e[Bb9]stá
 [Bb9] muitas raz[C/E]ões  [F/A]  para desist[Bb9]ir
 [Bb9]  que von[C/E]tade [F/A] de  chor[Bb9]ar, mas, eu [Gm]sei
-       Am              Dm7/9
-Não devo descansar as mãos.
+Não dev[Am]o descansar as m[Dm7/9]ãos.
 
 [C9]  pois q[C9/Bb]uem insiste [F/A]e semeia[Bb9], ainda que
 Cho[C/E]rando,[C9] voltará, [C9/Bb]trazendo co[F/A]nsigo

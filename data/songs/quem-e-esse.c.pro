@@ -8,11 +8,9 @@
 {comment: Intro: C F7+}
 
 Co[C]mo cordeiro ele mor[C/F]reu 
-       Am7            F7+
-era inocente o filho de Deus
+era ino[Am7]cente o filho d[F7+]e Deus
 Foi aç[C]oitado, inju[C/F]stiçado 
-        Am7                    F7+
-condenado a morte sem merecer.
+condenad[Am7]o a morte sem merecer. [F7+]
 
 Quem é esse q[Dm]ue andou sobre as águas?[Am7]
 em pleno deserto [C]o pão multiplicou?        [G]
@@ -21,9 +19,7 @@ e tudo estremece ao so[C]m de sua voz      [G]
 Quem e esse que [Dm]nunca desampara      [Am7]
 ele nunca falha, es[C]se é meu Deus        [G]
 
-                 F7+            Am
-Eu não merecia mas ele me amou
+Eu não merecia ma[F7+]s ele me amou  [Am]
 vivia no pecado mas [C]Deus me resgatou         [G]
-                     F7+                  Am
-Levou aquela cruz porque pensou em mim
+Levou aquela cruz por[F7+]que pensou em mim    [Am]
 me deu a salvação no[C] sangue carmezim            [G]

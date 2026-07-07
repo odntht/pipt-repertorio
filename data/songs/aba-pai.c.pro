@@ -19,10 +19,8 @@ eu [G/B]quero Te adorar
      G7+       C/E FC/E
 as palavras não podem dizer
 o qu[Dm7]anto eu Te a[C/E]mo
-   F       Dm        G7/9      C/E
-e como eu preciso de Ti
+e c[F]omo eu p[Dm]reciso de [G7/9]Ti        [C/E]
 só me [F]resta d[Dm]izer[G]:
 [C]Aba Pai[C/E]    [F]    [G]
 
-Dm            G9    C7+
-SÓ ME RESTA DIZER     PAI
+[Dm]SÓ ME RESTA DI[G9]ZER   [C7+]  PAI

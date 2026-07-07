@@ -12,10 +12,8 @@ Tua graç[C#m7]a me basta
 Nas madrug[A9]adas frias
 Na solidão[F#m] da estrada
 Tua graça[B4] me bast[B]a
-       E7M/9    E9
-No vento incessante
-         E7M/9           E9
-Toda hora e a cada instante
+No vent[E7M/9]o incessa[E9]nte
+Toda hora[E7M/9] e a cada instan[E9]te
 Tua gra[C#m7]ça me basta
 Na imens[A9]idão do mundo
 No abism[F#m]o mais profundo

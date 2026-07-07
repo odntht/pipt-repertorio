@@ -17,8 +17,7 @@ Por Jesu[Em]s têm com Deus com[A]unhão.            [D]
 
 [D]Alvo mais que a neve,   [A]
 [Em]Al-[A]-vo mais que a ne[D]ve[A]!
-D              D5+        G
-Sim, nesse sangue lavado,
+[D]Sim, nesse sang[D5+]ue lavado, [G]
 Mais a[D]lvo que a neve[A] eu estou        [D]
 
 [D]Quão espinhosa coroa          [Bm]

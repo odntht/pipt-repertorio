@@ -8,16 +8,12 @@
 
 {comment: Intro: A7+ C7+ Bm7}
 
-A7+                  C7+           Bm7            A7+
-Grande é  o Senhor e mui digno de louvor
-       C7+                Bm7       Fdim F#m7
-Na cidade do nosso Deus seu Santo monte
+[A7+]Grande é  o Senhor e [C7+]mui digno de l[Bm7]ouvor          [A7+]
+Na cida[C7+]de do nosso Deus se[Bm7]u Santo mo[Fdim]nte  [F#m7]
 [A9]Alegria de toda terr[Bm7]a   [A/C#]      [D7M]      [D/E]
 
-A7+                  C7+           Bm7            A7+
-Grande é o Senhor em quem nós temos a vitória
-       C7+                Bm7       Fdim F#m7
-E que nos ajuda contra o inimigo
+[A7+]Grande é o Senhor em [C7+]quem nós temos[Bm7] a vitória     [A7+]
+E que n[C7+]os ajuda contra o i[Bm7]nimigo    [Fdim]     [F#m7]
 [A9]Por isso diante dele nos prostramos   [Bm7]    [A/C#]     [Dm7]     [D/E]
 
 [A9]Queremos o seu nome engrandecer             [Em7]     [A7]

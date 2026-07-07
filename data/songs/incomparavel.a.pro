@@ -12,8 +12,7 @@ Nem em templ[D/A]os feitos por mãos.       [E/A]
 A[D]cima das religiões.  [E]       [F°]
 
 Não há [F#m7]nada no céu, na terra  [C#m7]
-                      D7+                     A    C#7
-Ou no mar, semelhante a ti, Senhor.
+Ou no mar, semelhante [D7+]a ti, Senhor.           [A]     [C#7]
 Tua i[F#m7]magem está revelada[D9] em nós
 Expressã[Bm7]o do teu amor.   [E4]
 

@@ -9,10 +9,8 @@
 {comment: Intro}
 [C] [Am] [G] [D/F#]
 
-C7+                      Am                                  G                  D/F#
- Me faltam palavras pra expressar o meu amor por Ti, Senhor
-C7+                Am                                 G      D/F#
- Me sobram experiências que expressam seu amor por mim, Senhor
+[C7+] Me faltam palavras pra e[Am]xpressar o meu amor por Ti, Senhor  [G]                   [D/F#]
+[C7+] Me sobram experiên[Am]cias que expressam seu amor por mim[G], Senho[D/F#]r
 
 [Am7]  Levaste [G/B]o meu  f[C]ardo, me perdoando    [G]        [D/F#]
 [Am]  Seu amor me [G/B]alcanç[C]ou, sigo te bus[D]cando
@@ -20,7 +18,5 @@ C7+                Am                                 G      D/F#
 [G]Majestoso, Poderoso, Deus Eterno, Pai B[Em]ondoso
 [C]Incomparáve[G/B]l, Mar[Am]avilhoso Tu És[D]
 
-C7+              Am              G                    D/F#
-Pra onde eu irei, pois só Tu tens palavras de vida eterna
-C7+               Am7               G                      D/F#
-Tu sondas meu coração e os teus olhos estão sobre toda a Terra
+[C7+]Pra onde eu irei,[Am] pois só Tu tens[G] palavras de vida ete[D/F#]rna
+[C7+]Tu sondas meu cora[Am7]ção e os teus olho[G]s estão sobre toda a Te[D/F#]rra

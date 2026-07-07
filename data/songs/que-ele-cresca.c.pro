@@ -9,10 +9,8 @@
 [C] [C9] [C4]
 
 M[C]a__[C9]__is de T[C4]i, m[C]a__[C9]__is de T[C4]i  
-            Am7/11  G              F
-E menos de mim,        e menos de mim 
-            Am7/11   G             F
-E menos de mim,        e menos de mim 
+E menos de m[Am7/11]im,     [G]   e menos de m[F]im 
+E menos de m[Am7/11]im,      [G]  e menos de m[F]im 
 
 Que Ele cr[Dm]esça e eu dimin[F]ua  
 Que Ele apar[Am]eça e eu me constr[G]anja  

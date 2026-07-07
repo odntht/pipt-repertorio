@@ -10,12 +10,10 @@
 
 C7+         Bm7(b5)  E7/G#   Am7   {Am7  Abm7  Gm7  C7 }
 És a nossa Estrela      da     manhã,
-F7+                C/E                  Dm7   F/G  G
-Cordeiro Santo que nos trouxe a paz
+[F7+]Cordeiro Santo que [C/E]nos trouxe a paz     [Dm7]      [F/G]     [G]
 C7+         Bm7(b5)  E7/G#   Am7   {Am7  Abm7  Gm7  C7}
 Em Tuas mãos está todo   o     vencer,    
-F7+                  C/E            Dm7   F/G  G
-Resposta a todo aquele que clamar
+[F7+]Resposta a todo aquel[C/E]e que clamar   [Dm7]      [F/G]     [G]
 [E7]A verdade é a Tua palavr[E/G#]a e não pode[Am7] men[D7]tir, por is[F/D]so est[Em7]amos aqui  
                                                        1ª vez: F/G  Fº/G
                                                        2ª vez: D/F#  E7/G#

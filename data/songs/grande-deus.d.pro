@@ -9,10 +9,8 @@
 
 {comment: Intro: G7+  D9  Bm7  A}
 
-G7+        D                    Bm7
-Por Tua cruz, a vida e a esperança
-            A              G7+
-Promessa de cura e restauração
+[G7+]Por Tua cru[D]z, a vida e a esperan[Bm7]ça
+Promessa de [A]cura e restaura[G7+]ção
 Por Tua g[D]raça, somos Teu [Bm7]reino
 Filhos herd[A]eiros livres em[D/G] Ti
 
@@ -21,18 +19,13 @@ Que nos trans[A]forma e nos traz rede[D/G]nção
 Nas b[Bm]atalhas, venc[D]edor
 Tu nos dás a vi[A]tória e cantamos:
 
-G7+   Bm  A                       G7+
-   Gran  -  de, não há outro igual a Ti
-   Bm   A                      G7+
-Gran  -  de, não há outro igual a Ti
-   Bm   A                      G7+
-Gran  -  de, não há outro igual a Ti
+[G7+]   Gra[Bm]n  -[A]  de, não há outro igual[G7+] a Ti
+Gra[Bm]n  - [A] de, não há outro igual[G7+] a Ti
+Gra[Bm]n  - [A] de, não há outro igual[G7+] a Ti
 Gra[Bm]n  - [A] de, não há outro igua[D/G]l a Ti
 
-G7+        D             Bm7
-Muralhas caem, cadeias se rompem
-            A              G7+
-Vivemos pra sempre justos em Ti
+[G7+]Muralhas ca[D]em, cadeias se[Bm7] rompem
+Vivemos pra [A]sempre justos e[G7+]m Ti
 Nos levan[D]tamos, venha ao [Bm7]Teu reino
 Livres bril[A]hamos, Teu sangue e Tua [D/G]cruz
 

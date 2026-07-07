@@ -16,8 +16,7 @@
 [E]   Tudo Ele é pra mim     [A]
 
 [D]Até que um dia seu amor senti, [C#m7]Sua imensa graça recebi.
-Bm7                                E4+               E
-Descobri, então, que Deus não vive longe lá no céu, 
+[Bm7]Descobri, então, que Deus não vive [E4+]longe lá no céu,  [E]
 sem se importar comigo.
 
 [A]Mas ag[F#m]ora ao meu [Bm]lado está[E].
