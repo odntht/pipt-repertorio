@@ -1,0 +1,57 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SetlistPrintView from '@/components/SetlistPrintView';
+import type { PrintItem } from '@/components/SetlistPrintView';
+import { loadAllSetlists } from '@/lib/setlists/load';
+import { loadAllSongs } from '@/lib/songs/load';
+
+export async function getStaticPaths() {
+  const setlists = loadAllSetlists();
+  return setlists.map((s) => ({ params: { slug: s.slug }, props: { setlist: s } }));
+}
+
+const { setlist } = Astro.props;
+
+const rawSongs = loadAllSongs();
+const byFullKey = new Map(
+  rawSongs.map((s) => {
+    const key =
+      s.qualifiers.length > 0
+        ? `${s.slug}.${s.qualifiers.join('.')}.${s.tom}`
+        : `${s.slug}.${s.tom}`;
+    return [key, s];
+  }),
+);
+const bySlug = new Map<string, typeof rawSongs[number]>();
+for (const s of rawSongs) if (!bySlug.has(s.slug)) bySlug.set(s.slug, s);
+
+const items: PrintItem[] = setlist.songs.map((item) => {
+  const qualifier = (item.qualifier ?? '').trim();
+  const tom = item.tom.toLowerCase();
+  const key = qualifier ? `${item.slug}.${qualifier}.${tom}` : `${item.slug}.${tom}`;
+  const exact = byFullKey.get(key);
+  const fallback = bySlug.get(item.slug);
+  const source = exact ?? fallback ?? null;
+  const meta = source?.song.metadata;
+  return {
+    slug: item.slug,
+    qualifier,
+    tom,
+    notes: item.notes,
+    moments: item.moments,
+    title: meta?.title ?? item.slug,
+    artist: meta?.artist,
+    hinarioNum: meta?.hinarioNum,
+    song: exact?.song ?? null,
+  };
+});
+---
+
+<BaseLayout title={`${setlist.event} — Imprimir`}>
+  <SetlistPrintView
+    client:load
+    event={setlist.event}
+    date={setlist.date}
+    items={items}
+  />
+</BaseLayout>

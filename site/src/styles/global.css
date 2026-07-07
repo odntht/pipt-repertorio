@@ -117,4 +117,78 @@ body {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+
+  /* Print da setlist inteira (Próximo Louvor): capa + cifras */
+  .print-setlist .print-cover {
+    page-break-after: always;
+    break-after: page;
+  }
+  .print-setlist .print-song {
+    page-break-before: always;
+    break-before: page;
+  }
+  .print-setlist .print-song:first-of-type { }
+}
+
+/* Estilos base da capa (tanto tela quanto print) */
+.print-setlist .print-cover {
+  font-family: var(--font-mono, monospace);
+  margin-bottom: 2rem;
+}
+.print-setlist .cover-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid currentColor;
+}
+.print-setlist .cover-date {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.print-setlist .cover-event {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.print-setlist .cover-block {
+  margin-top: 1.25rem;
+}
+.print-setlist .cover-block h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+.print-setlist .cover-block ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+.print-setlist .cover-block li {
+  padding: 0.15rem 0;
+  font-weight: 600;
+}
+.print-setlist .print-song {
+  margin-bottom: 2rem;
+}
+.print-setlist .song-title {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 0.35rem 0;
+}
+.print-setlist .song-artist {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin: 0 0 0.5rem 0;
+}
+.print-setlist .song-notes {
+  font-style: italic;
+  font-size: 0.9rem;
+  opacity: 0.75;
+  margin: 0 0 0.75rem 0;
+}
+.print-setlist .song-missing {
+  color: #dc2626;
+  font-size: 0.9rem;
 }

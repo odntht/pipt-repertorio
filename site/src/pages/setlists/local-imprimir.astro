@@ -1,0 +1,24 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LocalPrintLoader from '@/components/LocalPrintLoader';
+import { loadAllSongs } from '@/lib/songs/load';
+
+const rawSongs = loadAllSongs();
+
+// Payload compacto pra hidratação client-side. AST completa da cifra vai
+// junto (necessário pra renderizar o corpo). Pesa ~1MB no total, mas só
+// é baixado quando o usuário abre a rota de print — não afeta o repertório.
+const songs = rawSongs.map((s) => ({
+  slug: s.slug,
+  qualifier: s.qualifiers.join('.'),
+  tom: s.tom,
+  title: s.song.metadata.title,
+  artist: s.song.metadata.artist,
+  hinarioNum: s.song.metadata.hinarioNum,
+  song: s.song,
+}));
+---
+
+<BaseLayout title="Imprimir setlist">
+  <LocalPrintLoader client:load songs={songs} />
+</BaseLayout>

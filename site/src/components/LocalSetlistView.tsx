@@ -180,6 +180,21 @@ export default function LocalSetlistView({ base, songs }: Props) {
     window.location.href = `${base}setlists/`;
   }
 
+  // Link pra rota de print: preserva a origem (localStorage vs shared) via
+  // query params — a rota de print decodifica igual à view atual.
+  const printHref = (() => {
+    if (!setlist) return `${base}setlists/`;
+    if (fromUrl) {
+      const payload = encodeSetlistForUrl({
+        event: setlist.event,
+        date: setlist.date,
+        songs: setlist.songs,
+      });
+      return `${base}setlists/local-imprimir/?d=${payload}`;
+    }
+    return `${base}setlists/local-imprimir/?id=${encodeURIComponent(setlist.id)}`;
+  })();
+
   function publishToGitHub() {
     if (!setlist) return;
     const yaml = buildYaml({
@@ -289,6 +304,12 @@ export default function LocalSetlistView({ base, songs }: Props) {
             Editar
           </button>
         )}
+        <a
+          href={printHref}
+          className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          Imprimir / PDF
+        </a>
         <button
           onClick={shareLink}
           className="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"

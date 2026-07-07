@@ -159,6 +159,12 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
   </ol>
 
   <div class="mt-6 flex flex-wrap gap-2 no-print">
+    <a
+      href={`${base}setlists/${setlist.slug}/imprimir/`}
+      class="text-sm border rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+    >
+      Imprimir / PDF
+    </a>
     <button
       id="edit-btn"
       type="button"
