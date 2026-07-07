@@ -10,7 +10,6 @@
 {comment: Intro}
 [Bm] [A] [G] [Bm] [A] [E]
 
-{comment: Refrão}
 [D]1. Perante o trono do alto céu[G]      [D]
 D                  G    A   (ou D/F#)
 eu tenho forte defensor,
