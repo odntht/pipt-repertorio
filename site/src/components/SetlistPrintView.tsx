@@ -39,9 +39,37 @@ function formatDateShort(iso: string): string {
   return `${d}/${m}/${y.slice(2)}`;
 }
 
-function titleLine(it: PrintItem): string {
-  const hino = it.hinarioNum ? `HINO ${it.hinarioNum} - ` : '';
-  return `${hino}${it.title.toUpperCase()} - ${it.tom.toUpperCase()}`;
+function prettyQualifier(q: string): string {
+  const m1 = q.match(/^v(\d+)$/);
+  if (m1) return `versão ${m1[1]}`;
+  const m2 = q.match(/^arranjo-(\d+)$/);
+  if (m2) return `arranjo ${m2[1]}`;
+  if (q === 'versao') return 'versão';
+  return q.replace(/-/g, ' ');
+}
+
+function tomLabel(it: PrintItem): string {
+  const t = it.tom.toUpperCase();
+  return it.qualifier ? `${t} (${prettyQualifier(it.qualifier)})` : t;
+}
+
+// Agrupa consecutivos com mesmo slug — evita repetir "GRANDE É O SENHOR"
+// quando há mais de uma versão da mesma música no setlist.
+function groupBySlug(items: PrintItem[]): PrintItem[][] {
+  const groups: PrintItem[][] = [];
+  for (const it of items) {
+    const last = groups[groups.length - 1];
+    if (last && last[0].slug === it.slug) last.push(it);
+    else groups.push([it]);
+  }
+  return groups;
+}
+
+function groupTitleLine(group: PrintItem[]): string {
+  const head = group[0];
+  const hino = head.hinarioNum ? `HINO ${head.hinarioNum} - ` : '';
+  const toms = group.map(tomLabel).join(', ');
+  return `${hino}${head.title.toUpperCase()} - ${toms}`;
 }
 
 export default function SetlistPrintView({
@@ -108,8 +136,8 @@ export default function SetlistPrintView({
         {orderedMoments.length === 0 && noMoment.length > 0 ? (
           <div className="cover-block">
             <ul>
-              {noMoment.map((it, i) => (
-                <li key={i}>{titleLine(it)}</li>
+              {groupBySlug(noMoment).map((g, i) => (
+                <li key={i}>{groupTitleLine(g)}</li>
               ))}
             </ul>
           </div>
@@ -119,8 +147,8 @@ export default function SetlistPrintView({
               <div key={m} className="cover-block">
                 <h2>{MOMENT_LABELS[m]}</h2>
                 <ul>
-                  {groups.get(m)!.map((it, i) => (
-                    <li key={i}>{titleLine(it)}</li>
+                  {groupBySlug(groups.get(m)!).map((g, i) => (
+                    <li key={i}>{groupTitleLine(g)}</li>
                   ))}
                 </ul>
               </div>

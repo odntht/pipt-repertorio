@@ -36,6 +36,25 @@ const MOMENT_LABELS: Record<string, string> = {
   posludio: 'Poslúdio',
 };
 
+function prettyQualifier(q: string): string {
+  const m1 = q.match(/^v(\d+)$/);
+  if (m1) return `versão ${m1[1]}`;
+  const m2 = q.match(/^arranjo-(\d+)$/);
+  if (m2) return `arranjo ${m2[1]}`;
+  if (q === 'versao') return 'versão';
+  return q.replace(/-/g, ' ');
+}
+
+function groupBySlug<T extends { slug: string }>(items: T[]): T[][] {
+  const groups: T[][] = [];
+  for (const it of items) {
+    const last = groups[groups.length - 1];
+    if (last && last[0].slug === it.slug) last.push(it);
+    else groups.push([it]);
+  }
+  return groups;
+}
+
 function buildYaml(sl: Omit<LocalSetlist, 'id' | 'updatedAt'>): string {
   const lines: string[] = [];
   lines.push(`event: "${sl.event.replace(/"/g, '\\"')}"`);
@@ -232,62 +251,97 @@ export default function LocalSetlistView({ base, songs }: Props) {
       </header>
 
       <ol className="space-y-3">
-        {resolvedItems.map((item, i) => (
-          <li key={i} className="border-b pb-3">
-            <div className="flex items-baseline gap-3">
-              <span className="text-2xl font-bold text-gray-400 tabular-nums">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <div className="flex-1">
-                <a
-                  href={
-                    item.hasFile
-                      ? `${base}musicas/${item.slug}/${
-                          item.qualifier ? `${item.qualifier}.` : ''
-                        }${item.tom.toLowerCase()}`
-                      : '#'
-                  }
-                  className={
-                    item.hasFile
-                      ? 'font-semibold uppercase hover:text-mmu-green'
-                      : 'font-semibold uppercase opacity-50'
-                  }
-                >
-                  {item.hinarioNum && `HINO ${item.hinarioNum} – `}
-                  {item.title}
-                </a>
-                <div className="text-sm text-gray-500 flex flex-wrap gap-2">
-                  <span>
-                    Tom: <strong>{item.tom.toUpperCase()}</strong>
-                  </span>
-                  {item.artist && <span>· {item.artist}</span>}
-                  {!item.hasFile && (
-                    <span className="text-red-600 dark:text-red-400">
-                      ⚠ tom não encontrado
-                    </span>
-                  )}
-                </div>
-                {item.moments && item.moments.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {item.moments.map((m) => (
-                      <span
-                        key={m}
-                        className="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green"
-                      >
-                        {MOMENT_LABELS[m] ?? m}
+        {groupBySlug(resolvedItems).map((group, i) => {
+          const head = group[0];
+          return (
+            <li key={i} className="border-b pb-3">
+              <div className="flex items-baseline gap-3">
+                <span className="text-2xl font-bold text-gray-400 tabular-nums">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div className="flex-1">
+                  <div className="font-semibold uppercase">
+                    {head.hinarioNum && `HINO ${head.hinarioNum} – `}
+                    {head.title}
+                    {' – '}
+                    {group.map((item, j) => (
+                      <span key={j}>
+                        {j > 0 && ', '}
+                        <a
+                          href={
+                            item.hasFile
+                              ? `${base}musicas/${item.slug}/${
+                                  item.qualifier ? `${item.qualifier}.` : ''
+                                }${item.tom.toLowerCase()}`
+                              : '#'
+                          }
+                          className={
+                            item.hasFile
+                              ? 'hover:text-mmu-green underline'
+                              : 'opacity-50'
+                          }
+                        >
+                          {item.tom.toUpperCase()}
+                          {item.qualifier && (
+                            <span className="text-xs text-mmu-green ml-1 normal-case">
+                              ({prettyQualifier(item.qualifier)})
+                            </span>
+                          )}
+                        </a>
                       </span>
                     ))}
                   </div>
-                )}
-                {item.notes && (
-                  <p className="text-sm italic text-gray-600 dark:text-gray-400 mt-1">
-                    {item.notes}
-                  </p>
-                )}
+                  {head.artist && (
+                    <div className="text-sm text-gray-500">{head.artist}</div>
+                  )}
+                  {group.map((item, j) => {
+                    const hasExtra =
+                      (item.moments && item.moments.length > 0) ||
+                      item.notes ||
+                      !item.hasFile;
+                    if (!hasExtra) return null;
+                    return (
+                      <div
+                        key={j}
+                        className="mt-1 ml-1 border-l-2 border-gray-200 dark:border-gray-700 pl-2"
+                      >
+                        {group.length > 1 && (
+                          <div className="text-xs text-gray-500">
+                            {item.tom.toUpperCase()}
+                            {item.qualifier &&
+                              ` (${prettyQualifier(item.qualifier)})`}
+                          </div>
+                        )}
+                        {item.moments && item.moments.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {item.moments.map((m) => (
+                              <span
+                                key={m}
+                                className="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green"
+                              >
+                                {MOMENT_LABELS[m] ?? m}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {item.notes && (
+                          <p className="text-sm italic text-gray-600 dark:text-gray-400 mt-1">
+                            {item.notes}
+                          </p>
+                        )}
+                        {!item.hasFile && (
+                          <span className="text-xs text-red-600 dark:text-red-400">
+                            ⚠ tom não encontrado
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ol>
 
       <div className="mt-6 flex flex-wrap gap-2 no-print">

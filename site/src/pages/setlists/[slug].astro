@@ -74,6 +74,28 @@ const MOMENT_LABELS: Record<string, string> = {
   preludio: 'Prelúdio',
   posludio: 'Poslúdio',
 };
+function prettyQualifier(q: string): string {
+  const m1 = q.match(/^v(\d+)$/);
+  if (m1) return `versão ${m1[1]}`;
+  const m2 = q.match(/^arranjo-(\d+)$/);
+  if (m2) return `arranjo ${m2[1]}`;
+  if (q === 'versao') return 'versão';
+  return q.replace(/-/g, ' ');
+}
+function tomUrlKey(qualifier: string, tom: string): string {
+  return qualifier ? `${qualifier}.${tom.toLowerCase()}` : tom.toLowerCase();
+}
+// Agrupa entradas consecutivas com o mesmo slug — mesma música, versões
+// diferentes viram um item só com múltiplos tons/qualifiers.
+function groupBySlug<T extends { slug: string }>(items: T[]): T[][] {
+  const groups: T[][] = [];
+  for (const it of items) {
+    const last = groups[groups.length - 1];
+    if (last && last[0].slug === it.slug) last.push(it);
+    else groups.push([it]);
+  }
+  return groups;
+}
 const resolved: ResolvedItem[] = setlist.songs.map((item) => {
   const qualifier = (item.qualifier ?? '').trim();
   const key = qualifier
@@ -115,47 +137,77 @@ const resolved: ResolvedItem[] = setlist.songs.map((item) => {
   </header>
 
   <ol class="space-y-3">
-    {resolved.map((item, i) => (
-      <li class="border-b pb-3">
-        <div class="flex items-baseline gap-3">
-          <span class="text-2xl font-bold text-gray-400 tabular-nums">
-            {String(i + 1).padStart(2, '0')}
-          </span>
-          <div class="flex-1">
-            <a
-              href={item.hasFile ? `${base}musicas/${item.slug}/${item.qualifier ? `${item.qualifier}.` : ''}${item.tom.toLowerCase()}` : '#'}
-              class={item.hasFile ? 'font-semibold uppercase hover:text-mmu-green' : 'font-semibold uppercase opacity-50'}
-            >
-              {item.hinarioNum && `HINO ${item.hinarioNum} – `}
-              {item.title}
-            </a>
-            <div class="text-sm text-gray-500 flex flex-wrap gap-2">
-              <span>Tom: <strong>{item.tom.toUpperCase()}</strong></span>
-              {item.artist && <span>· {item.artist}</span>}
-              {!item.hasFile && (
-                <span class="text-red-600 dark:text-red-400">
-                  ⚠ tom não encontrado
-                </span>
-              )}
-            </div>
-            {item.moments && item.moments.length > 0 && (
-              <div class="flex flex-wrap gap-1 mt-1">
-                {item.moments.map((m) => (
-                  <span class="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green">
-                    {MOMENT_LABELS[m] ?? m}
-                  </span>
+    {groupBySlug(resolved).map((group, i) => {
+      const head = group[0];
+      return (
+        <li class="border-b pb-3">
+          <div class="flex items-baseline gap-3">
+            <span class="text-2xl font-bold text-gray-400 tabular-nums">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div class="flex-1">
+              <div class="font-semibold uppercase">
+                {head.hinarioNum && `HINO ${head.hinarioNum} – `}
+                {head.title}
+                {' – '}
+                {group.map((item, j) => (
+                  <>
+                    {j > 0 && ', '}
+                    <a
+                      href={item.hasFile ? `${base}musicas/${item.slug}/${tomUrlKey(item.qualifier, item.tom)}` : '#'}
+                      class={item.hasFile ? 'hover:text-mmu-green underline' : 'opacity-50'}
+                    >
+                      {item.tom.toUpperCase()}
+                      {item.qualifier && (
+                        <span class="text-xs text-mmu-green ml-1 normal-case">
+                          ({prettyQualifier(item.qualifier)})
+                        </span>
+                      )}
+                    </a>
+                  </>
                 ))}
               </div>
-            )}
-            {item.notes && (
-              <p class="text-sm italic text-gray-600 dark:text-gray-400 mt-1">
-                {item.notes}
-              </p>
-            )}
+              {head.artist && (
+                <div class="text-sm text-gray-500">{head.artist}</div>
+              )}
+              {group.map((item) => (
+                <>
+                  {(item.moments && item.moments.length > 0) || item.notes || !item.hasFile ? (
+                    <div class="mt-1 ml-1 border-l-2 border-gray-200 dark:border-gray-700 pl-2">
+                      {group.length > 1 && (
+                        <div class="text-xs text-gray-500">
+                          {item.tom.toUpperCase()}
+                          {item.qualifier && ` (${prettyQualifier(item.qualifier)})`}
+                        </div>
+                      )}
+                      {item.moments && item.moments.length > 0 && (
+                        <div class="flex flex-wrap gap-1 mt-1">
+                          {item.moments.map((m) => (
+                            <span class="inline-block px-2 py-0.5 rounded text-xs bg-mmu-green/15 text-mmu-green">
+                              {MOMENT_LABELS[m] ?? m}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {item.notes && (
+                        <p class="text-sm italic text-gray-600 dark:text-gray-400 mt-1">
+                          {item.notes}
+                        </p>
+                      )}
+                      {!item.hasFile && (
+                        <span class="text-xs text-red-600 dark:text-red-400">
+                          ⚠ tom não encontrado
+                        </span>
+                      )}
+                    </div>
+                  ) : null}
+                </>
+              ))}
+            </div>
           </div>
-        </div>
-      </li>
-    ))}
+        </li>
+      );
+    })}
   </ol>
 
   <div class="mt-6 flex flex-wrap gap-2 no-print">
