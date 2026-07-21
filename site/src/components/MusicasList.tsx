@@ -11,6 +11,12 @@ interface Entry {
   toms: string[];
   hinarioNum?: string;
   lyrics: string;
+  /**
+   * Tom-key da variante padrão (ex.: 'g', 'v2.a'). Usado para linkar direto
+   * ao [tom].astro, evitando o hop pelo redirect estático em [slug]/index.astro
+   * (que dava flash branco com URL exposta).
+   */
+  defaultTomKey: string;
 }
 
 interface Props {
@@ -211,7 +217,7 @@ export default function MusicasList({ entries, base }: Props) {
                   addTag(first.tag);
                   setSearch('');
                 } else {
-                  window.location.href = `${base}musicas/${first.entry.slug}`;
+                  window.location.href = `${base}musicas/${first.entry.slug}/${first.entry.defaultTomKey}`;
                 }
               } else if (e.key === 'Escape') {
                 setSearchDropdownOpen(false);
@@ -254,7 +260,7 @@ export default function MusicasList({ entries, base }: Props) {
                 return (
                   <li key={entry.slug} role="option">
                     <a
-                      href={`${base}musicas/${entry.slug}`}
+                      href={`${base}musicas/${entry.slug}/${entry.defaultTomKey}`}
                       onMouseDown={(e) => e.preventDefault()}
                       className="block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
@@ -349,7 +355,7 @@ export default function MusicasList({ entries, base }: Props) {
         {filtered.map((e) => (
           <li key={e.slug} className="border-b pb-2">
             <a
-              href={`${base}musicas/${e.slug}`}
+              href={`${base}musicas/${e.slug}/${e.defaultTomKey}`}
               className="flex flex-wrap items-center gap-2 hover:text-mmu-green"
             >
               <span className="font-semibold uppercase">

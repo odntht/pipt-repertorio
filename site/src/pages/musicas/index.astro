@@ -20,7 +20,17 @@ function extractSearchableLyrics(raw: string): string {
   return kept.join('\n');
 }
 
+// Tom-key canônico da variante — combina com a rota `[tom].astro`.
+function tomKeyOf(s: (typeof songs)[number]): string {
+  return s.qualifiers.length > 0
+    ? `${s.qualifiers.join('.')}.${s.tom}`
+    : s.tom;
+}
+
 // Consolida versões (múltiplos toms) numa entrada por slug.
+// `defaultTomKey` é o tom-alvo do link da lista — preferindo variantes
+// sem qualifier (mesma regra do antigo redirect em [slug]/index.astro,
+// que agora existe só como safety net p/ URLs digitadas à mão).
 const bySlug = new Map<
   string,
   {
@@ -32,14 +42,21 @@ const bySlug = new Map<
     toms: string[];
     hinarioNum?: string;
     lyrics: string;
+    defaultTomKey: string;
+    defaultQualifierCount: number;
   }
 >();
 for (const s of songs) {
   const existing = bySlug.get(s.slug);
+  const tomKey = tomKeyOf(s);
   if (existing) {
     existing.toms.push(s.tom);
     for (const t of s.song.metadata.tags) {
       if (!existing.tags.includes(t)) existing.tags.push(t);
+    }
+    if (s.qualifiers.length < existing.defaultQualifierCount) {
+      existing.defaultTomKey = tomKey;
+      existing.defaultQualifierCount = s.qualifiers.length;
     }
   } else {
     bySlug.set(s.slug, {
@@ -51,10 +68,14 @@ for (const s of songs) {
       toms: [s.tom],
       hinarioNum: s.song.metadata.hinarioNum,
       lyrics: extractSearchableLyrics(s.song.raw),
+      defaultTomKey: tomKey,
+      defaultQualifierCount: s.qualifiers.length,
     });
   }
 }
-const entries = Array.from(bySlug.values());
+const entries = Array.from(bySlug.values()).map(
+  ({ defaultQualifierCount: _unused, ...rest }) => rest,
+);
 ---
 
 <BaseLayout title="Músicas">
