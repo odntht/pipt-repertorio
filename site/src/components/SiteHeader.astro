@@ -2,7 +2,7 @@
 const base = import.meta.env.BASE_URL;
 ---
 
-<header class="site-header border-b border-gray-200 dark:border-gray-800 py-3 px-4 flex items-center gap-3">
+<header class="site-header border-b border-gray-200 dark:border-gray-800 py-3 px-4 flex items-center gap-3 relative">
   <a href={base} class="flex items-center gap-2 hover:opacity-80">
     <img src={`${base}logo/mmu-small.png`} alt="MMU" class="h-10 w-10 rounded" />
     <div class="flex flex-col leading-tight">
@@ -10,9 +10,94 @@ const base = import.meta.env.BASE_URL;
       <span class="text-xs text-gray-500 dark:text-gray-400">Ministério de Música</span>
     </div>
   </a>
-  <nav class="ml-auto flex gap-4 text-sm no-print">
-    <a href={`${base}musicas`} class="hover:text-mmu-green">Músicas</a>
-    <a href={`${base}setlists`} class="hover:text-mmu-green">Setlists</a>
-    <a href={`${base}sobre`} class="hover:text-mmu-green">Sobre</a>
+
+  <button
+    id="nav-toggle"
+    type="button"
+    class="ml-auto md:hidden inline-flex items-center justify-center h-10 w-10 rounded hover:bg-gray-100 dark:hover:bg-gray-800 no-print"
+    aria-label="Abrir menu"
+    aria-expanded="false"
+    aria-controls="site-nav"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <nav
+    id="site-nav"
+    data-open="false"
+    class="site-nav md:ml-auto md:flex md:flex-wrap md:items-center md:gap-x-4 md:gap-y-2 md:static md:bg-transparent md:border-0 md:shadow-none md:p-0 hidden absolute left-0 right-0 top-full z-20 flex-col items-stretch gap-1 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-lg p-4 text-sm no-print"
+  >
+    <a href={`${base}musicas`} class="hover:text-mmu-green py-1">Músicas</a>
+    <a href={`${base}setlists`} class="hover:text-mmu-green py-1">Setlists</a>
+    <a
+      href="https://calendar.google.com/calendar/u/0?cid=Nm02ZWhkdjNtMTNuaGswbjY5YTdqZHFrdmtAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green py-1"
+    >Agenda</a>
+    <a
+      href="https://drive.google.com/file/d/14bPsGWxwrT6BpMUUy5DprbZV2EIhPWGH/view?usp=sharing"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green py-1"
+    >Repertório (PDF)</a>
+    <a
+      href="https://docs.google.com/document/d/1V622DVm_t5CFkhmpLlL8QmD4jdpYaxOF/edit?usp=sharing&ouid=105502224068545677104&rtpof=true&sd=true"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green py-1"
+    >Repertório (DOCX)</a>
+    <a
+      href="https://drive.google.com/drive/folders/1-EWKxWupLSmbx_0tQsT53PzpktrbXvMC?usp=share_link"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green py-1"
+    >Arranjos</a>
+    <a
+      href="https://docs.google.com/spreadsheets/d/10sG771Df-UpYYw5AtQCPWnxNNX8Xy2spXlldTPOZJpw/edit?usp=share_link"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green py-1"
+    >Financeiro</a>
+    <a
+      href="https://drive.google.com/file/d/1Hq1znldw4bKiwj__9NR7KeRJC39lDlp1/view?usp=share_link"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green py-1"
+    >Regimento</a>
+    <a
+      href="https://docs.google.com/document/d/1MpZusBlLKPZdPBAK0gNpSQsjDs3Mpjs4/edit?usp=sharing&ouid=111623185006755951040&rtpof=true&sd=true"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green py-1"
+    >Equipe Guitarra</a>
+    <a
+      href="https://docs.google.com/forms/d/e/1FAIpQLSe5-43b0LYXkUtxfW88te3BrfwxcZGP5T81xksaTuWcHUFCNg/viewform"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green py-1"
+    >Sugerir música</a>
+    <a href={`${base}sobre`} class="hover:text-mmu-green py-1">Sobre</a>
   </nav>
 </header>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById('nav-toggle');
+    const nav = document.getElementById('site-nav');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', () => {
+      const open = nav.getAttribute('data-open') === 'true';
+      const next = !open;
+      nav.setAttribute('data-open', String(next));
+      nav.classList.toggle('hidden', !next);
+      nav.classList.toggle('flex', next);
+      btn.setAttribute('aria-expanded', String(next));
+      btn.setAttribute('aria-label', next ? 'Fechar menu' : 'Abrir menu');
+    });
+  })();
+</script>
