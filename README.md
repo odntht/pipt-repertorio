@@ -62,6 +62,7 @@ Ver [`plugin/README.md`](plugin/README.md).
 
 - **Design:** [docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md](docs/superpowers/specs/2026-07-05-pipt-repertorio-design.md)
 - **Plano A (Fundações):** [docs/superpowers/plans/2026-07-05-plano-a-fundacoes.md](docs/superpowers/plans/2026-07-05-plano-a-fundacoes.md)
+- **Roadmap de melhorias:** [ROADMAP.md](ROADMAP.md)
 
 ## Estado do projeto
 
