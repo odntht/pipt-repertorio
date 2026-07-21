@@ -33,48 +33,73 @@ const base = import.meta.env.BASE_URL;
   >
     <a href={`${base}musicas`} class="hover:text-mmu-green">Músicas</a>
     <a href={`${base}setlists`} class="hover:text-mmu-green">Setlists</a>
-    <a
-      href="https://calendar.google.com/calendar/u/0?cid=Nm02ZWhkdjNtMTNuaGswbjY5YTdqZHFrdmtAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="hover:text-mmu-green"
-    >Agenda</a>
-    <a
-      href="https://drive.google.com/file/d/14bPsGWxwrT6BpMUUy5DprbZV2EIhPWGH/view?usp=sharing"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="hover:text-mmu-green"
-    >Repertório (PDF)</a>
-    <a
-      href="https://docs.google.com/document/d/1V622DVm_t5CFkhmpLlL8QmD4jdpYaxOF/edit?usp=sharing&ouid=105502224068545677104&rtpof=true&sd=true"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="hover:text-mmu-green"
-    >Repertório (DOCX)</a>
-    <a
-      href="https://drive.google.com/drive/folders/1-EWKxWupLSmbx_0tQsT53PzpktrbXvMC?usp=share_link"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="hover:text-mmu-green"
-    >Arranjos</a>
-    <a
-      href="https://docs.google.com/spreadsheets/d/10sG771Df-UpYYw5AtQCPWnxNNX8Xy2spXlldTPOZJpw/edit?usp=share_link"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="hover:text-mmu-green"
-    >Financeiro</a>
-    <a
-      href="https://drive.google.com/file/d/1Hq1znldw4bKiwj__9NR7KeRJC39lDlp1/view?usp=share_link"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="hover:text-mmu-green"
-    >Regimento</a>
-    <a
-      href="https://docs.google.com/document/d/1MpZusBlLKPZdPBAK0gNpSQsjDs3Mpjs4/edit?usp=sharing&ouid=111623185006755951040&rtpof=true&sd=true"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="hover:text-mmu-green"
-    >Equipe Guitarra</a>
+
+    <div class="docs-wrapper">
+      <button
+        id="docs-toggle"
+        type="button"
+        class="docs-toggle inline-flex items-center justify-center h-8 w-8 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+        aria-label="Documentos e links"
+        aria-expanded="false"
+        aria-controls="docs-menu"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <div
+        id="docs-menu"
+        data-open="false"
+        class="docs-menu"
+      >
+        <a
+          href="https://calendar.google.com/calendar/u/0?cid=Nm02ZWhkdjNtMTNuaGswbjY5YTdqZHFrdmtAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-mmu-green"
+        >Agenda</a>
+        <a
+          href="https://drive.google.com/file/d/14bPsGWxwrT6BpMUUy5DprbZV2EIhPWGH/view?usp=sharing"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-mmu-green"
+        >Repertório (PDF)</a>
+        <a
+          href="https://docs.google.com/document/d/1V622DVm_t5CFkhmpLlL8QmD4jdpYaxOF/edit?usp=sharing&ouid=105502224068545677104&rtpof=true&sd=true"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-mmu-green"
+        >Repertório (DOCX)</a>
+        <a
+          href="https://drive.google.com/drive/folders/1-EWKxWupLSmbx_0tQsT53PzpktrbXvMC?usp=share_link"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-mmu-green"
+        >Arranjos</a>
+        <a
+          href="https://docs.google.com/spreadsheets/d/10sG771Df-UpYYw5AtQCPWnxNNX8Xy2spXlldTPOZJpw/edit?usp=share_link"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-mmu-green"
+        >Financeiro</a>
+        <a
+          href="https://drive.google.com/file/d/1Hq1znldw4bKiwj__9NR7KeRJC39lDlp1/view?usp=share_link"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-mmu-green"
+        >Regimento</a>
+        <a
+          href="https://docs.google.com/document/d/1MpZusBlLKPZdPBAK0gNpSQsjDs3Mpjs4/edit?usp=sharing&ouid=111623185006755951040&rtpof=true&sd=true"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-mmu-green"
+        >Equipe Guitarra</a>
+      </div>
+    </div>
+
     <a
       href="https://docs.google.com/forms/d/e/1FAIpQLSe5-43b0LYXkUtxfW88te3BrfwxcZGP5T81xksaTuWcHUFCNg/viewform"
       target="_blank"
@@ -86,7 +111,7 @@ const base = import.meta.env.BASE_URL;
 </header>
 
 <style>
-  /* Mobile (< md): hamburger controla dropdown absoluto abaixo do header. */
+  /* Mobile (< md): hamburger externo controla dropdown absoluto. */
   .site-nav {
     display: none;
     flex-direction: column;
@@ -105,9 +130,23 @@ const base = import.meta.env.BASE_URL;
   .site-nav[data-open='true'] {
     display: flex;
   }
-  .site-nav > a {
+  .site-nav > a,
+  .docs-menu > a {
     padding: 0.25rem 0;
   }
+
+  /* Docs no mobile: pass-through — filhos fluem inline com os siblings do nav.
+     Toggle escondido; o hamburger externo já contém tudo. */
+  .docs-wrapper {
+    display: contents;
+  }
+  .docs-menu {
+    display: contents;
+  }
+  .docs-toggle {
+    display: none;
+  }
+
   @media (prefers-color-scheme: dark) {
     .site-nav {
       background: rgb(17 24 39);
@@ -115,7 +154,7 @@ const base = import.meta.env.BASE_URL;
     }
   }
 
-  /* Desktop (≥ md): linha horizontal com wrap, transparente, sem hamburger. */
+  /* Desktop (≥ md): nav horizontal + docs colapsados atrás de um botão. */
   @media (min-width: 768px) {
     .nav-toggle {
       display: none;
@@ -136,28 +175,96 @@ const base = import.meta.env.BASE_URL;
     .site-nav > a {
       padding: 0;
     }
+
+    .docs-wrapper {
+      display: block;
+      position: relative;
+    }
+    .docs-toggle {
+      display: inline-flex;
+    }
+    .docs-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 0.5rem);
+      z-index: 20;
+      min-width: 220px;
+      background: white;
+      border: 1px solid rgb(229 231 235);
+      border-radius: 0.375rem;
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      padding: 0.5rem;
+      flex-direction: column;
+      gap: 0.125rem;
+    }
+    .docs-menu[data-open='true'] {
+      display: flex;
+    }
+    .docs-menu > a {
+      padding: 0.375rem 0.5rem;
+      border-radius: 0.25rem;
+      white-space: nowrap;
+    }
+    .docs-menu > a:hover {
+      background: rgb(243 244 246);
+    }
   }
 
-  /* Desktop + dark: garantir fundo transparente. */
   @media (min-width: 768px) and (prefers-color-scheme: dark) {
     .site-nav {
       background: transparent;
       border: 0;
+    }
+    .docs-menu {
+      background: rgb(17 24 39);
+      border-color: rgb(31 41 55);
+    }
+    .docs-menu > a:hover {
+      background: rgb(31 41 55);
     }
   }
 </style>
 
 <script is:inline>
   (function () {
-    const btn = document.getElementById('nav-toggle');
+    // Hamburger externo (mobile).
+    const navBtn = document.getElementById('nav-toggle');
     const nav = document.getElementById('site-nav');
-    if (!btn || !nav) return;
-    btn.addEventListener('click', () => {
-      const open = nav.getAttribute('data-open') === 'true';
-      const next = !open;
-      nav.setAttribute('data-open', String(next));
-      btn.setAttribute('aria-expanded', String(next));
-      btn.setAttribute('aria-label', next ? 'Fechar menu' : 'Abrir menu');
-    });
+    if (navBtn && nav) {
+      navBtn.addEventListener('click', () => {
+        const open = nav.getAttribute('data-open') === 'true';
+        const next = !open;
+        nav.setAttribute('data-open', String(next));
+        navBtn.setAttribute('aria-expanded', String(next));
+        navBtn.setAttribute('aria-label', next ? 'Fechar menu' : 'Abrir menu');
+      });
+    }
+
+    // Hamburger interno de docs (desktop).
+    const docsBtn = document.getElementById('docs-toggle');
+    const docsMenu = document.getElementById('docs-menu');
+    if (docsBtn && docsMenu) {
+      const setDocsOpen = (next) => {
+        docsMenu.setAttribute('data-open', String(next));
+        docsBtn.setAttribute('aria-expanded', String(next));
+      };
+      docsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setDocsOpen(docsMenu.getAttribute('data-open') !== 'true');
+      });
+      document.addEventListener('click', (e) => {
+        if (
+          docsMenu.getAttribute('data-open') === 'true' &&
+          !docsMenu.contains(e.target) &&
+          !docsBtn.contains(e.target)
+        ) {
+          setDocsOpen(false);
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setDocsOpen(false);
+      });
+    }
   })();
 </script>
