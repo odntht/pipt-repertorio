@@ -14,7 +14,7 @@ const base = import.meta.env.BASE_URL;
   <button
     id="nav-toggle"
     type="button"
-    class="ml-auto md:hidden inline-flex items-center justify-center h-10 w-10 rounded hover:bg-gray-100 dark:hover:bg-gray-800 no-print"
+    class="nav-toggle ml-auto inline-flex items-center justify-center h-10 w-10 rounded hover:bg-gray-100 dark:hover:bg-gray-800 no-print"
     aria-label="Abrir menu"
     aria-expanded="false"
     aria-controls="site-nav"
@@ -29,61 +29,123 @@ const base = import.meta.env.BASE_URL;
   <nav
     id="site-nav"
     data-open="false"
-    class="site-nav md:ml-auto md:flex md:flex-wrap md:items-center md:gap-x-4 md:gap-y-2 md:static md:bg-transparent md:border-0 md:shadow-none md:p-0 hidden absolute left-0 right-0 top-full z-20 flex-col items-stretch gap-1 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-lg p-4 text-sm no-print"
+    class="site-nav text-sm no-print"
   >
-    <a href={`${base}musicas`} class="hover:text-mmu-green py-1">Músicas</a>
-    <a href={`${base}setlists`} class="hover:text-mmu-green py-1">Setlists</a>
+    <a href={`${base}musicas`} class="hover:text-mmu-green">Músicas</a>
+    <a href={`${base}setlists`} class="hover:text-mmu-green">Setlists</a>
     <a
       href="https://calendar.google.com/calendar/u/0?cid=Nm02ZWhkdjNtMTNuaGswbjY5YTdqZHFrdmtAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ"
       target="_blank"
       rel="noopener noreferrer"
-      class="hover:text-mmu-green py-1"
+      class="hover:text-mmu-green"
     >Agenda</a>
     <a
       href="https://drive.google.com/file/d/14bPsGWxwrT6BpMUUy5DprbZV2EIhPWGH/view?usp=sharing"
       target="_blank"
       rel="noopener noreferrer"
-      class="hover:text-mmu-green py-1"
+      class="hover:text-mmu-green"
     >Repertório (PDF)</a>
     <a
       href="https://docs.google.com/document/d/1V622DVm_t5CFkhmpLlL8QmD4jdpYaxOF/edit?usp=sharing&ouid=105502224068545677104&rtpof=true&sd=true"
       target="_blank"
       rel="noopener noreferrer"
-      class="hover:text-mmu-green py-1"
+      class="hover:text-mmu-green"
     >Repertório (DOCX)</a>
     <a
       href="https://drive.google.com/drive/folders/1-EWKxWupLSmbx_0tQsT53PzpktrbXvMC?usp=share_link"
       target="_blank"
       rel="noopener noreferrer"
-      class="hover:text-mmu-green py-1"
+      class="hover:text-mmu-green"
     >Arranjos</a>
     <a
       href="https://docs.google.com/spreadsheets/d/10sG771Df-UpYYw5AtQCPWnxNNX8Xy2spXlldTPOZJpw/edit?usp=share_link"
       target="_blank"
       rel="noopener noreferrer"
-      class="hover:text-mmu-green py-1"
+      class="hover:text-mmu-green"
     >Financeiro</a>
     <a
       href="https://drive.google.com/file/d/1Hq1znldw4bKiwj__9NR7KeRJC39lDlp1/view?usp=share_link"
       target="_blank"
       rel="noopener noreferrer"
-      class="hover:text-mmu-green py-1"
+      class="hover:text-mmu-green"
     >Regimento</a>
     <a
       href="https://docs.google.com/document/d/1MpZusBlLKPZdPBAK0gNpSQsjDs3Mpjs4/edit?usp=sharing&ouid=111623185006755951040&rtpof=true&sd=true"
       target="_blank"
       rel="noopener noreferrer"
-      class="hover:text-mmu-green py-1"
+      class="hover:text-mmu-green"
     >Equipe Guitarra</a>
     <a
       href="https://docs.google.com/forms/d/e/1FAIpQLSe5-43b0LYXkUtxfW88te3BrfwxcZGP5T81xksaTuWcHUFCNg/viewform"
       target="_blank"
       rel="noopener noreferrer"
-      class="hover:text-mmu-green py-1"
+      class="hover:text-mmu-green"
     >Sugerir música</a>
-    <a href={`${base}sobre`} class="hover:text-mmu-green py-1">Sobre</a>
+    <a href={`${base}sobre`} class="hover:text-mmu-green">Sobre</a>
   </nav>
 </header>
+
+<style>
+  /* Mobile (< md): hamburger controla dropdown absoluto abaixo do header. */
+  .site-nav {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 20;
+    background: white;
+    border-bottom: 1px solid rgb(229 231 235);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    padding: 1rem;
+  }
+  .site-nav[data-open='true'] {
+    display: flex;
+  }
+  .site-nav > a {
+    padding: 0.25rem 0;
+  }
+  @media (prefers-color-scheme: dark) {
+    .site-nav {
+      background: rgb(17 24 39);
+      border-color: rgb(31 41 55);
+    }
+  }
+
+  /* Desktop (≥ md): linha horizontal com wrap, transparente, sem hamburger. */
+  @media (min-width: 768px) {
+    .nav-toggle {
+      display: none;
+    }
+    .site-nav {
+      display: flex !important;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 1rem;
+      position: static;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+      margin-left: auto;
+    }
+    .site-nav > a {
+      padding: 0;
+    }
+  }
+
+  /* Desktop + dark: garantir fundo transparente. */
+  @media (min-width: 768px) and (prefers-color-scheme: dark) {
+    .site-nav {
+      background: transparent;
+      border: 0;
+    }
+  }
+</style>
 
 <script is:inline>
   (function () {
@@ -94,8 +156,6 @@ const base = import.meta.env.BASE_URL;
       const open = nav.getAttribute('data-open') === 'true';
       const next = !open;
       nav.setAttribute('data-open', String(next));
-      nav.classList.toggle('hidden', !next);
-      nav.classList.toggle('flex', next);
       btn.setAttribute('aria-expanded', String(next));
       btn.setAttribute('aria-label', next ? 'Fechar menu' : 'Abrir menu');
     });
