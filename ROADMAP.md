@@ -40,11 +40,35 @@ Convenção de esforço: **P** (pequeno, ~1h), **M** (médio, ~meia diária), **
 
 ---
 
-## Semana de ensaio
+## Direção musical
 
-- [ ] **Notas de ensaio setlist-level** — **P**
-  Hoje o `notes` é por música. Falta um campo pro líder deixar recado geral ("começar sem bateria", "modular na 3ª estrofe", "sem baixo hoje").
+Um conjunto de anotações que documenta **como a música deve ser tocada e conduzida** — quem começa, como começa, onde cada instrumento entra, dinâmica (piano/forte, crescendo, ritardando), acentos, quebras, marcações de andamento. É a "partitura de direção" do líder da equipe.
+
+Difere da cifra propriamente dita (que é letra + acordes) e das notas de setlist (que são contextuais a UMA ocasião). A direção musical é uma propriedade **da música** — o arranjo canônico daquela equipe.
+
+- [ ] **Direção musical inline na cifra (song-level)** — **G**
+  Adicionar anotações de direção dentro do próprio `.pro`, ancoradas em seções ou linhas específicas. Ex.: "intro: violão dedilhado 4 compassos"; "entrada do baixo: 2ª estrofe, subindo em oitava"; "refrão final: pp, só voz e piano".
+  _Perguntas em aberto (pra brainstorm futuro):_
+  - **Formato:** nova diretiva ChordPro (`{direcao: ...}`, `{d: ...}`)? Bloco YAML no topo do arquivo? Arquivo `.direcao.md` separado?
+  - **Granularidade:** por seção (intro/estrofe/refrão/ponte/final)? Por linha? Por compasso?
+  - **Multi-instrumento:** namespaces (`{d.baixo: ...}`, `{d.bateria: ...}`) ou texto livre?
+  - **Dinâmica:** notação musical padrão (pp/p/mp/mf/f/ff/crescendo/ritardando) com renderização visual, ou texto livre?
+  - **Render:** inline junto da cifra, painel lateral toggleável, ou aba separada?
+  _Onde:_ parser em `site/src/lib/chordpro/`, novo render em `site/src/components/SongViewer.tsx`.
+
+- [ ] **Notas de execução por setlist (contextual)** — **P**
+  Sobrescreve/complementa a direção canônica pra UMA ocasião específica ("hoje sem bateria", "modular pra E na 3ª estrofe", "pular a ponte"). Não altera a música — só o combinado do dia.
   _Onde:_ novo campo `notes:` no topo do YAML de setlist, render no editor e na view.
+
+- [ ] **Toggle "esconder direções"** — **P**
+  Botão pra ligar/desligar a exibição das anotações de direção. Útil pra músicos que só querem ver acordes e letra, sem poluir. Persiste por dispositivo (localStorage), similar ao toggle de acordes que já existe.
+
+- [ ] **Templates de direção por equipe** — **M**
+  Cada equipe (guitarra, vocal, teclado) pode ter uma "view" filtrada mostrando só as direções relevantes pra ela — o teclado vê "piano entra pp na 2ª", a bateria vê "quebra rápida antes do refrão final". Requer que a direção use namespaces por instrumento.
+
+---
+
+## Semana de ensaio
 
 - [ ] **Compartilhar setlist (WhatsApp)** — **M**
   Botão que gera texto formatado pra colar no grupo (título + tom + momento, sem markdown de PDF). Diferente do print completo.
