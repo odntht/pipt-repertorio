@@ -33,13 +33,25 @@ const base = import.meta.env.BASE_URL;
   >
     <a href={`${base}musicas`} class="hover:text-mmu-green">Músicas</a>
     <a href={`${base}setlists`} class="hover:text-mmu-green">Setlists</a>
+    <a
+      href="https://drive.google.com/drive/folders/1-EWKxWupLSmbx_0tQsT53PzpktrbXvMC?usp=share_link"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green"
+    >Arranjos</a>
+    <a
+      href="https://docs.google.com/forms/d/e/1FAIpQLSe5-43b0LYXkUtxfW88te3BrfwxcZGP5T81xksaTuWcHUFCNg/viewform"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-mmu-green"
+    >Sugerir música</a>
 
     <div class="docs-wrapper">
       <button
         id="docs-toggle"
         type="button"
         class="docs-toggle inline-flex items-center justify-center h-8 w-8 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-        aria-label="Documentos e links"
+        aria-label="Mais links"
         aria-expanded="false"
         aria-controls="docs-menu"
       >
@@ -74,12 +86,6 @@ const base = import.meta.env.BASE_URL;
           class="hover:text-mmu-green"
         >Repertório (DOCX)</a>
         <a
-          href="https://drive.google.com/drive/folders/1-EWKxWupLSmbx_0tQsT53PzpktrbXvMC?usp=share_link"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hover:text-mmu-green"
-        >Arranjos</a>
-        <a
           href="https://docs.google.com/spreadsheets/d/10sG771Df-UpYYw5AtQCPWnxNNX8Xy2spXlldTPOZJpw/edit?usp=share_link"
           target="_blank"
           rel="noopener noreferrer"
@@ -97,16 +103,9 @@ const base = import.meta.env.BASE_URL;
           rel="noopener noreferrer"
           class="hover:text-mmu-green"
         >Equipe Guitarra</a>
+        <a href={`${base}sobre`} class="hover:text-mmu-green">Sobre</a>
       </div>
     </div>
-
-    <a
-      href="https://docs.google.com/forms/d/e/1FAIpQLSe5-43b0LYXkUtxfW88te3BrfwxcZGP5T81xksaTuWcHUFCNg/viewform"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="hover:text-mmu-green"
-    >Sugerir música</a>
-    <a href={`${base}sobre`} class="hover:text-mmu-green">Sobre</a>
   </nav>
 </header>
 
