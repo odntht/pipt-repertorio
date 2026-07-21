@@ -24,10 +24,22 @@ interface Props {
 }
 
 function prettyQualifier(q: string): string {
-  const m1 = q.match(/^v(\d+)$/);
-  if (m1) return `versão ${m1[1]}`;
-  const m2 = q.match(/^arranjo-(\d+)$/);
-  if (m2) return `arranjo ${m2[1]}`;
+  // v1 é a versão default — sem rótulo. v2+ mostra compacto ("v2").
+  if (q === 'v1') return '';
+  const mV = q.match(/^v(\d+)$/);
+  if (mV) return `v${mV[1]}`;
+  // versao-<nome> → "v. Nome" (versão nomeada, ex.: versao-hieracles).
+  const mNamed = q.match(/^versao-(.+)$/);
+  if (mNamed) {
+    return `v. ${mNamed[1]
+      .split('-')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ')}`;
+  }
+  const mA = q.match(/^arranjo-(\d+)$/);
+  if (mA) return `arranjo ${mA[1]}`;
+  // 'versao' bare precisa de rótulo — colide com variante sem qualifier
+  // em várias músicas do dataset (ex.: castelo-forte.c vs castelo-forte.versao.c).
   if (q === 'versao') return 'versão';
   return q.replace(/-/g, ' ');
 }
@@ -288,20 +300,23 @@ export default function SongViewer({ song, availableToms, slug, base, titleBase 
       {availableToms.length > 1 && (
         <div className="flex flex-wrap gap-2 mb-4 no-print text-sm">
           <span>Versões:</span>
-          {availableToms.map((t) => (
-            <a
-              key={t.key}
-              href={`${base}musicas/${slug}/${t.key}`}
-              className="underline hover:text-mmu-green"
-            >
-              {t.tom.toUpperCase()}
-              {t.qualifier && (
-                <span className="text-xs text-mmu-green ml-1">
-                  ({prettyQualifier(t.qualifier)})
-                </span>
-              )}
-            </a>
-          ))}
+          {availableToms.map((t) => {
+            const qLabel = t.qualifier ? prettyQualifier(t.qualifier) : '';
+            return (
+              <a
+                key={t.key}
+                href={`${base}musicas/${slug}/${t.key}`}
+                className="underline hover:text-mmu-green"
+              >
+                {t.tom.toUpperCase()}
+                {qLabel && (
+                  <span className="text-xs text-mmu-green ml-1">
+                    ({qLabel})
+                  </span>
+                )}
+              </a>
+            );
+          })}
         </div>
       )}
 

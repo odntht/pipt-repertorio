@@ -29,10 +29,19 @@ export async function getStaticPaths() {
 }
 
 function prettyQualifier(q: string): string {
-  const m1 = q.match(/^v(\d+)$/);
-  if (m1) return `versão ${m1[1]}`;
-  const m2 = q.match(/^arranjo-(\d+)$/);
-  if (m2) return `arranjo ${m2[1]}`;
+  if (q === 'v1') return '';
+  const mV = q.match(/^v(\d+)$/);
+  if (mV) return `v${mV[1]}`;
+  const mNamed = q.match(/^versao-(.+)$/);
+  if (mNamed) {
+    return `v. ${mNamed[1]
+      .split('-')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ')}`;
+  }
+  const mA = q.match(/^arranjo-(\d+)$/);
+  if (mA) return `arranjo ${mA[1]}`;
+  // 'versao' bare permanece rotulado — colide com variante sem qualifier.
   if (q === 'versao') return 'versão';
   return q.replace(/-/g, ' ');
 }

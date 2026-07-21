@@ -75,13 +75,23 @@ function buildYaml(event: string, date: string, items: SetlistItem[]): string {
   return lines.join('\n') + '\n';
 }
 
-// Rótulo pra distinguir variantes na dropdown (ex.: "v2" → "versão 2").
+// Rótulo pra distinguir variantes na dropdown. v1 é default (sem rótulo);
+// v2+ vira compacto "v2"; versao-<nome> vira "v. Nome".
 function prettyQualifier(q: string): string {
   if (!q) return '';
-  const m1 = q.match(/^v(\d+)$/);
-  if (m1) return `versão ${m1[1]}`;
-  const m2 = q.match(/^arranjo-(\d+)$/);
-  if (m2) return `arranjo ${m2[1]}`;
+  if (q === 'v1') return '';
+  const mV = q.match(/^v(\d+)$/);
+  if (mV) return `v${mV[1]}`;
+  const mNamed = q.match(/^versao-(.+)$/);
+  if (mNamed) {
+    return `v. ${mNamed[1]
+      .split('-')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ')}`;
+  }
+  const mA = q.match(/^arranjo-(\d+)$/);
+  if (mA) return `arranjo ${mA[1]}`;
+  // 'versao' bare permanece rotulado — colide com variante sem qualifier.
   if (q === 'versao') return 'versão';
   return q.replace(/-/g, ' ');
 }
@@ -379,7 +389,9 @@ export default function SetlistEditor({ base, songs }: Props) {
           />
           {search && searchResults.length > 0 && (
             <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border rounded shadow-lg max-h-72 overflow-auto">
-              {searchResults.map((s) => (
+              {searchResults.map((s) => {
+                const qLabel = prettyQualifier(s.qualifier);
+                return (
                 <li key={`${s.slug}::${s.qualifier}`}>
                   <button
                     type="button"
@@ -391,9 +403,9 @@ export default function SetlistEditor({ base, songs }: Props) {
                         {s.hinarioNum && `HINO ${s.hinarioNum} – `}
                         {s.title}
                       </span>
-                      {s.qualifier && (
+                      {qLabel && (
                         <span className="text-xs text-mmu-green ml-2">
-                          ({prettyQualifier(s.qualifier)})
+                          ({qLabel})
                         </span>
                       )}
                       {s.artist && (
@@ -405,7 +417,8 @@ export default function SetlistEditor({ base, songs }: Props) {
                     </span>
                   </button>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           )}
         </div>
@@ -422,6 +435,7 @@ export default function SetlistEditor({ base, songs }: Props) {
         <ol className="space-y-2 mb-4">
           {items.map((it, idx) => {
             const song = songByKey.get(`${it.slug}::${it.qualifier}`);
+            const qLabel = prettyQualifier(it.qualifier);
             return (
               <li
                 key={idx}
@@ -451,9 +465,9 @@ export default function SetlistEditor({ base, songs }: Props) {
                   <div className="font-semibold uppercase">
                     {song?.hinarioNum && `HINO ${song.hinarioNum} – `}
                     {song?.title ?? it.slug}
-                    {it.qualifier && (
+                    {qLabel && (
                       <span className="ml-2 text-xs text-mmu-green normal-case">
-                        ({prettyQualifier(it.qualifier)})
+                        ({qLabel})
                       </span>
                     )}
                   </div>
